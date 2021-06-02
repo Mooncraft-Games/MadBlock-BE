@@ -1,6 +1,5 @@
 rootProject.name = 'MadBlockServer'
-include 'MadGradle', // Used to store build commands, does not contain code.
-        'Tool:NGAPI', 'Tool:Database', 'Tool:PlayerRegistry',
+include 'Tool:NGAPI', 'Tool:Database', 'Tool:PlayerRegistry',
         'Component:Ranks', 'Component:Punishments', 'Component:Social',
         'Game:CrystalWars', 'Game:BlockSwap', 'Game:SumoX', 'Game:TowerWars', 'Game:SkyWars',
         'External:NukkitTables', 'External:ScoreboardAPI'
