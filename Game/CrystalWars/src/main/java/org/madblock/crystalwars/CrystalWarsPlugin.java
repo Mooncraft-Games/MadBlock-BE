@@ -30,9 +30,9 @@ public class CrystalWarsPlugin extends PluginBase {
                 .setItemDroppingEnabled(true)
                 .setItemPickUpEnabled(true)
                 .setFallDamageEnabled(true)
-                .setGuidelinePlayers(4)
+                .setGuidelinePlayers(2)
                 .setMaximumPlayers(4)
-                .setMinimumPlayers(4)
+                .setMinimumPlayers(2)
                 .setDefaultCountdownLength(5);
 
         NewGamesAPI1.getGameRegistry().registerGame(new GameID(CrystalWarsConstants.BASE_GAME_ID, CrystalWarsConstants.BASE_GAME_SERVER_ID,
