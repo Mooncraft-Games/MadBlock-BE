@@ -1,3 +1,19 @@
-# Building From Source
-- Open the project in your IDE of choice
-- Run **package** which can be found under **madblock-parent** » **Lifecycle** » **package**
+# MadBlock Bedrock Edition Repository
+
+### Cloning
+
+```
+git clone https://github.com/Mooncraft-Games/MadBlock-BE.git
+git submodule update --init
+```
+
+### Building (after cloning)
+
+**All:** `./gradlew clean build copyJars`
+
+**Tools:** `./gradlew :Tool:clean :Tool:assemble copyJars`
+
+**Components:** `./gradlew :Component:clean :Component:assemble copyJars`
+
+**Games:** `./gradlew :Game:clean :Game:assemble copyJars`
+
