@@ -8,7 +8,7 @@ version '1.0'
 sourceCompatibility = targetCompatibility = 1.8
 
 task copyJars(type: Copy) {
-    from subprojects.collect { it.tasks.withType(Jar) }
+    from allprojects.collect { it.tasks.withType(Jar) }
     into "$buildDir/libs"
 }
 
