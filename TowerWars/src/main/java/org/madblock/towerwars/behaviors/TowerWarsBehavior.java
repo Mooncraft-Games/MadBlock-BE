@@ -1,0 +1,166 @@
+package org.madblock.towerwars.behaviors;
+
+import cn.nukkit.Player;
+import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.game.GameBehavior;
+import org.madblock.newgamesapi.team.Team;
+import org.madblock.towerwars.enemies.EnemyRegistry;
+import org.madblock.towerwars.enemies.enemy.Enemy;
+import org.madblock.towerwars.events.EventManager;
+import org.madblock.towerwars.menu.MenuManager;
+import org.madblock.towerwars.pathfinding.Pathfinder;
+import org.madblock.towerwars.towers.TowerRegistry;
+import org.madblock.towerwars.towers.tower.Tower;
+import org.madblock.towerwars.towers.types.ArcherTowerType;
+import org.madblock.towerwars.towers.types.TowerType;
+import org.madblock.towerwars.utils.GameRegion;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+// The base class lacks implementation of lives, money, and teams
+public abstract class TowerWarsBehavior extends GameBehavior {
+
+    private final EnemyRegistry enemyRegistry = new EnemyRegistry();
+    private final TowerRegistry towerRegistry = new TowerRegistry();
+    private final EventManager eventManager = new EventManager();
+    private final MenuManager menuManager = new MenuManager(this);
+
+    private Pathfinder pathfinder;
+
+    private final Set<Enemy> activeEnemies = new HashSet<>();
+    private final Set<Tower> activeTowers = new HashSet<>();
+
+    public TowerWarsBehavior() {
+        this.registerEnemies();
+        this.registerTowers();
+    }
+
+    public abstract int getLives(Player player);
+    public abstract void setLives(Player player, int lives);
+    public abstract int getBalance(Player player);
+    public abstract void setBalance(Player player, int balance);
+
+    /**
+     * Retrieve the player's game space
+     * @param player
+     * @return GameRegion
+     */
+    public abstract GameRegion getPlayerGameRegion(Player player);
+
+    protected int getInitialBalance() {
+        return 100;
+    }
+    protected int getInitialLives() {
+        return 20;
+    }
+
+    protected void registerEnemies() {
+
+    }
+    protected void registerTowers() {
+        this.getTowerRegistry().register(new ArcherTowerType(this));
+    }
+
+    //
+    //  Internal game logic
+    //
+
+    public EnemyRegistry getEnemyRegistry() {
+        return this.enemyRegistry;
+    }
+
+    public TowerRegistry getTowerRegistry() {
+        return this.towerRegistry;
+    }
+
+    public MenuManager getMenuManager() {
+        return this.menuManager;
+    }
+
+    public EventManager getEventManager() {
+        return this.eventManager;
+    }
+
+    public Pathfinder getPathfinder() {
+        return this.pathfinder;
+    }
+
+    public List<TowerType> getUnlockedTowerTypes(Player player) {
+        // TODO: Implement calculation for figuring out what towers are unlocked
+        return new ArrayList<>(this.getTowerRegistry().getTypes());
+    }
+
+    /**
+     * Retrieve all active enemies that are within a region.
+     * @param region The region
+     * @return
+     */
+    public Set<Enemy> getActiveEnemies(GameRegion region) {
+        return this.activeEnemies
+                .stream()
+                .filter(enemy -> enemy.getGameRegion().getPlayArea().getUniqueIdentifier().equals(region.getPlayArea().getUniqueIdentifier()))
+                .collect(Collectors.toSet());
+    }
+
+    public void addEnemy(Enemy enemy) {
+        this.activeEnemies.add(enemy);
+    }
+
+    public void removeEnemy(Enemy enemy) {
+        this.activeEnemies.remove(enemy);
+    }
+
+    public Set<Tower> getActiveTowers() {
+        return Collections.unmodifiableSet(this.activeTowers);
+    }
+
+    public void addTower(Tower tower) {
+        this.activeTowers.add(tower);
+    }
+
+    public void removeTower(Tower tower) {
+        this.activeTowers.remove(tower);
+    }
+
+    @Override
+    public void onInitialCountdownEnd() {
+        this.pathfinder = new Pathfinder(this.getSessionHandler().getPrimaryMap());
+        this.updateScoreboardTask();
+    }
+
+    @Override
+    public void registerGameSchedulerTasks() {
+        this.getSessionHandler().getGameScheduler().registerGameTask(this::gameTick, 0, 1);
+    }
+
+    @Override
+    public void cleanUp() {
+        this.getMenuManager().cleanUp();
+        this.getPathfinder().cleanUp();
+    }
+
+
+    protected void updateScoreboardTask() {
+        for (Player player : this.getActivePlayers()) {
+            // Gold
+            this.getSessionHandler().getScoreboardManager().setLine(player, 0, Utility.ResourcePackCharacters.COIN + " " + this.getBalance(player));
+            // Lives
+            this.getSessionHandler().getScoreboardManager().setLine(player, 1, Utility.ResourcePackCharacters.HEART_FULL + " " + this.getLives(player));
+        }
+    }
+
+    private void gameTick() {
+        this.activeTowers.iterator()
+                .forEachRemaining(Tower::tick);
+        this.activeEnemies.iterator()
+                .forEachRemaining(Enemy::tick);
+    }
+
+    private List<Player> getActivePlayers() {
+        return this.getSessionHandler().getPlayers().stream()
+                .filter(p -> this.getSessionHandler().getPlayerTeam(p).filter(Team::isActiveGameTeam).isPresent())
+                .collect(Collectors.toList());
+    }
+
+}

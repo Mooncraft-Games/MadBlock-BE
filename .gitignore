@@ -1,0 +1,14 @@
+# Project exclude paths
+/BlockSwap/target/
+/Database/target/
+/NGAPI/target/
+/PlayerRegistry/target/
+/Punishments/target/
+/Ranks/target/
+/SkyWars/target/
+/Social/target/
+/SumoX/target/
+/TowerWars/target/
+/.idea
+# Project exclude paths
+/target/

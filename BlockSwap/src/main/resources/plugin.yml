@@ -1,0 +1,6 @@
+name: MadblockBlockSwapMinigame
+main: org.madblock.blockswap.BlockSwapPlugin
+version: "1.0.0"
+api: ["1.0.0"]
+depend: [NewGamesAPI1]
+author: William Qi

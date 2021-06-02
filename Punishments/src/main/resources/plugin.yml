@@ -1,0 +1,8 @@
+name: MadblockPunishments
+main: org.madblock.punishments.PunishmentsPlugin
+version: "1.0.0"
+api: ["1.0.0"]
+
+author: "William Qi"
+depend: [MadblockDatabase, MadblockRanks, MadblockPlayerRegistry]
+softdepend: [NewGamesAPI1]

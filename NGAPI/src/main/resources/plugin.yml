@@ -1,0 +1,10 @@
+name: NewGamesAPI1
+main: org.madblock.newgamesapi.NewGamesAPI1
+load: STARTUP
+version: "1.0.0"
+api: ["1.0.9"]
+prefix: "mantlegames"
+
+author: "CG360 @ Madblock Games"
+description: "Our Minigame Core designed for 1.0 Nukkit."
+depend: [MadblockRanks, MadblockDatabase, MadblockPlayerRegistry, ScoreboardPlugin]

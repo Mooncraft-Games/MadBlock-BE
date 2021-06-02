@@ -1,0 +1,7 @@
+name: MadblockPlayerRegistry
+main: org.madblock.playerregistry.PlayerRegistry
+version: "2.0.0"
+api: ["1.0.0"]
+author: "William Qi"
+load: STARTUP
+depend: [MadblockDatabase]

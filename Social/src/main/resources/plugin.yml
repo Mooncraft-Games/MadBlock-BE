@@ -1,0 +1,8 @@
+name: MadblockSocial
+main: org.madblock.social.SocialAPI
+version: "1.0.0"
+api: ["1.0.0"]
+author: "William Qi"
+load: STARTUP
+depend: [MadblockPlayerRegistry, MadblockDatabase]
+softdepend: [NewGamesAPI1]

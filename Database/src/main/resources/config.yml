@@ -1,0 +1,9 @@
+# Add databases here
+# To access a database listed: DatabaseAPI#getConnection("MAIN") where "MAIN" can be any of the keys listed in this file.
+
+#MAIN:
+#  database: database
+#  host: host
+#  port: port
+#  username: username
+#  password: password

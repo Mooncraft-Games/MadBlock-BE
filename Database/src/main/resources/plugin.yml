@@ -1,0 +1,6 @@
+name: MadblockDatabase
+main: org.madblock.database.DatabaseAPI
+load: STARTUP
+version: "2.0.0"
+api: ["1.0.0"]
+author: "William Qi"

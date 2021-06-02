@@ -1,0 +1,7 @@
+name: MadblockRanks
+main: org.madblock.ranks.RankPlugin
+version: "1.0.0"
+api: ["1.0.0"]
+
+author: "William Qi"
+depend: [MadblockDatabase, MadblockPlayerRegistry]
