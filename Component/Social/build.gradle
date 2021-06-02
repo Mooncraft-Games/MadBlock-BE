@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(":Tool:NGAPI")
+    implementation project(":Tool:Database")
+    implementation project(":Tool:PlayerRegistry")
+    implementation project(":Component:Ranks")
+}
