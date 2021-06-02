@@ -1,5 +1,9 @@
 group 'org.madblock.game'
 
+jar {
+    jar.enabled(false)
+}
+
 subprojects {
     dependencies {
         // Use NGAPI in all game projects
