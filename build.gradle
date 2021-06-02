@@ -56,11 +56,12 @@ task packageProduction(type: Copy) {
     dependsOn deepClean
 
     from allprojects.collect {
-        if(!it.path.startsWith(":External")) {
-            return it.tasks.withType(Jar)
-        } else {
-            return new ArrayList<>()
-        }
+        if(it.path == ":External:ScoreboardAPI") return it.tasks.withType(Jar)
+        if(!it.path.startsWith(":External")) return it.tasks.withType(Jar)
+
+
+        return new ArrayList<>()
+
     }
     into "$buildDir/libs"
 }
