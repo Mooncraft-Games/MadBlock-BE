@@ -26,7 +26,6 @@ import org.madblock.social.Utility;
 import org.madblock.social.events.*;
 import org.madblock.social.friends.comparators.FriendComparator;
 import org.madblock.social.friends.comparators.RequestsComparator;
-import org.madblock.social.events.*;
 
 import java.sql.*;
 import java.util.*;

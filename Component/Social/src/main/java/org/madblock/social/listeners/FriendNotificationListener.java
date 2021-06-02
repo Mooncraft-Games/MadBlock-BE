@@ -5,7 +5,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.social.Utility;
 import org.madblock.social.events.*;
-import org.madblock.social.events.*;
 
 public class FriendNotificationListener implements Listener {
 

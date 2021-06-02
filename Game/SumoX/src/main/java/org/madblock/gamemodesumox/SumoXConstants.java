@@ -1,7 +1,6 @@
 package org.madblock.gamemodesumox;
 
 import org.madblock.gamemodesumox.powerup.*;
-import org.madblock.gamemodesumox.powerup.*;
 
 import java.util.ArrayList;
 import java.util.Collections;

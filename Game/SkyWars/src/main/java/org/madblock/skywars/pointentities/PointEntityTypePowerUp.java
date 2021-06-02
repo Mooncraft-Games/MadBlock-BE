@@ -52,7 +52,7 @@ import java.util.UUID;
 
 public class PointEntityTypePowerUp extends PointEntityType implements Listener {
 
-    public static final String ID = "powerup";
+    public static final String ID = "resources/powerup";
 
     private static final String GEOMETRY_NAME = "geometry.skywars_powerup";
 
@@ -64,7 +64,7 @@ public class PointEntityTypePowerUp extends PointEntityType implements Listener 
         String geometryFile = null;
         try {
             geometryFile = IOUtils.toString(
-                    SkywarsPlugin.getInstance().getClass().getResourceAsStream("/powerup/skywars_powerup.geometry.json"),
+                    SkywarsPlugin.getInstance().getClass().getResourceAsStream("/resources/powerup/skywars_powerup.geometry.json"),
                     StandardCharsets.UTF_8
             );
         } catch (IOException exception) {
@@ -76,7 +76,7 @@ public class PointEntityTypePowerUp extends PointEntityType implements Listener 
         BufferedImage skinFile = null;
         try {
             skinFile = ImageIO.read(
-                    SkywarsPlugin.getInstance().getClass().getResourceAsStream("/powerup/skywars_powerup.png")
+                    SkywarsPlugin.getInstance().getClass().getResourceAsStream("/resources/powerup/skywars_powerup.png")
             );
         } catch (IOException exception) {
             SkywarsPlugin.getInstance().getLogger().error("Failed to load powerup skin file.");
