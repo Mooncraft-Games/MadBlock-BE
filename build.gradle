@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'org.madblock'
-version '1.0-PREVIEW'
+version '1.0'
 
 sourceCompatibility = targetCompatibility = 1.8
 
@@ -35,6 +35,9 @@ subprojects {
     dependencies {
         implementation 'com.google.code.gson:gson:2.8.6'
         implementation 'cn.nukkit:nukkit:1.0-SNAPSHOT'
+
+        compileOnly 'org.projectlombok:lombok:1.18.20'
+        annotationProcessor 'org.projectlombok:lombok:1.18.20'
     }
 
     jar {

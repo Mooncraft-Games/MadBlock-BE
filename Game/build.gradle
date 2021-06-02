@@ -1,3 +1,5 @@
+group 'org.madblock.game'
+
 subprojects {
     dependencies {
         // Use NGAPI in all game projects
