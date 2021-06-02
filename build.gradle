@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+}
+
+group 'org.madblock'
+version '1.0-PREVIEW'
+
+sourceCompatibility = targetCompatibility = 1.8
+
+task copyJars(type: Copy) {
+    from subprojects.collect { it.tasks.withType(Jar) }
+    into "$buildDir/libs"
+}
+
+jar {
+    jar.enabled(false) // Removes the empty MadBlockServer jar
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+        maven {
+            url = 'https://repo.nukkitx.com/maven-snapshots'
+        }
+        maven {
+            url = 'https://repo.opencollab.dev/maven-releases/'
+        }
+        maven {
+            url = 'https://repo.opencollab.dev/maven-snapshots/'
+        }
+    }
+
+    dependencies {
+        implementation 'com.google.code.gson:gson:2.8.6'
+        implementation 'cn.nukkit:nukkit:1.0-SNAPSHOT'
+
+        compile fileTree(dir: rootDir.getPath()+'/libs/compile', include: '*.jar')
+        implementation fileTree(dir: rootDir.getPath()+'/libs/runtime', include: '*.jar')
+    }
+
+    jar {
+        from {
+            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+    }
+}
+
