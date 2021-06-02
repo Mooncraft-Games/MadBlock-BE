@@ -1,3 +1,6 @@
 [submodule "External/NukkitTables"]
 	path = External/NukkitTables
 	url = https://github.com/CloudG360/NukkitTables
+[submodule "External/ScoreboardAPI"]
+	path = External/ScoreboardAPI
+	url = https://github.com/CloudG360/ScoreboardAPI.git

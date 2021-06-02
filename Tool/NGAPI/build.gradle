@@ -3,4 +3,7 @@ dependencies {
     implementation project(":Tool:PlayerRegistry")
     implementation project(":Component:Ranks")
     implementation project(":External:NukkitTables")
+    implementation project(":External:ScoreboardAPI")
+
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
 }
