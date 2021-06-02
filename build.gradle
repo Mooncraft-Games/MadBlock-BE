@@ -1,16 +1,12 @@
+import java.util.function.BiConsumer
+
 plugins {
     id 'java'
 }
 
 group 'org.madblock'
 version '1.0'
-
 sourceCompatibility = targetCompatibility = 1.8
-
-task copyJars(type: Copy) {
-    from allprojects.collect { it.tasks.withType(Jar) }
-    into "$buildDir/libs"
-}
 
 jar {
     jar.enabled(false) // Removes the empty MadBlockServer jar
@@ -18,6 +14,7 @@ jar {
 
 subprojects {
     apply plugin: 'java'
+    sourceCompatibility = targetCompatibility = 1.8
 
     repositories {
         mavenCentral()
@@ -46,4 +43,26 @@ subprojects {
         }
     }
 }
+
+task deepClean {
+    group = "madgradle"
+    dependsOn allprojects.collect({ it.tasks.findByName('clean') })
+}
+
+
+task packageProduction(type: Copy) {
+    group = "madgradle"
+    description = "Used to gather all the jars required for a production server"
+    dependsOn deepClean
+
+    from allprojects.collect {
+        if(!it.path.startsWith(":External")) {
+            return it.tasks.withType(Jar)
+        } else {
+            return new ArrayList<>()
+        }
+    }
+    into "$buildDir/libs"
+}
+
 
