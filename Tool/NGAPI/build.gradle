@@ -2,4 +2,5 @@ dependencies {
     implementation project(":Tool:Database")
     implementation project(":Tool:PlayerRegistry")
     implementation project(":Component:Ranks")
+    implementation project(":External:NukkitTables")
 }

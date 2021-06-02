@@ -1,0 +1,5 @@
+group 'org.madblock.external'
+
+jar {
+    jar.enabled(false)
+}

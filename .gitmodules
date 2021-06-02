@@ -1,0 +1,3 @@
+[submodule "External/NukkitTables"]
+	path = External/NukkitTables
+	url = https://github.com/CloudG360/NukkitTables
