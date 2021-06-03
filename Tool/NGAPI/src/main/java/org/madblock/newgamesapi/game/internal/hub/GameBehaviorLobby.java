@@ -245,4 +245,7 @@ public class GameBehaviorLobby extends GameBehavior {
         }
     }
 
+    public ArrayList<Player> getSuperPlayers() {
+        return new ArrayList<>(superPlayers);
+    }
 }
