@@ -27,7 +27,6 @@ import org.madblock.newgamesapi.team.Team;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * @author Nicholas
@@ -37,7 +36,6 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
     public static final String TEAM_ID_PROPERTY = "team";
 
-    protected final Map<Vector3, Map<UUID, Long>> biteDelays = new HashMap<>();
     protected final Map<Team, PointEntity> teamPointEntities = new HashMap<>();
     protected final Map<Vector3, Integer> crystalHealth = new HashMap<>();
     protected final Map<Vector3, EntityEndCrystal> crystals = new HashMap<>();
@@ -67,7 +65,8 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
     public void onRemovePointEntity(PointEntity entity) {
         super.onRemovePointEntity(entity);
         teamPointEntities.remove(gameHandler.getTeams().get(entity.getStringProperties().get(TEAM_ID_PROPERTY)));
-        biteDelays.remove(new Vector3((int) entity.getX(), (int) entity.getY(), (int) entity.getZ()));
+        crystalHealth.remove(new Vector3((int) entity.getX(), (int) entity.getY(), (int) entity.getZ()));
+        crystals.remove(new Vector3((int) entity.getX(), (int) entity.getY(), (int) entity.getZ()));
     }
 
     public boolean isCrystalDestroyed(PointEntity entity) {
@@ -166,10 +165,10 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
         Vector3 position = new Vector3(location.getX(), location.getY(), location.getZ());
         if (crystals.containsKey(position)) {
-            Integer health = crystalHealth.getOrDefault(position, 100);
+            Integer health = crystalHealth.get(position);
             crystalHealth.put(position, health - 1);
             player.getLevel().addSound(player.getPosition(), Sound.HIT_CHAIN, 0.25f, 1);
-            if (health <= 0) {
+            if (health - 1 <= 0) {
                 crystals.get(position).kill();
                 crystals.get(position).despawnFromAll();
                 Team victimTeam = gameHandler.getTeams().get(targetCrystalPointEntity.getStringProperties().get(TEAM_ID_PROPERTY));
