@@ -5,5 +5,5 @@ dependencies {
     implementation project(":External:ScoreboardAPI")
 
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
-    compile project(":External:NukkitTables")
+    compileOnly project(":External:NukkitTables")
 }
