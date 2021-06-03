@@ -17,7 +17,7 @@ public final class SumoXConstants {
     /** The base knockback value. */
     public static final float KNOCKBACK_BASE = 0.6f;
 
-    /** base * (1.05^finals_time) = compound 5% boost every second. */
+    /** base * (1.05^(finals_time * 2/2)) = compound 2% boost every second. */
     public static final float PANIC_KNOCKBACK_MULTIPLIER = 1.02f;
 
     /** Time in seconds to respawn. */
@@ -44,7 +44,7 @@ public final class SumoXConstants {
 
     public static final float POWERUP_LEAP_STRENGTH = 1.62f;
 
-    public static final double POWERUP_KBAURA_RADIUS = 4f;
+    public static final double POWERUP_KBAURA_RADIUS = 6.5f;
     public static final double POWERUP_KBAURA_Y_VELOCITY = 0.7f;
     public static final float POWERUP_KBAURA_POWER = 1.8f;
 
@@ -80,7 +80,6 @@ public final class SumoXConstants {
     static {
         ArrayList<Class<? extends PowerUp>> puss = new ArrayList<>();
 
-        puss.add(PowerUpBlindness.class);
         puss.add(PowerUpImmunity.class);
         puss.add(PowerUpLeap.class);
         puss.add(PowerUpKBAura.class);

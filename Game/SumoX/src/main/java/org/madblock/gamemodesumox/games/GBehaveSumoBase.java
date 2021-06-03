@@ -313,7 +313,7 @@ public class GBehaveSumoBase extends GameBehavior {
     }
 
     public double calculatePanicKnockbackMultiplier() {
-        return Math.pow(SumoXConstants.PANIC_KNOCKBACK_MULTIPLIER, (getTimeElapsed()-Math.floor(maxTimer*(1-SumoXConstants.BASE_TIMER_PANIC_ZONE))));
+        return Math.max(Math.pow(SumoXConstants.PANIC_KNOCKBACK_MULTIPLIER, (getTimeElapsed()-Math.floor(maxTimer*(1-SumoXConstants.BASE_TIMER_PANIC_ZONE))) * (2f/3)), 1f);
     }
 
 
