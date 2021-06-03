@@ -43,7 +43,7 @@ public class PowerUpLeap extends PowerUp {
 
     @Override
     public int getWeight() {
-        return 20;
+        return 100;
     }
 
     @Override

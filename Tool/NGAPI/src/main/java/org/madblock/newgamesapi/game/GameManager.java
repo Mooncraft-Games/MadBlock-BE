@@ -85,6 +85,7 @@ public class GameManager {
 
                 GameHandler gameHandler = new GameHandler(id, behavior, sessionID, selectedMapID, mapLevel, this, cleanupTime);
                 handler = gameHandler;
+                break;
             } catch (InvalidMapIDException err){
                 NewGamesAPI1.getPlgLogger().warning(String.format("Map ID (%s) threw an error when loaded into an active game. Retrying.", mapPool.get(randomMapIndex).getId()));
                 mapPool.remove(randomMapIndex);
