@@ -22,11 +22,11 @@ public class CustomGamePVPSettings {
     public CustomGamePVPSettings() {
         enabled = true;
 
-        defaultKnockback = new Vector3(1.5d, 0.5d, 1.5d);
+        defaultKnockback = new Vector3(1.25d, 1.4d, 1.25d);
 
         damageMultiplier = 1;
         allowCriticals = false;
-        noHitTicks = 5;
+        noHitTicks = 9;
     }
 
     /**

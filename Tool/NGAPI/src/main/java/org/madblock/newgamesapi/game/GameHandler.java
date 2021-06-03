@@ -19,6 +19,9 @@ import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.AnimatePacket;
+import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.network.protocol.SetEntityMotionPacket;
 import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.TextFormat;
@@ -531,7 +534,7 @@ public class GameHandler implements Listener {
         }
     }
     
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerVsPlayerDamage(EntityDamageByEntityEvent event) {
         CustomGamePVPSettings pvpSettings = gameID.getGameProperties().getCustomPvpSettings();
         if (
@@ -548,11 +551,11 @@ public class GameHandler implements Listener {
             }
             event.setDamage(event.getDamage() * pvpSettings.getDamageMultiplier());
 
-            // victim.attack(event);
-
             victim.noDamageTicks = pvpSettings.getNoHitTicks();
 
             // TODO: break down item
+
+            // TODO: damage: we can't use victim.attack (investigate... why is there a inf loop?)
 
             // Do knockback
             Vector3 knockbackVector = pvpSettings.getKnockbackVector()
@@ -563,16 +566,25 @@ public class GameHandler implements Listener {
             double distanceX = victim.getX() - attacker.getX();
             double distanceZ = victim.getZ() - attacker.getZ();
             double distance = Math.sqrt(distanceX * distanceX + distanceZ * distanceZ);
+            
+            double x = knockbackVector.getX() * (1 / distance) * distanceX;
+            double y = knockbackVector.getY();
+            double z = knockbackVector.getZ() * (1 / distance) * distanceZ;
 
+            
+            // We don't use setMotion b/c it was not as smooth as I would have liked. (rubberbanded)
+            SetEntityMotionPacket entityMotionPacket = new SetEntityMotionPacket();
+            entityMotionPacket.eid = victim.getId();
+            entityMotionPacket.motionX = (float)x;
+            entityMotionPacket.motionY = (float)y;
+            entityMotionPacket.motionZ = (float)z;
+            victim.dataPacket(entityMotionPacket);
 
+            EntityEventPacket hurtAnimationPacket = new EntityEventPacket();
+            hurtAnimationPacket.eid = victim.getId();
+            hurtAnimationPacket.event = EntityEventPacket.HURT_ANIMATION;
+            Server.broadcastPacket(victim.getViewers().values(), hurtAnimationPacket);
 
-            double x = (victim.getMotion().getX() / 2d) + knockbackVector.getX() * (1 / distance) * distanceX;
-            double y = (victim.getMotion().getY() / 2d) + knockbackVector.getY();
-            double z = (victim.getMotion().getZ() / 2d) + knockbackVector.getZ() * (1 / distance) * distanceZ;
-
-            victim.setMotion(new Vector3(x, y, z));
-
-            event.setKnockBack(0);
             event.setCancelled();   // We implement our own kb and damage. We don't want them to override our motion.
         }
     }
