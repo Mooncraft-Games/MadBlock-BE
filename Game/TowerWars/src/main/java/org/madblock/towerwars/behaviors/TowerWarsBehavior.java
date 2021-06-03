@@ -3,9 +3,12 @@ package org.madblock.towerwars.behaviors;
 import cn.nukkit.Player;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
+import org.madblock.newgamesapi.map.types.MapRegion;
 import org.madblock.newgamesapi.team.Team;
+import org.madblock.towerwars.TowerWarsPlugin;
 import org.madblock.towerwars.enemies.EnemyRegistry;
 import org.madblock.towerwars.enemies.enemy.Enemy;
+import org.madblock.towerwars.enemies.types.SilverfishEnemyType;
 import org.madblock.towerwars.events.EventManager;
 import org.madblock.towerwars.menu.MenuManager;
 import org.madblock.towerwars.pathfinding.Pathfinder;
@@ -31,6 +34,9 @@ public abstract class TowerWarsBehavior extends GameBehavior {
     private final Set<Enemy> activeEnemies = new HashSet<>();
     private final Set<Tower> activeTowers = new HashSet<>();
 
+    // Mapped by teamId
+    protected final Map<String, GameRegion> gameRegions = new HashMap<>();
+
     public TowerWarsBehavior() {
         this.registerEnemies();
         this.registerTowers();
@@ -48,6 +54,13 @@ public abstract class TowerWarsBehavior extends GameBehavior {
      */
     public abstract GameRegion getPlayerGameRegion(Player player);
 
+    /**
+     * Retrieve a owner for a game region
+     * @param gameRegion
+     * @return Player
+     */
+    public abstract Player getGameRegionOwner(GameRegion gameRegion);
+
     protected int getInitialBalance() {
         return 100;
     }
@@ -56,7 +69,7 @@ public abstract class TowerWarsBehavior extends GameBehavior {
     }
 
     protected void registerEnemies() {
-
+        this.getEnemyRegistry().register(new SilverfishEnemyType(this));
     }
     protected void registerTowers() {
         this.getTowerRegistry().register(new ArcherTowerType(this));
@@ -127,6 +140,38 @@ public abstract class TowerWarsBehavior extends GameBehavior {
     public void onInitialCountdownEnd() {
         this.pathfinder = new Pathfinder(this.getSessionHandler().getPrimaryMap());
         this.updateScoreboardTask();
+
+        // Parse MapID regions
+        Arrays.stream(this.getTeams())
+                .filter(Team.GenericTeamBuilder::isActiveGameTeam)
+                .map(Team.GenericTeamBuilder::getId)
+                .forEach(teamId -> {
+                    Map<String, MapRegion> regions = this.getSessionHandler().getPrimaryMapID().getRegions();
+
+                    String playAreaId = teamId + "_area";
+                    String goalId = teamId + "_goal";
+                    String spawnId = teamId + "_spawn";
+
+                    if (!regions.containsKey(playAreaId)) {
+                        TowerWarsPlugin.get().getLogger().error("Missing region " + playAreaId);
+                        return;
+                    }
+                    if (!regions.containsKey(goalId)) {
+                        TowerWarsPlugin.get().getLogger().error("Missing region " + goalId);
+                        return;
+                    }
+                    if (!regions.containsKey(spawnId)) {
+                        TowerWarsPlugin.get().getLogger().error("Missing region " + spawnId);
+                        return;
+                    }
+
+                    MapRegion playArea = regions.get(playAreaId);
+                    MapRegion goalArea = regions.get(goalId);
+                    MapRegion spawnArea = regions.get(spawnId);
+
+                    this.gameRegions.put(teamId, new GameRegion(playArea, spawnArea, goalArea));
+
+                });
     }
 
     @Override

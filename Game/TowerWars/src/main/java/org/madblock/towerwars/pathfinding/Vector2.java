@@ -4,23 +4,23 @@ import java.util.Objects;
 
 public class Vector2 {
 
-    private int x;
-    private int z;
+    private double x;
+    private double z;
 
-    public Vector2(int x, int z) {
+    public Vector2(double x, double z) {
         this.x = x;
         this.z = z;
     }
 
-    public int getX() {
+    public double getX() {
         return this.x;
     }
 
-    public int getZ() {
+    public double getZ() {
         return this.z;
     }
 
-    public Vector2 add(int x, int z) {
+    public Vector2 add(double x, double z) {
         return new Vector2(this.x + x, this.z + z);
     }
 

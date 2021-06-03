@@ -50,16 +50,16 @@ public class TestPathfinderAsyncConsumer {
         ChunkManager mockChunkManager = new MockChunkManager(gameMap);
         PathfinderAsyncConsumer pathfinder = new PathfinderAsyncConsumer(
                 new PathfinderAsyncConsumer.Settings.Builder()
-                    .setLevel(mockChunkManager)
-                    .setInitialPosition(new Vector3(0, 0, 0))
-                    .setBoundaries(boundaries)
-                    .setEndGoalRegion(endGoalRegion)
-                    .setSpacityMap(Pathfinder.getSpacityMap(mockChunkManager, boundaries))
-                    .build()
+                        .setLevel(mockChunkManager)
+                        .setInitialPosition(new Vector3(0, 0, 0))
+                        .setBoundaries(boundaries)
+                        .setEndGoalRegion(endGoalRegion)
+                        .setSpacityMap(Pathfinder.getSpacityMap(mockChunkManager, boundaries))
+                        .build()
         );
         List<Vector2> path = pathfinder.get();
         for (Vector2 step : path) {
-            if (mockChunkManager.getBlockIdAt(step.getX(), 0, step.getZ()) != Block.AIR) {
+            if (mockChunkManager.getBlockIdAt((int)step.getX(), 0, (int)step.getZ()) != Block.AIR) {
                 fail("Attempted to walk through wall while pathfinding.");
             }
         }
@@ -83,16 +83,6 @@ public class TestPathfinderAsyncConsumer {
                 { 1, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
                 { 1, 1, 1, 1, 1, 1, 0, 0, 0, 1 }
         };
-//        int[][] spacityMap = {
-//                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-//                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-//                { 2, 2, 2, 2, 2, 2, 2, 2, 1, 0 },
-//                { 1, 1, 1, 1, 1, 1, 1, 2, 1, 0 },
-//                { 0, 0, 0, 0, 0, 0, 1, 2, 1, 0 },
-//                { 0, 0, 0, 0, 0, 0, 1, 2, 1, 0 },
-//                { 0, 0, 0, 0, 0, 0, 1, 2, 1, 0 },
-//                { 0, 0, 0, 0, 0, 0, 1, 2, 1, 0 },
-//        };
 
 
         MapRegion endGoalRegion = new MapRegion(
@@ -115,12 +105,12 @@ public class TestPathfinderAsyncConsumer {
 
         PathfinderAsyncConsumer pathfinder = new PathfinderAsyncConsumer(
                 new PathfinderAsyncConsumer.Settings.Builder()
-                    .setLevel(mockChunkManager)
-                    .setInitialPosition(initialPosition)
-                    .setBoundaries(boundaries)
-                    .setEndGoalRegion(endGoalRegion)
-                    .setSpacityMap(spacityMap)
-                    .build()
+                        .setLevel(mockChunkManager)
+                        .setInitialPosition(initialPosition)
+                        .setBoundaries(boundaries)
+                        .setEndGoalRegion(endGoalRegion)
+                        .setSpacityMap(spacityMap)
+                        .build()
         );
 
         List<Vector2> path = pathfinder.get();
@@ -133,7 +123,7 @@ public class TestPathfinderAsyncConsumer {
         int targetSpacity = spacityMap[initialPosition.getFloorZ()][initialPosition.getFloorX()];
         int incorrectSpacities = 0;
         for (Vector2 step : path) {
-            if (spacityMap[step.getZ()][step.getX()] != targetSpacity) {
+            if (spacityMap[(int)step.getZ()][(int)step.getX()] != targetSpacity) {
                 incorrectSpacities++;
                 if (incorrectSpacities > path.size() / 2) {
                     //fail("Spacity test failed. Majority of path returned spacity of " + spacityMap[step.getZ()][step.getX()] + " instead of " + targetSpacity);

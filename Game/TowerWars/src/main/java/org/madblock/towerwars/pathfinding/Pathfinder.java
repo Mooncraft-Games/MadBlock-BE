@@ -18,10 +18,11 @@ import java.util.concurrent.CompletableFuture;
 
 public class Pathfinder implements Listener {
 
+    public static int WALL_SPACITY = 1;
+
     // Note: This is a list because it is possible for two pathfinding operations to run at the same time and use the same chunks.
     private final List<FullChunk> usedChunks = Collections.synchronizedList(new ArrayList<>());
 
-    private MapRegion test;
     private final ChunkManager level;
 
     public Pathfinder(ChunkManager level) {
@@ -31,12 +32,11 @@ public class Pathfinder implements Listener {
 
     /**
      * The y level is constant and is retrieved from the currentPosition
-     * @param gameRegion
-     * @param currentPosition
+     * @param gameRegion Game region that contains the play area and the end goal
+     * @param currentPosition Where we are currently
      * @return the positions to goto starting from currentPosition
      */
     public CompletableFuture<List<Vector2>> solve(GameRegion gameRegion, Vector3 currentPosition) {
-        this.test = gameRegion.getPlayArea();
         // Make sure the chunks stay loaded throughout our pathfinding
         Set<FullChunk> loadedChunks = this.loadChunks(gameRegion.getPlayArea());
         this.usedChunks.addAll(loadedChunks);
@@ -93,18 +93,6 @@ public class Pathfinder implements Listener {
         }
     }
 
-    @EventHandler
-    public void onDebug(BlockBreakEvent event) {
-        event.getPlayer().sendMessage("spacity = " + getSpacityMap(this.level, this.test)[(int)Math.abs(this.test.getPosLesser().getZ() - event.getBlock().getFloorZ())][(int)Math.abs(this.test.getPosLesser().getX() - event.getBlock().getFloorX())]);
-        for (int[] row : getSpacityMap(this.level, this.test)) {
-            for (int i : row) {
-                if (i == 3) {
-                    event.getPlayer().sendMessage("spacity other than 1 exists " + i);
-                }
-            }
-        }
-    }
-
     /**
      * Will construct a spacity map based off of the chunkManager.
      * It will use the y level of the lower boundary.
@@ -112,9 +100,6 @@ public class Pathfinder implements Listener {
      * @param boundaries
      * @return
      */
-
-    // TODO: consider edge blocks and cache in actual obj not static
-    // TODO: getSpacityMap should have tests too
     public static int[][] getSpacityMap(ChunkManager chunkManager, MapRegion boundaries) {
         int width = boundaries.getPosGreater().getX() - boundaries.getPosLesser().getX();
         int height = boundaries.getPosGreater().getZ() - boundaries.getPosLesser().getZ();
@@ -125,13 +110,15 @@ public class Pathfinder implements Listener {
         for (int z = 0; z < spacityMap.length; z++) {
             for (int x = 0; x < spacityMap[0].length; x++) {
                 if (chunkManager.getBlockIdAt(boundaries.getPosLesser().getX() + x, boundaries.getPosLesser().getY(), boundaries.getPosLesser().getZ() + z) != Block.AIR) {
-                    spacityMap[z][x] = 1;
+                    spacityMap[z][x] = WALL_SPACITY;
+                } else if (x == 0 || x == spacityMap[0].length - 1 || z == 0 || z == spacityMap.length - 1) {
+                    spacityMap[z][x] = WALL_SPACITY + 1;
                 }
             }
         }
 
         // Start creating spacity grid data
-        int triggerSpacity = 1; // what spacity value should we change the adjacent neighbours on?
+        int triggerSpacity = WALL_SPACITY; // what spacity value should we change the adjacent neighbours on?
         while (incomplete) {
             incomplete = false; // This is kept false if no changes are made to the 2d array.
             for (int z = 0; z < spacityMap.length; z++) {

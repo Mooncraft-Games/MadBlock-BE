@@ -4,10 +4,7 @@ import org.madblock.towerwars.TowerWarsPlugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +23,15 @@ public class EventManager {
     }
 
     public void callEvent(GameEvent event) {
-        for (GameListener listener : this.listeners) {
+        this.callGameListeners(this.listeners, event);
+    }
+
+    public void callEvent(Collection<GameListener> objects, GameEvent event) {
+        this.callGameListeners(objects, event);
+    }
+
+    private void callGameListeners(Collection<GameListener> listeners, GameEvent event) {
+        for (GameListener listener : listeners) {
             for (Method method : getValidEventMethods(listener.getClass(), event)) {
                 try {
                     method.invoke(this, event);
