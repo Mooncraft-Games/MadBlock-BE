@@ -19,6 +19,7 @@ import cn.nukkit.utils.TextFormat;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
+import org.madblock.newgamesapi.game.HubManager;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
 import org.madblock.newgamesapi.game.internal.hub.pointentities.PointEntityTypeKitNPC;
 import org.madblock.newgamesapi.game.internal.hub.regions.RegionTagHubBuildArea;
@@ -97,6 +98,8 @@ public class GameBehaviorLobby extends GameBehavior {
     @Override public Optional<Team> onCountdownJoinEvent(Player player) { return commonJoin(player); }
     @Override public Optional<Team> onMidGameJoinEvent(Player player) { return commonJoin(player); }
     public Optional<Team> commonJoin(Player player){
+        HubManager.get().updateLastHubPreference(player, this.getSessionHandler().getGameID().getGameIdentifier());
+
         getSessionHandler().getGameScheduler().registerGameTask(() -> {
             for(Player p : getSessionHandler().getPlayers()) {
                 player.getLevel().addSound(player.getPosition(), Sound.MOB_ENDERMEN_PORTAL, 1f, 0.8f, p);
@@ -245,4 +248,7 @@ public class GameBehaviorLobby extends GameBehavior {
         }
     }
 
+    public ArrayList<Player> getSuperPlayers() {
+        return new ArrayList<>(superPlayers);
+    }
 }
