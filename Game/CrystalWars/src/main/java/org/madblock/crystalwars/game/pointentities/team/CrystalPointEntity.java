@@ -17,6 +17,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.CrystalWarsPlugin;
+import org.madblock.crystalwars.util.CrystalWarsUtility;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;
@@ -48,6 +49,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
     public void onRegister() {
         addFunction("spawn_crystal", this::spawnCrystalFunction);
         CrystalWarsPlugin.getInstance().getServer().getPluginManager().registerEvents(this, CrystalWarsPlugin.getInstance());
+        getGameHandler().getGameScheduler().registerGameTask(this::updateActionBar, 0, 20);
     }
 
     @Override
@@ -184,5 +186,36 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                 }
             }
         }
+    }
+
+    protected void updateActionBar() {
+        StringBuilder textToDisplay = new StringBuilder();
+        for (Team team : getGameHandler().getTeams().values()) {
+            if (!team.isActiveGameTeam())
+                continue;
+            boolean crystalExists = crystalExistsForTeam(team);
+
+            int playerCount = team.getPlayers().size();
+
+            if (crystalExists || playerCount > 0) {
+                textToDisplay.append(String.format("%s %s[%s] ", CrystalWarsUtility.generateCrystalTeamIcon(team,
+                        isCrystalDestroyed(teamPointEntities.get(team))),
+                        team.getColour().getColourString(), getTeamCrystalHealth(team)));
+            }
+        }
+
+        for (Player player : getGameHandler().getPlayers()) {
+            player.sendActionBar(textToDisplay.toString().trim(), 0, 1, 0);
+        }
+    }
+
+    protected boolean crystalExistsForTeam(Team team) {
+        return isCrystalDestroyed(teamPointEntities.get(team));
+    }
+
+    protected int getTeamCrystalHealth(Team team) {
+        PointEntity entity = teamPointEntities.get(team);
+        return crystalHealth.getOrDefault(new Vector3(entity.getX(), entity.getY(),
+                entity.getZ()), 0);
     }
 }

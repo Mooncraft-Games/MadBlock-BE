@@ -48,9 +48,7 @@ public class CrystalWarsGame extends GameBehavior {
     }
 
     @Override
-    public void registerGameSchedulerTasks() {
-        getSessionHandler().getGameScheduler().registerGameTask(this::updateActionBar, 0, 40);
-    }
+    public void registerGameSchedulerTasks() {}
 
     @Override
     public void onPlayerLeaveGame(Player player) {
@@ -185,25 +183,5 @@ public class CrystalWarsGame extends GameBehavior {
                 .getRegisteredTypes()
                 .get(CrystalPointEntity.ID))
                 .isCrystalDestroyed(entity)).isPresent();
-    }
-
-    protected void updateActionBar() {
-        StringBuilder textToDisplay = new StringBuilder();
-        for (Team team : getSessionHandler().getTeams().values()) {
-            if (!team.isActiveGameTeam())
-                continue;
-            boolean crystalExists = crystalExistsForTeam(team);
-
-            char crystalCharacter = crystalExists ? '*' : ' ';
-            int playerCount = team.getPlayers().size();
-
-            if (crystalExists || playerCount > 0) {
-                textToDisplay.append(String.format("%s[%s] %s [%s] ", team.getColour().getColourString(), crystalCharacter, team.getDisplayName(), playerCount));
-            }
-        }
-
-        for (Player player : getSessionHandler().getPlayers()) {
-            player.sendActionBar(textToDisplay.toString().trim(), 0, 1, 0);
-        }
     }
 }
