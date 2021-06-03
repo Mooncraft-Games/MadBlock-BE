@@ -50,7 +50,9 @@ public class TaskTickdownCountdown extends Task {
                 String subtitle = currentTimer <= 5 ? TextFormat.YELLOW+" - Get ready! - " : "";
                 Sound tickSound = currentTimer <= 3 ? Sound.NOTE_BANJO : Sound.MOB_SHEEP_SHEAR;
                 for (Player player: handler.getPlayers()) {
-                    player.sendMessage(Utility.generateServerMessage("GAME", TextFormat.DARK_AQUA, String.format("The game will be starting in %s%s %sseconds", textColour, currentTimer, Utility.DEFAULT_TEXT_COLOUR)));
+                    player.sendMessage(Utility.generateServerMessage("GAME", TextFormat.DARK_AQUA,
+                            String.format("The game will be starting in %s%s %ssecond" + (currentTimer == 1 ? "" : "s"),
+                                    textColour, currentTimer, Utility.DEFAULT_TEXT_COLOUR)));
                     player.getLevel().addSound(player.getPosition(), tickSound, 1f, 0.8f, player);
                     player.sendTitle(String.format("%s%s%s", textColour, TextFormat.BOLD, currentTimer), subtitle, 6,8,6);
                 }
