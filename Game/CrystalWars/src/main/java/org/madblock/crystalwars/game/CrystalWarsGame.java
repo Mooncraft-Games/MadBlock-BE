@@ -148,8 +148,6 @@ public class CrystalWarsGame extends GameBehavior {
             event.setDeathState(GamePlayerDeathEvent.DeathState.TIMED_RESPAWN);
             int respawnSeconds = 5;
             event.setRespawnSeconds(respawnSeconds);
-            event.getDeathCause().getVictim().sendTitle(TextFormat.RED + "OUCH!", TextFormat.RED + "Respawning in " +
-                    respawnSeconds + " seconds...", 0, 40, 15);
         } else {
             checkWin();
         }
