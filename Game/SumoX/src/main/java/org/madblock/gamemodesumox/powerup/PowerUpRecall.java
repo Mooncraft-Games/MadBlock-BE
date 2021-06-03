@@ -56,7 +56,7 @@ public class PowerUpRecall extends PowerUp implements Listener {
 
     @Override
     public int getWeight() {
-        return 15;
+        return 100;
     }
 
     @Override

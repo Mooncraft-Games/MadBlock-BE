@@ -53,7 +53,7 @@ public final class PowerUpImmunity extends PowerUp implements Listener {
 
     @Override
     public int getWeight() {
-        return 6;
+        return 100;
     }
 
     @Override
