@@ -47,7 +47,6 @@ public class PETypeSumoXPowerUpSpot extends PointEntityType implements Listener 
 
     protected boolean triggeredMisuseWarning = false;
 
-    protected int maxWeight;
     protected PowerUp[] powerUpPool;
 
     protected int powerUpItemCount;
@@ -59,7 +58,6 @@ public class PETypeSumoXPowerUpSpot extends PointEntityType implements Listener 
     public PETypeSumoXPowerUpSpot(GameHandler gameHandler) {
         super(SumoXKeys.PE_TYPE_POWERUP, gameHandler);
 
-        this.maxWeight = 0;
         this.powerUpPool = new PowerUp[0];
 
         this.powerUpItemCount = 0;
@@ -79,9 +77,7 @@ public class PETypeSumoXPowerUpSpot extends PointEntityType implements Listener 
                 Class<? extends PowerUp> c = SumoXConstants.AVAILABLE_POWER_UPS.get(i);
                 PowerUp powerUp = c.getConstructor(GameHandler.class).newInstance(gameHandler);
                 powerUpPool[i] = powerUp;
-                maxWeight += Math.max(powerUp.getWeight(), 1);
             } catch (Exception err){
-                this.maxWeight = 0;
                 this.powerUpPool = new PowerUp[0];
                 SumoX.getPlgLogger().error("Very Broken PowerUp: Constructor Fault.");
                 return;
@@ -253,14 +249,19 @@ public class PETypeSumoXPowerUpSpot extends PointEntityType implements Listener 
 
                                 getGameHandler().addRewardChunk(attacker, new RewardChunk("powerup", "Power-Up Pickup", 3, 0, 1));
 
-                                int selection = new Random().nextInt(maxWeight);
-                                int cumulativeWeightChecked = 1;
+                                int powerPoolWeight = 0;
+                                for(PowerUp e: powerUpPool) powerPoolWeight += Math.max(e.getTotalWeight(context), 0);
+
+                                int selection = powerPoolWeight <= 0 ? 0 : new Random().nextInt(powerPoolWeight);
+                                int cumulativeWeightChecked = 0;
 
                                 for (PowerUp entry : powerUpPool) {
+                                    int weight = entry.getTotalWeight(context);
 
-                                    if (selection <= (cumulativeWeightChecked + entry.getTotalWeight(context))) {
+                                    if (selection < (cumulativeWeightChecked + weight)) {
+                                        boolean result = runPowerUp(entry, context);
 
-                                        if (runPowerUp(entry, context)) {
+                                        if (result) {
                                             event.getEntity().getLevel().addSound(event.getEntity().getPosition(), Sound.MOB_WITHER_BREAK_BLOCK, 0.5f, 0.9f, gameHandler.getPlayers());
                                             event.getEntity().close();
                                             powerUpEntities.remove(event.getEntity());
@@ -269,7 +270,7 @@ public class PETypeSumoXPowerUpSpot extends PointEntityType implements Listener 
                                             return;
                                         }
                                     }
-                                    cumulativeWeightChecked += entry.getWeight();
+                                    cumulativeWeightChecked += weight;
                                 }
                             }
                         }
