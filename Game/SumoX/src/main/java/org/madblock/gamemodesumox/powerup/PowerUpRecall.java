@@ -92,7 +92,8 @@ public class PowerUpRecall extends PowerUp implements Listener {
                 context.getPlayer().setImmobile(true);
 
                 gameHandler.getGameScheduler().registerGameTask(() -> {
-                    context.getPlayer().teleport(posHistory.get(fI));
+                    context.getPlayer().setPosition(posHistory.get(fI));
+                    context.getPlayer().sendPosition(posHistory.get(fI));
                     if(finalTick) {
                         context.getPlayer().setImmobile(false);
                         context.getPlayer().getLevel().addSound(context.getPlayer().getPosition(), Sound.BEACON_DEACTIVATE, 0.6f, 0.7f);
