@@ -22,7 +22,7 @@ public class CommandGame extends PluginCommand<NewGamesAPI1> {
     public CommandGame() {
         super("game", NewGamesAPI1.get());
         this.setDescription("Handles games");
-        this.setUsage("/game start <String: gameid> \nOR /game sentto <String: sessionid> \nOR /game stop <String: gameid>");
+        this.setUsage("/game start <String: gameid> \nOR /game sentto <String: sessionid> \nOR /game stop <String: sessionid>");
 
         this.commandParameters.clear();
         this.commandParameters.put("start", new CommandParameter[]{
