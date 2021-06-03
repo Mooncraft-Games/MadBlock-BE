@@ -24,6 +24,7 @@ import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
 import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.team.Team;
+import org.madblock.newgamesapi.team.TeamPresets;
 
 import java.util.*;
 
@@ -183,5 +184,10 @@ public class CrystalWarsGame extends GameBehavior {
                 .getRegisteredTypes()
                 .get(CrystalPointEntity.ID))
                 .isCrystalDestroyed(entity)).isPresent();
+    }
+
+    @Override
+    public Team.GenericTeamBuilder[] getTeams() {
+        return TeamPresets.FOUR_TEAMS;
     }
 }

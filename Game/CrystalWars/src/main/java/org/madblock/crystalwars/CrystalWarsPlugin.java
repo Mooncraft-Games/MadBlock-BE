@@ -36,7 +36,7 @@ public class CrystalWarsPlugin extends PluginBase {
                 .setDefaultCountdownLength(5);
 
         NewGamesAPI1.getGameRegistry().registerGame(new GameID(CrystalWarsConstants.BASE_GAME_ID, CrystalWarsConstants.BASE_GAME_SERVER_ID,
-                "Crystal Wars Regular", "Destory the other crystals, but make sure to defend your own!",
+                "Crystal Wars Regular", "Destroy the other crystals, but make sure to defend your own!",
                 "crystalwars", new String[] { "crystalwars_regular" }, 1, regularCrystalWarsProperties, CrystalWarsGame.class));
 
         NewGamesAPI1.getKitRegistry().registerKitGroup(kitGroup);
