@@ -108,7 +108,7 @@ public class KitHub extends Kit {
 
     @Override
     public void onKitEquip(Player player) {
-        player.addEffect(Effect.getEffect(Effect.JUMP).setAmplifier(2).setDuration(100000).setVisible(false));
+        // player.addEffect(Effect.getEffect(Effect.JUMP).setAmplifier(2).setDuration(100000).setVisible(false)); no more jump boost!
         if(player.isSprinting()){
             player.setMovementSpeed((VANILLA_BASE_SPEED * VANILLA_BASE_SPRINT_MULTIPLIER) * SPEED_MULTIPLIER); //Vanilla is a 30% increase
         } else {
