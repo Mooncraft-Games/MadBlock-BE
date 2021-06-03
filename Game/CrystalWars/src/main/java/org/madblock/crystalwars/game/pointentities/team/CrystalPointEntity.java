@@ -6,7 +6,7 @@ import cn.nukkit.entity.item.EntityEndCrystal;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.player.PlayerInteractEntityEvent;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
@@ -76,7 +76,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         }
         Entity theEntity = null;
         for (Entity worldEntity : gameHandler.getPrimaryMap().getEntities()) {
-            if (!worldEntity.getName().equals("EndCrystal"))
+            if (!(worldEntity instanceof EntityEndCrystal))
                 continue;
             if (worldEntity.getLocation().x == entity.getX() && worldEntity.getLocation().y == entity.getY() &&
                     worldEntity.getLocation().z == entity.getZ()) {
@@ -128,18 +128,20 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
     }
 
     @EventHandler
-    private void onCrystalHit(PlayerInteractEntityEvent event) {
-        Player player = event.getPlayer();
-        Entity entity = event.getEntity();
-        if (gameHandler.getPlayers().contains(player) && entity.getName().equals("EndCrystal")) {
-            event.setCancelled(updateCrystal(player, entity.getLocation()));
+    private void onCrystalDamage(EntityDamageByEntityEvent event) {
+        Entity victim = event.getEntity();
+        if (victim instanceof EntityEndCrystal) {
+            event.setCancelled();
+            Entity damager = event.getDamager();
+            if (damager instanceof Player)
+                updateCrystal(((Player) damager), victim.getLocation());
         }
     }
 
-    protected boolean updateCrystal(Player player, Location location) {
+    protected void updateCrystal(Player player, Location location) {
         Optional<Team> playerTeam = gameHandler.getPlayerTeam(player);
         if (!playerTeam.isPresent() || !playerTeam.get().isActiveGameTeam()) {
-            return true;
+            return;
         }
 
         PointEntity targetCrystalPointEntity = null;
@@ -151,14 +153,14 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                 if (entity.getStringProperties().get(TEAM_ID_PROPERTY).equals(playerTeam.get().getId())) {
                     player.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, "You cannot destroy " +
                             "your own crystal.", TextFormat.RED));
-                    return true;
+                    return;
                 }
                 break;
             }
         }
 
         if (targetCrystalPointEntity == null) {
-            return true;
+            return;
         }
 
         Vector3 position = new Vector3(location.getX(), location.getY(), location.getZ());
@@ -180,7 +182,5 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                 }
             }
         }
-        return true;
     }
-
 }
