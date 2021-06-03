@@ -173,6 +173,8 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             if (health - 1 <= 0) {
                 crystals.get(position).kill();
                 crystals.get(position).despawnFromAll();
+                crystals.remove(position);
+                crystalHealth.remove(position);
                 Team victimTeam = gameHandler.getTeams().get(targetCrystalPointEntity.getStringProperties().get(TEAM_ID_PROPERTY));
                 for (Player gamePlayer : gameHandler.getPlayers()) {
                     gamePlayer.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, String.format("%s's " +
