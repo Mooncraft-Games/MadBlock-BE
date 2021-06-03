@@ -23,7 +23,7 @@ public abstract class PowerUp {
     public int getBonusWeight(PowerUpContext context) { return 0; }
 
     public final int getTotalWeight(PowerUpContext context){
-        return Math.min(getWeight() + getBonusWeight(context), 0);
+        return Math.max(getWeight() + getBonusWeight(context), 0);
     }
 
     public abstract Integer getItemID();
