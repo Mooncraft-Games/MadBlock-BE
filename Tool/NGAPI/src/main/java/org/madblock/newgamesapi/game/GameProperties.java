@@ -24,6 +24,8 @@ public class GameProperties {
     private boolean isFallDamageEnabledPreGame;
     private boolean isFallDamageEnabled;
 
+    private CustomGamePVPSettings customPvpSettings;
+
     private boolean isTourneyGamemode;
 
     private GameHandler.AutomaticWinPolicy winPolicy;
@@ -56,6 +58,8 @@ public class GameProperties {
 
         this.isFallDamageEnabledPreGame = false;
         this.isFallDamageEnabled = false;
+
+        this.customPvpSettings = new CustomGamePVPSettings();
 
         this.isTourneyGamemode = false;
 
@@ -91,6 +95,10 @@ public class GameProperties {
     public boolean isFallDamageEnabled() { return isFallDamageEnabled; }
 
     public boolean isTourneyGamemode() { return isTourneyGamemode; }
+
+    public CustomGamePVPSettings getCustomPvpSettings() {
+        return this.customPvpSettings;
+    }
 
     public GameHandler.AutomaticWinPolicy getWinPolicy() { return winPolicy; }
 
@@ -253,6 +261,16 @@ public class GameProperties {
 
     public GameProperties setTourneyGamemode(boolean tourneyGamemode) {
         isTourneyGamemode = tourneyGamemode;
+        return this;
+    }
+
+    /**
+     * Replace the current knockback settings for the game.
+     * @param customPvpSettings new knockback settings
+     * @return self for chaining
+     */
+    public GameProperties setCustomPvpSettings(CustomGamePVPSettings customPvpSettings) {
+        this.customPvpSettings = customPvpSettings;
         return this;
     }
 

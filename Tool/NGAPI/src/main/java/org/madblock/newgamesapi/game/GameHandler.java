@@ -8,13 +8,17 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.PlayerDropItemEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.TextFormat;
@@ -524,6 +528,52 @@ public class GameHandler implements Listener {
                     return;
                 }
             }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onPlayerVsPlayerDamage(EntityDamageByEntityEvent event) {
+        CustomGamePVPSettings pvpSettings = gameID.getGameProperties().getCustomPvpSettings();
+        if (
+                pvpSettings.isEnabled() &&
+                event.getDamager() instanceof Player &&
+                event.getEntity() instanceof Player &&
+                getPlayers().containsAll(Arrays.asList((Player)event.getDamager(), (Player)event.getEntity()))
+        ) {
+            Player attacker = (Player)event.getDamager();
+            Player victim = (Player)event.getEntity();
+
+            if (!pvpSettings.areCriticalsAllowed() && !attacker.onGround) {
+                event.setDamage(event.getDamage() / 1.5f);
+            }
+            event.setDamage(event.getDamage() * pvpSettings.getDamageMultiplier());
+
+            // victim.attack(event);
+
+            victim.noDamageTicks = pvpSettings.getNoHitTicks();
+
+            // TODO: break down item
+
+            // Do knockback
+            Vector3 knockbackVector = pvpSettings.getKnockbackVector()
+                    .multiply(event.getKnockBack());
+
+            // Based off of the knockBack method for LivingEntity
+
+            double distanceX = victim.getX() - attacker.getX();
+            double distanceZ = victim.getZ() - attacker.getZ();
+            double distance = Math.sqrt(distanceX * distanceX + distanceZ * distanceZ);
+
+
+
+            double x = (victim.getMotion().getX() / 2d) + knockbackVector.getX() * (1 / distance) * distanceX;
+            double y = (victim.getMotion().getY() / 2d) + knockbackVector.getY();
+            double z = (victim.getMotion().getZ() / 2d) + knockbackVector.getZ() * (1 / distance) * distanceZ;
+
+            victim.setMotion(new Vector3(x, y, z));
+
+            event.setKnockBack(0);
+            event.setCancelled();   // We implement our own kb and damage. We don't want them to override our motion.
         }
     }
 
