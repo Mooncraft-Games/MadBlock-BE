@@ -22,13 +22,11 @@ import java.util.HashMap;
 public class PowerUpRecall extends PowerUp implements Listener {
 
     protected HashMap<Player, ArrayList<Vector3>> recallLists;
-    protected ArrayList<Player> recallPlayers;
 
     public PowerUpRecall(GameHandler gameHandler) {
         super(gameHandler);
 
         this.recallLists = new HashMap<>();
-        this.recallPlayers = new ArrayList<>();
 
         SumoX.get().getServer().getPluginManager().registerEvents(this, SumoX.get());
         gameHandler.getGameScheduler().registerGameTask(this::onSecondTick, 0 , SumoXConstants.POWERUP_RECALL_TICK_FRAMES);
@@ -86,7 +84,7 @@ public class PowerUpRecall extends PowerUp implements Listener {
     @Override
     public boolean use(PowerUpContext context) {
         if(recallLists.containsKey(context.getPlayer())){
-            ArrayList<Vector3> posHistory = recallLists.get(context.getPlayer());
+            ArrayList<Vector3> posHistory = new ArrayList<>(recallLists.get(context.getPlayer()));
             int recallAmount = Math.min(SumoXConstants.POWERUP_RECALL_MAX_HISTORY, posHistory.size());
 
             for (int i = 0; i < recallAmount; i++) {
@@ -95,14 +93,13 @@ public class PowerUpRecall extends PowerUp implements Listener {
                 boolean finalTick = i == (recallAmount - 1);
 
                 context.getPlayer().setImmobile(true);
-                recallPlayers.add(context.getPlayer());
 
                 gameHandler.getGameScheduler().registerGameTask(() -> {
                     context.getPlayer().setPosition(posHistory.get(fI));
                     context.getPlayer().sendPosition(posHistory.get(fI));
 
                     if(finalTick) {
-                        recallPlayers.remove(context.getPlayer());
+                        context.getPlayer().teleport(posHistory.get(fI));
                         context.getPlayer().setImmobile(false);
                         context.getPlayer().getLevel().addSound(context.getPlayer().getPosition(), Sound.BEACON_DEACTIVATE, 0.6f, 0.7f);
                         context.getPlayer().getLevel().addParticleEffect(context.getPlayer().getPosition(), ParticleEffect.HUGE_EXPLOSION_LEVEL);
@@ -124,25 +121,23 @@ public class PowerUpRecall extends PowerUp implements Listener {
     public void onSecondTick(){
         for(Player player: gameHandler.getPlayers()){
 
-            if(!recallPlayers.contains(player)) {
-                if (!recallLists.containsKey(player)) {
-                    recallLists.put(player, new ArrayList<>());
-                }
-                ArrayList<Vector3> positions = recallLists.get(player);
-                positions.add(0, player.getPosition());
+            if (!recallLists.containsKey(player)) {
+                recallLists.put(player, new ArrayList<>());
+            }
+            ArrayList<Vector3> positions = recallLists.get(player);
+            positions.add(0, player.getPosition());
 
-                int originalSize = positions.size();
-                int historySize = SumoXConstants.POWERUP_RECALL_MAX_HISTORY;
+            int originalSize = positions.size();
+            int historySize = SumoXConstants.POWERUP_RECALL_MAX_HISTORY;
 
-                Kit kit = gameHandler.getAppliedSessionKits().get(player);
+            Kit kit = gameHandler.getAppliedSessionKits().get(player);
 
-                if (kit != null) {
-                    historySize = SumoUtil.StringToInt(kit.getProperty(SumoXKeys.KIT_PROP_RECALL_TIME).orElse(null)).orElse(SumoXConstants.POWERUP_RECALL_MAX_HISTORY);
-                }
+            if (kit != null) {
+                historySize = SumoUtil.StringToInt(kit.getProperty(SumoXKeys.KIT_PROP_RECALL_TIME).orElse(null)).orElse(SumoXConstants.POWERUP_RECALL_MAX_HISTORY);
+            }
 
-                for (int i = historySize; i < originalSize; i++) {
-                    positions.remove(historySize);
-                }
+            for (int i = historySize; i < originalSize; i++) {
+                positions.remove(historySize);
             }
         }
     }
