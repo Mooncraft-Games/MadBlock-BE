@@ -327,7 +327,7 @@ public class GameHandler implements Listener {
                         Team t = potentialLoopTeam.get();
                         teamid = teams.containsValue(t) ? t.getId() : TeamPresets.SPECTATOR_TEAM_ID;
                     } else {
-                        teamid = teamPopulator.getPriorityFillTeam();
+                        teamid = TeamPresets.SPECTATOR_TEAM_ID;
                     }
                     player.setImmobile(false);
                     break;
