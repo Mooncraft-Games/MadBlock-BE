@@ -5,6 +5,7 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import org.madblock.gamemodesumox.SumoXConstants;
+import org.madblock.gamemodesumox.games.GBehaveSumoBase;
 import org.madblock.newgamesapi.game.GameHandler;
 
 public class PowerUpKBAura extends PowerUp {
@@ -62,9 +63,17 @@ public class PowerUpKBAura extends PowerUp {
                 double deltaZ = v.getZ() - p.getZ();
 
                 double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaZ, 2));
+
+                double multiplier = 1f;
+
+                if(gameHandler.getGameBehaviors() instanceof GBehaveSumoBase) {
+                    GBehaveSumoBase gameBehave = (GBehaveSumoBase) gameHandler.getGameBehaviors();
+                    multiplier *= Math.min(gameBehave.calculatePanicKnockbackMultiplier(), 5);
+                }
+
                 if (distance <= SumoXConstants.POWERUP_KBAURA_RADIUS) {
                     Vector3 dir = new Vector3(deltaX, 0, deltaZ).normalize();
-                    v.setMotion(new Vector3(dir.x, SumoXConstants.POWERUP_KBAURA_Y_VELOCITY, dir.z).multiply(SumoXConstants.POWERUP_KBAURA_POWER));
+                    v.setMotion(new Vector3(dir.x, SumoXConstants.POWERUP_KBAURA_Y_VELOCITY, dir.z).multiply(SumoXConstants.POWERUP_KBAURA_POWER).multiply(multiplier));
                 }
             }
         }

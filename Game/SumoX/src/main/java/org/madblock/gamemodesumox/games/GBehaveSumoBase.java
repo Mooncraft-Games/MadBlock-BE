@@ -308,8 +308,12 @@ public class GBehaveSumoBase extends GameBehavior {
         }
 
         double baseKBValue = baseKB * victimModifier * kitDamageModifier;
-        double knockbackValue = isInPanicMode ? Math.min(baseKBValue * (Math.pow(SumoXConstants.PANIC_KNOCKBACK_MULTIPLIER, (getTimeElapsed()-Math.floor(maxTimer*(1-SumoXConstants.BASE_TIMER_PANIC_ZONE))))), baseKBValue*5) : baseKBValue;
+        double knockbackValue = isInPanicMode ? Math.min(baseKBValue * calculatePanicKnockbackMultiplier(), baseKBValue*5) : baseKBValue;
         applyKnockback(victim, attacker, knockbackValue);
+    }
+
+    public double calculatePanicKnockbackMultiplier() {
+        return Math.pow(SumoXConstants.PANIC_KNOCKBACK_MULTIPLIER, (getTimeElapsed()-Math.floor(maxTimer*(1-SumoXConstants.BASE_TIMER_PANIC_ZONE))));
     }
 
 
