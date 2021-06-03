@@ -1,10 +1,15 @@
 package org.madblock.gamemodesumox.powerup;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.HandlerList;
+import cn.nukkit.event.Listener;
+import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import org.madblock.gamemodesumox.SumoUtil;
+import org.madblock.gamemodesumox.SumoX;
 import org.madblock.gamemodesumox.SumoXConstants;
 import org.madblock.gamemodesumox.SumoXKeys;
 import org.madblock.newgamesapi.game.GameHandler;
@@ -13,12 +18,13 @@ import org.madblock.newgamesapi.kits.Kit;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class PowerUpRecall extends PowerUp {
+public class PowerUpRecall extends PowerUp implements Listener {
 
     protected HashMap<Player, ArrayList<Vector3>> recallLists = new HashMap<>();
 
     public PowerUpRecall(GameHandler gameHandler) {
         super(gameHandler);
+        SumoX.get().getServer().getPluginManager().registerEvents(this, SumoX.get());
         gameHandler.getGameScheduler().registerGameTask(this::onSecondTick, 0 , SumoXConstants.POWERUP_RECALL_TICK_FRAMES);
     }
 
@@ -81,7 +87,9 @@ public class PowerUpRecall extends PowerUp {
     }
 
     @Override
-    public void cleanUp() { }
+    public void cleanUp() {
+        HandlerList.unregisterAll(this);
+    }
 
     public void onSecondTick(){
         for(Player player: gameHandler.getPlayers()){
@@ -103,6 +111,17 @@ public class PowerUpRecall extends PowerUp {
 
             for(int i = historySize; i < originalSize; i++){
                 positions.remove(historySize);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDeath(EntityDeathEvent event) {
+        if(event.getEntity() instanceof Player){
+            Player p = (Player) event.getEntity();
+
+            if(recallLists.containsKey(p)) {
+                recallLists.put(p, new ArrayList<>());
             }
         }
     }
