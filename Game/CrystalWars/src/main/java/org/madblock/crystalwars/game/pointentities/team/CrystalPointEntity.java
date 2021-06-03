@@ -124,6 +124,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         endCrystal.spawnToAll();
 
         teamPointEntities.put(team, entity);
+        crystals.put(position, endCrystal);
         crystalHealth.put(position, 100);
     }
 
@@ -167,17 +168,19 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         if (crystals.containsKey(position)) {
             Integer health = crystalHealth.getOrDefault(position, 100);
             crystalHealth.put(position, health - 1);
+            player.getLevel().addSound(player.getPosition(), Sound.HIT_CHAIN, 0.25f, 1);
             if (health <= 0) {
                 crystals.get(position).kill();
                 crystals.get(position).despawnFromAll();
+                Team victimTeam = gameHandler.getTeams().get(targetCrystalPointEntity.getStringProperties().get(TEAM_ID_PROPERTY));
                 for (Player gamePlayer : gameHandler.getPlayers()) {
                     gamePlayer.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, String.format("%s's " +
-                            "crystal was destroyed! They can no longer respawn!", playerTeam.get().getFormattedDisplayName())));
+                            "crystal was destroyed by " + playerTeam.get().getColour().getColourString() + player.getName() +
+                            TextFormat.WHITE + "! They can no longer respawn!", victimTeam.getFormattedDisplayName())));
                 }
-                Team victimTeam = gameHandler.getTeams().get(targetCrystalPointEntity.getStringProperties().get(TEAM_ID_PROPERTY));
                 for (Player victimPlayer : victimTeam.getPlayers()) {
                     victimPlayer.sendTitle(TextFormat.RED + "CRYSTAL DESTROYED", TextFormat.RED +
-                            "You can no longer respawn!");
+                            "You can no longer respawn!", 20, 60, 20);
                     victimPlayer.getLevel().addSound(victimPlayer.getPosition(), Sound.MOB_ENDERDRAGON_GROWL, 0.25f, 1);
                 }
             }
