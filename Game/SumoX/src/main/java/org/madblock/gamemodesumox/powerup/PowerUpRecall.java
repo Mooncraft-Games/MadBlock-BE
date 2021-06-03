@@ -6,6 +6,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import org.madblock.gamemodesumox.SumoUtil;
@@ -81,7 +82,26 @@ public class PowerUpRecall extends PowerUp implements Listener {
     public boolean use(PowerUpContext context) {
         if(recallLists.containsKey(context.getPlayer())){
             ArrayList<Vector3> posHistory = recallLists.get(context.getPlayer());
-            context.getPlayer().teleport(posHistory.get(Math.min(SumoXConstants.POWERUP_RECALL_MAX_HISTORY, posHistory.size()) - 1));
+            int recallAmount = Math.min(SumoXConstants.POWERUP_RECALL_MAX_HISTORY, posHistory.size());
+
+            for (int i = 0; i < recallAmount; i++) {
+                int waitTicks = i * SumoXConstants.POWERUP_RECALL_REWIND_SPEED;
+                int fI = i; // needs to be effectivley final for lambda
+                boolean finalTick = i == (recallAmount - 1);
+
+                context.getPlayer().setImmobile(true);
+
+                gameHandler.getGameScheduler().registerGameTask(() -> {
+                    context.getPlayer().teleport(posHistory.get(fI));
+                    if(finalTick) {
+                        context.getPlayer().setImmobile(false);
+                        context.getPlayer().getLevel().addSound(context.getPlayer().getPosition(), Sound.BEACON_DEACTIVATE, 0.6f, 0.7f);
+                        context.getPlayer().getLevel().addParticleEffect(context.getPlayer().getPosition(), ParticleEffect.HUGE_EXPLOSION_LEVEL);
+                    } else {
+                        context.getPlayer().getLevel().addSound(context.getPlayer().getPosition(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 0.6f, 0.8f);
+                    }
+                }, waitTicks);
+            }
         }
         return true;
     }

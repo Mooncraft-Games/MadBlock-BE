@@ -48,8 +48,9 @@ public final class SumoXConstants {
     public static final double POWERUP_KBAURA_Y_VELOCITY = 0.7f;
     public static final float POWERUP_KBAURA_POWER = 1.8f;
 
-    public static final int POWERUP_RECALL_TICK_FRAMES = 20;
-    public static final int POWERUP_RECALL_MAX_HISTORY = 5;
+    public static final int POWERUP_RECALL_TICK_FRAMES = 10;
+    public static final int POWERUP_RECALL_MAX_HISTORY = 10;
+    public static final int POWERUP_RECALL_REWIND_SPEED = 3; // ticks per frame of rewind
 
     // -- ANTI-CAMP --
     //TODO: Decide on one method or intergrate them all.
