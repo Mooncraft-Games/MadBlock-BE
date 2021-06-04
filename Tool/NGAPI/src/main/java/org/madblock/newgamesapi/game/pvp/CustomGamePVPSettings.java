@@ -7,6 +7,8 @@ import cn.nukkit.math.Vector3;
  */
 public class CustomGamePVPSettings implements Cloneable {
 
+    public static final CustomGamePVPSettings DISABLED = new CustomGamePVPSettings().setEnabled(false);
+
     // General
     private boolean enabled;
 
