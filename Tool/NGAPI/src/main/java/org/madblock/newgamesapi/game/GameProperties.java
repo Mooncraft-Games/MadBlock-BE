@@ -98,6 +98,11 @@ public class GameProperties {
 
     public boolean isTourneyGamemode() { return isTourneyGamemode; }
 
+    /**
+     * The contents of the settings should not be modified.
+     * If you need to modify the settings during a game see CustomPVPManager
+     * @return settings
+     */
     public CustomGamePVPSettings getCustomPvpSettings() {
         return this.customPvpSettings;
     }

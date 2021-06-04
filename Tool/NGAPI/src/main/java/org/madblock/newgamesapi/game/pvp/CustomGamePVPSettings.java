@@ -5,7 +5,7 @@ import cn.nukkit.math.Vector3;
 /**
  *  Responsible for customizations to PVP in games.
  */
-public class CustomGamePVPSettings {
+public class CustomGamePVPSettings implements Cloneable {
 
     // General
     private boolean enabled;
@@ -104,4 +104,17 @@ public class CustomGamePVPSettings {
         return this;
     }
 
+    @Override
+    protected CustomGamePVPSettings clone() {
+        try {
+            return (CustomGamePVPSettings)super.clone();
+        } catch (CloneNotSupportedException exception) {
+            return new CustomGamePVPSettings()
+                    .setCriticalsAllowed(areCriticalsAllowed())
+                    .setDamageMultiplier(getDamageMultiplier())
+                    .setDefaultKnockback(getKnockbackVector())
+                    .setNoHitTicks(getNoHitTicks())
+                    .setEnabled(isEnabled());
+        }
+    }
 }

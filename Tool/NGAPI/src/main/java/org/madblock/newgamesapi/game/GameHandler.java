@@ -1055,6 +1055,7 @@ public class GameHandler implements Listener {
     public FunctionalRegionManager getFunctionalRegionManager() { return functionalRegionManager; }
     public PointEntityTypeManager getPointEntityTypeManager() { return pointEntityTypeManager; }
     public ScoreboardManager getScoreboardManager() { return scoreboardManager; }
+    public CustomPVPManager getCustomPVPManager() { return customPVPManager; }
 
     public boolean isTourneyStarted() { return tourneyStarted; }
     public HashSet<Player> getTourneyMasters() { return tourneyMasters; }
