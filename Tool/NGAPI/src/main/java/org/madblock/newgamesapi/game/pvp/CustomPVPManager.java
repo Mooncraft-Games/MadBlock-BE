@@ -56,9 +56,9 @@ public class CustomPVPManager implements Listener {
             if (!settings.areCriticalsAllowed() && !attacker.onGround) {
                 event.setDamage(event.getDamage() / 1.5f);  // TODO: This isn't working. What is the criteria for a crit?
             }
+            event.setDamage(event.getDamage() * settings.getDamageMultiplier());
 
             // Calculate the damage and call the DeathManager to see if this event should be prevented
-            event.setDamage(event.getDamage() * settings.getDamageMultiplier());
             float damage = applyDamageModifiers(victim, event.getDamage());
             handler.getDeathManager().onGamePlayerDeath(new EntityDamageByEntityEvent(attacker, victim, event.getCause(), damage, event.getKnockBack()));
             if (event.isCancelled()) {
@@ -123,7 +123,7 @@ public class CustomPVPManager implements Listener {
      * @param attacker
      * @param victim
      */
-    private void damageVictimArmor(Player attacker, Player victim) {
+    private static void damageVictimArmor(Player attacker, Player victim) {
         // From EntityHumanType.attack since we prevent this behavior through cancelling the event
         for (int slot = 0; slot < 4; slot++) {
             Item armor = victim.getInventory().getArmorItem(slot);
@@ -154,7 +154,7 @@ public class CustomPVPManager implements Listener {
      * @param attacker
      * @param victim
      */
-    private void damageAttackerItem(Player attacker, Player victim) {
+    private static void damageAttackerItem(Player attacker, Player victim) {
         Item itemInHand = attacker.getInventory().getItemInHand();
 
         for (Enchantment enchantment : itemInHand.getEnchantments()) {
@@ -178,12 +178,12 @@ public class CustomPVPManager implements Listener {
     private float applyDamageModifiers(Player victim, float rawDamage) {
         float protection = 0;
         for (Item armor : victim.getInventory().getArmorContents()) {
-            protection += armor.getArmorPoints() * 0.08f;
+            protection += armor.getArmorPoints();
             if (armor.hasEnchantment(Enchantment.ID_PROTECTION_ALL)) {
-                protection += (armor.getEnchantment(Enchantment.ID_PROTECTION_ALL).getLevel() + 1) * 0.08f;
+                protection += (armor.getEnchantment(Enchantment.ID_PROTECTION_ALL).getLevel() + 1);
             }
         }
-        return Math.max(0, rawDamage - protection);
+        return Math.max(0, rawDamage - (protection * 0.08f * settings.getProtectionMultiplier()));
     }
 
 

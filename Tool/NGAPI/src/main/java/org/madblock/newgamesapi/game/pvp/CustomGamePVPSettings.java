@@ -15,6 +15,7 @@ public class CustomGamePVPSettings implements Cloneable {
 
     // PVP
     private float damageMultiplier;
+    private float protectionMultiplier;
     private boolean allowCriticals;
     private int noHitTicks;
 
@@ -25,6 +26,7 @@ public class CustomGamePVPSettings implements Cloneable {
         defaultKnockback = new Vector3(1.25d, 1.4d, 1.25d);
 
         damageMultiplier = 1;
+        protectionMultiplier = 1;
         allowCriticals = false;
         noHitTicks = 9;
     }
@@ -47,6 +49,10 @@ public class CustomGamePVPSettings implements Cloneable {
 
     public float getDamageMultiplier() {
         return damageMultiplier;
+    }
+
+    public float getProtectionMultiplier() {
+        return protectionMultiplier;
     }
 
     public boolean areCriticalsAllowed() {
@@ -89,6 +95,11 @@ public class CustomGamePVPSettings implements Cloneable {
         return this;
     }
 
+    public CustomGamePVPSettings setProtectionMultiplier(float multiplier) {
+        protectionMultiplier = multiplier;
+        return this;
+    }
+
     public CustomGamePVPSettings setCriticalsAllowed(boolean status) {
         this.allowCriticals = status;
         return this;
@@ -112,6 +123,7 @@ public class CustomGamePVPSettings implements Cloneable {
             return new CustomGamePVPSettings()
                     .setCriticalsAllowed(areCriticalsAllowed())
                     .setDamageMultiplier(getDamageMultiplier())
+                    .setProtectionMultiplier(getProtectionMultiplier())
                     .setDefaultKnockback(getKnockbackVector())
                     .setNoHitTicks(getNoHitTicks())
                     .setEnabled(isEnabled());
