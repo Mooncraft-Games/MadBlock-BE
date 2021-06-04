@@ -1,4 +1,4 @@
-package org.madblock.newgamesapi.game;
+package org.madblock.newgamesapi.game.pvp;
 
 import cn.nukkit.math.Vector3;
 

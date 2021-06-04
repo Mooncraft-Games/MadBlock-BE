@@ -1,5 +1,7 @@
 package org.madblock.newgamesapi.game;
 
+import org.madblock.newgamesapi.game.pvp.CustomGamePVPSettings;
+
 public class GameProperties {
 
     private boolean canWorldBeManipulatedPreGame;
