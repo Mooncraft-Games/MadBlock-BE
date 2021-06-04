@@ -1173,6 +1173,9 @@ public class GameHandler implements Listener {
         }
         HandlerList.unregisterAll(this);
         HandlerList.unregisterAll(getGameBehaviors());
+        HandlerList.unregisterAll(deathManager);
+        HandlerList.unregisterAll(spawnManager);
+        HandlerList.unregisterAll(customPVPManager);
         return true;
     }
 
