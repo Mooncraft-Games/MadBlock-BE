@@ -10,6 +10,7 @@ import org.madblock.gamemodesumox.kits.KitTimelord;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.game.GameID;
 import org.madblock.newgamesapi.game.GameProperties;
+import org.madblock.newgamesapi.game.pvp.CustomGamePVPSettings;
 import org.madblock.newgamesapi.kits.KitGroup;
 import org.madblock.newgamesapi.registry.GameRegistry;
 import org.madblock.newgamesapi.registry.KitRegistry;
@@ -30,14 +31,16 @@ public class SumoX extends PluginBase {
                 .setDefaultCountdownLength(10)
                 .setMinimumPlayers(2)
                 .setGuidelinePlayers(2)
-                .setMaximumPlayers(4);
+                .setMaximumPlayers(4)
+                .setCustomPvpSettings(CustomGamePVPSettings.DISABLED);
         GameProperties sumoMegaProperties = new GameProperties(GameHandler.AutomaticWinPolicy.MANUAL_CALLS_ONLY)
                 .setCanPlayersMoveDuringCountdown(false)
                 .setCanWorldBeManipulated(false)
                 .setDefaultCountdownLength(10)
                 .setMinimumPlayers(4)
                 .setGuidelinePlayers(8)
-                .setMaximumPlayers(32);
+                .setMaximumPlayers(32)
+                .setCustomPvpSettings(CustomGamePVPSettings.DISABLED);
 
         GameProperties sumoBrawlTourneyProperties = new GameProperties(GameHandler.AutomaticWinPolicy.MANUAL_CALLS_ONLY)
                 .setCanPlayersMoveDuringCountdown(false)
@@ -46,7 +49,8 @@ public class SumoX extends PluginBase {
                 .setMinimumPlayers(1)
                 .setGuidelinePlayers(1)
                 .setMaximumPlayers(4)
-                .setTourneyGamemode(true);
+                .setTourneyGamemode(true)
+                .setCustomPvpSettings(CustomGamePVPSettings.DISABLED);
         GameProperties sumoMegaTourneyProperties = new GameProperties(GameHandler.AutomaticWinPolicy.MANUAL_CALLS_ONLY)
                 .setCanPlayersMoveDuringCountdown(false)
                 .setCanWorldBeManipulated(false)
@@ -54,7 +58,8 @@ public class SumoX extends PluginBase {
                 .setMinimumPlayers(1)
                 .setGuidelinePlayers(1)
                 .setMaximumPlayers(32)
-                .setTourneyGamemode(true);
+                .setTourneyGamemode(true)
+                .setCustomPvpSettings(CustomGamePVPSettings.DISABLED);
 
         GameID sumoBrawlID = new GameID("sumox_brawl", "sumobrawl", "Sumo X Brawl", "The all new Sumo! Slap up to 4 players off the platform till they run out of lives! The last standing wins each round!", "sumox", new String[]{"sumo", "sumox"}, 2, sumoBrawlProperties, GBehaveSumoBase.class);
         GameID sumoMegaID = new GameID("sumox_mega", "sumomega", "Sumo X Mega", "The all new Sumo! Slap up to 32 players off the platform till they run out of lives! The last standing wins each round!", "sumox", new String[]{"sumo", "sumox"}, 2, sumoMegaProperties, GBehaveSumoBase.class);
