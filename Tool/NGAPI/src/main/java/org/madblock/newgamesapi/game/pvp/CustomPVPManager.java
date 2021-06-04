@@ -53,9 +53,6 @@ public class CustomPVPManager implements Listener {
             Player victim = (Player)event.getEntity();
 
             // Adjust damage according to settings
-            if (!settings.areCriticalsAllowed() && !attacker.onGround) {
-                event.setDamage(event.getDamage() / 1.5f);  // TODO: This isn't working. What is the criteria for a crit?
-            }
             event.setDamage(event.getDamage() * settings.getDamageMultiplier());
 
             // Calculate the damage and call the DeathManager to see if this event should be prevented
@@ -176,14 +173,14 @@ public class CustomPVPManager implements Listener {
      * @return new damage
      */
     private float applyDamageModifiers(Player victim, float rawDamage) {
-        float protection = 0;
+        int protection = 0;
         for (Item armor : victim.getInventory().getArmorContents()) {
             protection += armor.getArmorPoints();
             if (armor.hasEnchantment(Enchantment.ID_PROTECTION_ALL)) {
                 protection += (armor.getEnchantment(Enchantment.ID_PROTECTION_ALL).getLevel() + 1);
             }
         }
-        return Math.max(0, rawDamage - (protection * 0.08f * settings.getProtectionMultiplier()));
+        return Math.max(0, rawDamage - (protection * 0.2f * settings.getProtectionMultiplier()));
     }
 
 

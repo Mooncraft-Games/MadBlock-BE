@@ -18,7 +18,6 @@ public class CustomGamePVPSettings implements Cloneable {
     // PVP
     private float damageMultiplier;
     private float protectionMultiplier;
-    private boolean allowCriticals;
     private int noHitTicks;
 
 
@@ -29,7 +28,6 @@ public class CustomGamePVPSettings implements Cloneable {
 
         damageMultiplier = 1;
         protectionMultiplier = 1;
-        allowCriticals = false;
         noHitTicks = 9;
     }
 
@@ -55,10 +53,6 @@ public class CustomGamePVPSettings implements Cloneable {
 
     public float getProtectionMultiplier() {
         return protectionMultiplier;
-    }
-
-    public boolean areCriticalsAllowed() {
-        return allowCriticals;
     }
 
     /**
@@ -102,11 +96,6 @@ public class CustomGamePVPSettings implements Cloneable {
         return this;
     }
 
-    public CustomGamePVPSettings setCriticalsAllowed(boolean status) {
-        this.allowCriticals = status;
-        return this;
-    }
-
     /**
      * Set the amount of ticks that players are immune for when hit
      * @param noHitTicks immunity ticks
@@ -123,7 +112,6 @@ public class CustomGamePVPSettings implements Cloneable {
             return (CustomGamePVPSettings)super.clone();
         } catch (CloneNotSupportedException exception) {
             return new CustomGamePVPSettings()
-                    .setCriticalsAllowed(areCriticalsAllowed())
                     .setDamageMultiplier(getDamageMultiplier())
                     .setProtectionMultiplier(getProtectionMultiplier())
                     .setDefaultKnockback(getKnockbackVector())
