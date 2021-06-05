@@ -64,7 +64,7 @@ public class PointEntityTypePowerUp extends PointEntityType implements Listener 
         String geometryFile = null;
         try {
             geometryFile = IOUtils.toString(
-                    SkywarsPlugin.getInstance().getClass().getResourceAsStream("/resources/powerup/skywars_powerup.geometry.json"),
+                    SkywarsPlugin.getInstance().getResource("powerup/skywars_powerup.geometry.json"),
                     StandardCharsets.UTF_8
             );
         } catch (IOException exception) {
@@ -76,7 +76,7 @@ public class PointEntityTypePowerUp extends PointEntityType implements Listener 
         BufferedImage skinFile = null;
         try {
             skinFile = ImageIO.read(
-                    SkywarsPlugin.getInstance().getClass().getResourceAsStream("/resources/powerup/skywars_powerup.png")
+                    SkywarsPlugin.getInstance().getResource("powerup/skywars_powerup.png")
             );
         } catch (IOException exception) {
             SkywarsPlugin.getInstance().getLogger().error("Failed to load powerup skin file.");
