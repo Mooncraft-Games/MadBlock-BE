@@ -104,6 +104,9 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             return;
         }
 
+        if (team.getPlayers().size() == 0)
+            return;
+
         PointEntity entity = data.getPointEntity();
 
         Vector3 position = new Vector3((int) entity.getX(), (int) entity.getY(), (int) entity.getZ());
@@ -192,13 +195,11 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
     protected void updateActionBar() {
         StringBuilder textToDisplay = new StringBuilder();
-        for (Team team : getGameHandler().getTeams().values()) {
-            if (!team.isActiveGameTeam())
+        for (Team team : gameHandler.getTeams().values()) {
+            if (!team.isActiveGameTeam() || teamPointEntities.get(team) == null)
                 continue;
             boolean crystalExists = crystalExistsForTeam(team);
-
             int playerCount = team.getPlayers().size();
-
             if (crystalExists || playerCount > 0) {
                 textToDisplay.append(String.format("%s %s[%s] ", CrystalWarsUtility.generateCrystalTeamIcon(team,
                         isCrystalDestroyed(teamPointEntities.get(team))),
@@ -206,7 +207,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             }
         }
 
-        for (Player player : getGameHandler().getPlayers()) {
+        for (Player player : gameHandler.getPlayers()) {
             player.sendActionBar(textToDisplay.toString().trim(), 0, 1, 0);
         }
     }
@@ -217,7 +218,6 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
     protected int getTeamCrystalHealth(Team team) {
         PointEntity entity = teamPointEntities.get(team);
-        return crystalHealth.getOrDefault(new Vector3(entity.getX(), entity.getY(),
-                entity.getZ()), 0);
+        return crystalHealth.getOrDefault(new Vector3((int) entity.getX(), (int) entity.getY(), (int) entity.getZ()), 0);
     }
 }
