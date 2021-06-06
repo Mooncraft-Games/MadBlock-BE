@@ -18,6 +18,10 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.TextFormat;
+import org.madblock.lib.stattrack.StatTrackAPI;
+import org.madblock.lib.stattrack.statistic.FinalEntityID;
+import org.madblock.lib.stattrack.statistic.StatisticCollection;
+import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.exception.LackOfContentException;
@@ -424,11 +428,23 @@ public class GameHandler implements Listener {
         if(this.token.equals(token)){
             getGameScheduler().registerGameTask(this::checkDeathWinPolicyConditions, 0, 10);
             getGameScheduler().registerGameTask(this::checkAutomaticClosePolicy, 5, 10);
-            for(Team team: getTeams().values()){
-                team.updateTeamBuildingPermissionsState();
-            }
+            for(Team team: getTeams().values()) team.updateTeamBuildingPermissionsState();
+
+            applyGeneralGameStats();
+
             return true;
         } else return false;
+    }
+
+    public void applyGeneralGameStats() {
+        StatisticCollection mapStats = StatisticEntitiesList.get().createCollection(mapID);
+        StatisticCollection gameStats = StatisticEntitiesList.get().createCollection(gameID);
+
+        mapStats.createStatistic("times_played").increment();
+        mapStats.createStatistic("total_players").modify(players.size()); // used to average the player counts
+
+        gameStats.createStatistic("games_started").increment();
+        gameStats.createStatistic("total_players").modify(players.size());
     }
 
     @EventHandler(priority = EventPriority.HIGH)

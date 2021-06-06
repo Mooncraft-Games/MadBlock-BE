@@ -3,6 +3,7 @@ package org.madblock.newgamesapi.map;
 import cn.nukkit.utils.TextFormat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.madblock.lib.stattrack.statistic.ITrackedEntityID;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.exception.MapIDParseException;
@@ -16,7 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 
-public class MapID {
+public class MapID implements ITrackedEntityID {
 
     private transient static final List<Integer> API_SUPPORTED_MAPID_VERSIONS = Arrays.asList(1);
 
@@ -209,5 +210,15 @@ public class MapID {
         } catch (FileNotFoundException fileNotFoundException){
             throw new IllegalStateException("Somehow a file disappeared while parsing a MapID. Oops?");
         }
+    }
+
+    @Override
+    public String getEntityType() {
+        return "map";
+    }
+
+    @Override
+    public String getStoredID() {
+        return id;
     }
 }
