@@ -1,5 +1,7 @@
 package org.madblock.newgamesapi.game;
 
+import org.madblock.newgamesapi.game.pvp.CustomGamePVPSettings;
+
 public class GameProperties {
 
     private boolean canWorldBeManipulatedPreGame;
@@ -23,6 +25,8 @@ public class GameProperties {
 
     private boolean isFallDamageEnabledPreGame;
     private boolean isFallDamageEnabled;
+
+    private CustomGamePVPSettings customPvpSettings;
 
     private boolean isTourneyGamemode;
 
@@ -56,6 +60,8 @@ public class GameProperties {
 
         this.isFallDamageEnabledPreGame = false;
         this.isFallDamageEnabled = false;
+
+        this.customPvpSettings = new CustomGamePVPSettings();
 
         this.isTourneyGamemode = false;
 
@@ -91,6 +97,15 @@ public class GameProperties {
     public boolean isFallDamageEnabled() { return isFallDamageEnabled; }
 
     public boolean isTourneyGamemode() { return isTourneyGamemode; }
+
+    /**
+     * The contents of the settings should not be modified.
+     * If you need to modify the settings during a game see CustomPVPManager
+     * @return settings
+     */
+    public CustomGamePVPSettings getCustomPvpSettings() {
+        return this.customPvpSettings;
+    }
 
     public GameHandler.AutomaticWinPolicy getWinPolicy() { return winPolicy; }
 
@@ -253,6 +268,16 @@ public class GameProperties {
 
     public GameProperties setTourneyGamemode(boolean tourneyGamemode) {
         isTourneyGamemode = tourneyGamemode;
+        return this;
+    }
+
+    /**
+     * Replace the current knockback settings for the game.
+     * @param customPvpSettings new knockback settings
+     * @return self for chaining
+     */
+    public GameProperties setCustomPvpSettings(CustomGamePVPSettings customPvpSettings) {
+        this.customPvpSettings = customPvpSettings;
         return this;
     }
 
