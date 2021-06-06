@@ -142,6 +142,7 @@ public class KitHub extends Kit {
 
         @Override
         protected void onPrepareExtendedKit() {
+
             gameHandler.getGameScheduler().registerGameTask(() -> {
                 if(target.isOnGround() && (bonusJumpCount >= 10)) {
                     int count = bonusJumpCount;
