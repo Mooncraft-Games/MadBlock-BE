@@ -8,5 +8,6 @@ subprojects {
     dependencies {
         // Use NGAPI in all game projects
         implementation project(":Tool:NGAPI")
+        implementation project(":Tool:StatTrackAPI")
     }
 }
