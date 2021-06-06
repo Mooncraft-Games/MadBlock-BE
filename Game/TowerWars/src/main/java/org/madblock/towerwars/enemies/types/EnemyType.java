@@ -1,23 +1,23 @@
 package org.madblock.towerwars.enemies.types;
 
 import org.madblock.newgamesapi.map.types.MapRegion;
+import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.enemies.enemy.Enemy;
 import org.madblock.towerwars.enemies.enemy.EnemyProperties;
+import org.madblock.towerwars.utils.GameRegion;
 
 public abstract class EnemyType {
 
-    private final EnemyProperties properties;
+    protected final TowerWarsBehavior behavior;
 
-    public EnemyType(EnemyProperties properties) {
-        this.properties = properties;
+    public EnemyType(TowerWarsBehavior behavior) {
+        this.behavior = behavior;
     }
 
     public abstract String getId();
+    public abstract EnemyProperties getProperties();
 
-    public abstract Enemy create(MapRegion playArea);
-
-    public EnemyProperties getProperties() {
-        return this.properties;
-    }
+    public abstract Enemy create(GameRegion gameRegion);
 
 }
+
