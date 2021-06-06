@@ -4,3 +4,6 @@
 [submodule "External/ScoreboardAPI"]
 	path = External/ScoreboardAPI
 	url = https://github.com/CloudG360/ScoreboardAPI.git
+[submodule "Tool/StatTrackAPI"]
+	path = Tool/StatTrackAPI
+	url = https://github.com/Mooncraft-Games/StatTrackAPI.git
