@@ -1,6 +1,7 @@
 dependencies {
     implementation project(":Tool:Database")
     implementation project(":Tool:PlayerRegistry")
+    implementation project(":Tool:StatTrackAPI")
     implementation project(":Component:Ranks")
     implementation project(":External:ScoreboardAPI")
 

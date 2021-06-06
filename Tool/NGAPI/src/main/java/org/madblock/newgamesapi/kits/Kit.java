@@ -3,13 +3,15 @@ package org.madblock.newgamesapi.kits;
 import cn.nukkit.Player;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.item.Item;
+import org.madblock.lib.stattrack.statistic.ITrackedEntityID;
+import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.game.GameHandler;
 
 import java.util.HashMap;
 import java.util.Optional;
 
-public abstract class Kit {
+public abstract class Kit implements ITrackedEntityID {
 
     private HashMap<Player, ExtendedKit> extendedKitVariants;
     private HashMap<String, String> properties;
@@ -25,6 +27,9 @@ public abstract class Kit {
 
     public abstract String getKitDisplayName();
     public abstract String getKitDescription();
+
+    @Override public String getEntityType() { return "kit"; }
+    @Override public String getStoredID() { return getKitID(); }
 
     /** @return the items a player should recieve at the start of a game, only in the hotbar.*/
     public Item[] getHotbarItems(){ return new Item[0]; }
@@ -111,6 +116,9 @@ public abstract class Kit {
         player.getInventory().sendContents(player);
         onKitEquip(player);
         handler.getGameBehaviors().onKitEquip(player, this);
+
+        StatisticEntitiesList.get().createCollection(this)
+                .createStatistic("times_applied").increment();
     }
 
     public final void removeKit(Player player, GameHandler handler, boolean clearWholeInventory) {
