@@ -21,18 +21,18 @@ public class ShopToolUpgrade extends ShopItem {
     protected final CrystalWarsGame gameBehavior;
 
     public ShopToolUpgrade(ItemTool item, Item cost, String imageLink, CrystalWarsGame base) {
-        super(item, cost, imageLink);
+        super(item, cost, null, imageLink, base);
         gameBehavior = base;
     }
 
     public ShopToolUpgrade(ItemTool item, Item cost, CrystalWarsGame base) {
-        super(item, cost);
+        super(item, cost, base);
         gameBehavior = base;
     }
 
     @Override
     public boolean onQuery(Player player) {
-        ItemTool givenToolItem = (ItemTool) givenItem;
+        ItemTool givenToolItem = (ItemTool) givenItems[0];
 
         if (player.getInventory().contains(soldItem)) {
             if (givenToolItem.isSword()) {
@@ -49,7 +49,7 @@ public class ShopToolUpgrade extends ShopItem {
 
     @Override
     public void onPurchase(Player player) {
-        ItemTool givenToolItem = (ItemTool)givenItem;
+        ItemTool givenToolItem = (ItemTool) givenItems[0];
         player.getInventory().removeItem(soldItem);
 
         Set<Integer> lookingForItemIds = new HashSet<>();

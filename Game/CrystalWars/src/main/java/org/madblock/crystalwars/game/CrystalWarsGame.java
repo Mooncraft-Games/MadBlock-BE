@@ -11,7 +11,6 @@ import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.game.pointentities.capturepoint.EmeraldCapturePointEntity;
 import org.madblock.crystalwars.game.pointentities.capturepoint.MiddleCapturePointEntity;
 import org.madblock.crystalwars.game.pointentities.shop.types.BrickShopPointEntity;

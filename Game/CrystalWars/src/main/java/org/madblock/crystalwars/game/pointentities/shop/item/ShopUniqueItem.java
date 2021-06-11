@@ -3,23 +3,24 @@ package org.madblock.crystalwars.game.pointentities.shop.item;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.TextFormat;
+import org.madblock.crystalwars.game.CrystalWarsGame;
 import org.madblock.newgamesapi.Utility;
 
 /**
  * @author Nicholas
  */
 public class ShopUniqueItem extends ShopItem {
-    public ShopUniqueItem(Item item, Item cost, String imageLink) {
-        super(item, cost, imageLink);
+    public ShopUniqueItem(Item item, Item cost, String imageLink, CrystalWarsGame base) {
+        super(item, cost, null, imageLink, base);
     }
 
-    public ShopUniqueItem(Item item, Item cost) {
-        super(item, cost);
+    public ShopUniqueItem(Item item, Item cost, CrystalWarsGame base) {
+        super(item, cost, base);
     }
 
     @Override
     public boolean onQuery(Player player) {
-        return !player.getInventory().contains(givenItem) && player.getInventory().contains(soldItem);
+        return !player.getInventory().contains(givenItems[0]) && player.getInventory().contains(soldItem);
     }
 
     @Override

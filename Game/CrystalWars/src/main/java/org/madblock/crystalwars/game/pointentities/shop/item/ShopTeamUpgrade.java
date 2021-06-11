@@ -64,11 +64,7 @@ public class ShopTeamUpgrade implements IShopData {
     public String getLabel() {
         StringBuilder label = new StringBuilder(upgrade.getName()).append('\n');
         if (soldItem != null) {
-            if (soldItem.getCount() > 1) {
-                label.append(soldItem.getCount()).append(" ").append(TextFormat.clean(soldItem.getName()));
-            } else {
-                label.append(soldItem.getName());
-            }
+            label.append(soldItem.getCount()).append(" ").append(TextFormat.clean(soldItem.getName()));
         } else {
             label.append("Max Reached");
         }

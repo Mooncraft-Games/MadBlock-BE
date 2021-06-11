@@ -13,9 +13,7 @@ public enum CrystalTeamUpgrade {
     PROTECTION_ONE("Protection 1"),
     PROTECTION_TWO("Protection 2"),
     RESOURCES_ONE("Resources 1"),
-    RESOURCES_TWO("Resources 2"),
-    HASTE_ONE("Haste 1"),
-    HASTE_TWO("Haste 2");
+    RESOURCES_TWO("Resources 2");
 
     private final String name;
 }

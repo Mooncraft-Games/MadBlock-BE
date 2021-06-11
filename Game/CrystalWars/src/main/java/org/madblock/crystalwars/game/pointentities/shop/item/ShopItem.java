@@ -1,27 +1,54 @@
 package org.madblock.crystalwars.game.pointentities.shop.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.TextFormat;
+import org.madblock.crystalwars.game.CrystalWarsGame;
+import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
 import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.team.Team;
 
 /**
  * @author Nicholas
  */
 public class ShopItem implements IShopData {
-    protected final Item givenItem;
+    protected final CrystalWarsGame gameBehavior;
+    protected final Item[] givenItems;
     protected final Item soldItem;
+    protected final String name;
     protected final String image;
 
-    public ShopItem(Item item, Item cost, String imageLink) {
-        givenItem = item;
+    public ShopItem(Item[] items, Item cost, String itemName, String imageLink, CrystalWarsGame base) {
+        gameBehavior = base;
+        givenItems = items;
         soldItem = cost;
+        name = itemName;
         image = imageLink;
     }
 
-    public ShopItem(Item item, Item cost) {
-        givenItem = item;
+    public ShopItem(Item[] items, Item cost, CrystalWarsGame base) {
+        gameBehavior = base;
+        givenItems = items;
         soldItem = cost;
+        name = null;
+        image = null;
+    }
+
+    public ShopItem(Item item, Item cost, String displayName, String imageLink, CrystalWarsGame base) {
+        gameBehavior = base;
+        givenItems = new Item[]{item};
+        soldItem = cost;
+        name = displayName;
+        image = imageLink;
+    }
+
+    public ShopItem(Item item, Item cost, CrystalWarsGame base) {
+        gameBehavior = base;
+        givenItems = new Item[]{item};
+        soldItem = cost;
+        name = null;
         image = null;
     }
 
@@ -33,27 +60,54 @@ public class ShopItem implements IShopData {
     @Override
     public void onPurchase(Player player) {
         player.getInventory().removeItem(soldItem);
-        player.getInventory().addItem(givenItem);
+        PlayerInventory inventory = player.getInventory();
+        for (Item item : givenItems) {
+            if (item.isArmor()) {
+                Team team = gameBehavior.getSessionHandler().getPlayerTeam(player).get();
+                if (gameBehavior.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.PROTECTION_TWO)) {
+                    item.addEnchantment(Enchantment.getEnchantment(Enchantment.ID_PROTECTION_ALL).setLevel(2));
+                } else if (gameBehavior.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.PROTECTION_ONE)) {
+                    item.addEnchantment(Enchantment.getEnchantment(Enchantment.ID_PROTECTION_ALL));
+                }
+            }
+            if (item.isHelmet()) {
+                inventory.setHelmet(item);
+            } else if (item.isChestplate()) {
+                inventory.setChestplate(item);
+            } else if (item.isLeggings()) {
+                inventory.setLeggings(item);
+            } else if (item.isBoots()) {
+                inventory.setBoots(item);
+            } else {
+                // Not Armor
+                inventory.addItem(item);
+            }
+        }
         player.getInventory().sendContents(player);
+        player.getInventory().sendArmorContents(player);
     }
 
     @Override
     public String getLabel() {
         StringBuilder label = new StringBuilder();
+        String name;
+        Item givenItem = givenItems[0];
+
+        if (this.name != null) {
+            name = this.name;
+        } else {
+            name = givenItem.getName();
+        }
 
         if (givenItem.getCount() > 1) {
-            label.append(givenItem.getCount()).append(" X ").append(TextFormat.clean(givenItem.getName()));
+            label.append(givenItem.getCount()).append(" X ").append(TextFormat.clean(name));
         } else {
-            label.append(TextFormat.clean(givenItem.getName()));
+            label.append(TextFormat.clean(name));
         }
 
         label.append('\n').append(TextFormat.YELLOW);
 
-        if (soldItem.getCount() > 1) {
-            label.append(soldItem.getCount()).append(" ").append(TextFormat.clean(soldItem.getName()));
-        } else {
-            label.append(TextFormat.clean(soldItem.getName()));
-        }
+        label.append(soldItem.getCount()).append(" ").append(TextFormat.clean(soldItem.getName()));
 
         return label.toString();
     }
@@ -61,10 +115,15 @@ public class ShopItem implements IShopData {
     @Override
     public String getPurchaseMessage(Player player) {
         String itemName;
-        if (givenItem.getCount() > 1) {
-            itemName = givenItem.getCount() + " " + givenItem.getName();
+        if (name != null) {
+            itemName = name;
         } else {
-            itemName = givenItem.getName();
+            Item givenItem = givenItems[0];
+            if (givenItem.getCount() > 1) {
+                itemName = givenItem.getCount() + " " + givenItem.getName();
+            } else {
+                itemName = givenItem.getName();
+            }
         }
         return Utility.generateServerMessage("Game", TextFormat.BLUE, "You purchased " + TextFormat.YELLOW +
                 TextFormat.clean(itemName) + Utility.DEFAULT_TEXT_COLOUR + ".");

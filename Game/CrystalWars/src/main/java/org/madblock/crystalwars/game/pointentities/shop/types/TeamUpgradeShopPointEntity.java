@@ -5,7 +5,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDiamond;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.game.CrystalWarsGame;
 import org.madblock.crystalwars.game.pointentities.shop.ShopPointEntity;
@@ -34,7 +33,7 @@ public class TeamUpgradeShopPointEntity extends ShopPointEntity {
 
     @Override
     protected IShopData[] getShopItems(Player player) {
-        IShopData[] upgrades = new IShopData[4];
+        IShopData[] upgrades = new IShopData[3];
         Team team = gameHandler.getPlayerTeam(player).get();
 
         if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.PROTECTION_ONE)) {
@@ -55,21 +54,12 @@ public class TeamUpgradeShopPointEntity extends ShopPointEntity {
         }
         ((ShopTeamUpgrade) upgrades[1]).setPurchaseCallback(this::upgradedSharpness);
 
-        if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.HASTE_ONE)) {
-            upgrades[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.HASTE_ONE, new ItemDiamond(0, 4), base);
-        } else if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.HASTE_TWO)) {
-            upgrades[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.HASTE_TWO, new ItemDiamond(0, 10), base);
-        } else {
-            upgrades[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.HASTE_TWO, base);
-        }
-        ((ShopTeamUpgrade) upgrades[2]).setPurchaseCallback(this::upgradedHaste);
-
         if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.RESOURCES_ONE)) {
-            upgrades[3] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_ONE, new ItemDiamond(0, 10), base);
+            upgrades[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_ONE, new ItemDiamond(0, 10), base);
         } else if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.RESOURCES_TWO)) {
-            upgrades[3] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_TWO, new ItemDiamond(0, 20), base);
+            upgrades[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_TWO, new ItemDiamond(0, 20), base);
         } else {
-            upgrades[3] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_TWO, base);
+            upgrades[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_TWO, base);
         }
 
         return upgrades;
@@ -117,19 +107,6 @@ public class TeamUpgradeShopPointEntity extends ShopPointEntity {
                 p.getInventory().setLeggings(leggings);
                 p.getInventory().setBoots(boots);
                 p.getInventory().sendArmorContents(p);
-            }
-        });
-    }
-
-    protected void upgradedHaste(Player player) {
-        gameHandler.getPlayerTeam(player).filter(Team::isActiveGameTeam).ifPresent(team -> {
-            Effect haste = Effect.getEffect(Effect.HASTE).setDuration(Integer.MAX_VALUE);
-            if (gameBehavior.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.HASTE_TWO)) {
-                haste.setAmplifier(1);
-            }
-
-            for (Player p : team.getPlayers()) {
-                p.addEffect(haste);
             }
         });
     }

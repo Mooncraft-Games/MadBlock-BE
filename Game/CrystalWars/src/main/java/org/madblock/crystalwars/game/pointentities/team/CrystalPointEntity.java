@@ -175,6 +175,9 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             player.getLevel().addSound(player.getPosition(), Sound.HIT_CHAIN, 0.25f, 1);
             if (health - 1 <= 0) {
                 crystals.get(position).kill();
+                getGameHandler().getGameScheduler().registerGameTask(() -> {
+                    crystals.get(position).despawnFromAll();
+                }, 2);
                 crystals.get(position).despawnFromAll();
                 crystals.remove(position);
                 crystalHealth.remove(position);
@@ -202,7 +205,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             int playerCount = team.getPlayers().size();
             if (crystalExists || playerCount > 0) {
                 textToDisplay.append(String.format("%s %s[%s] ", CrystalWarsUtility.generateCrystalTeamIcon(team,
-                        isCrystalDestroyed(teamPointEntities.get(team))),
+                        crystalExistsForTeam(team)),
                         team.getColour().getColourString(), getTeamCrystalHealth(team)));
             }
         }
@@ -213,7 +216,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
     }
 
     protected boolean crystalExistsForTeam(Team team) {
-        return isCrystalDestroyed(teamPointEntities.get(team));
+        return !isCrystalDestroyed(teamPointEntities.get(team));
     }
 
     protected int getTeamCrystalHealth(Team team) {
