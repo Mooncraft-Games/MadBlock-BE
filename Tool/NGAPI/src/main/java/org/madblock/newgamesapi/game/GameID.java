@@ -1,11 +1,12 @@
 package org.madblock.newgamesapi.game;
 
 import cn.nukkit.utils.TextFormat;
+import org.madblock.lib.stattrack.statistic.ITrackedEntityID;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.kits.KitGroup;
 import org.madblock.newgamesapi.registry.KitRegistry;
 
-public final class GameID {
+public final class GameID implements ITrackedEntityID {
 
     private transient String[] gameInfoMessageParagraphs;
     private transient String gameInfoMessage;
@@ -73,4 +74,14 @@ public final class GameID {
     public KitGroup getGameKits() { return KitRegistry.get().getKitGroup(kitGroupID).orElse(KitRegistry.DEFAULT); }
 
     public Class<? extends GameBehavior> getGameBehaviorClass() { return gameBehaviorClass; }
+
+    @Override
+    public String getEntityType() {
+        return "game";
+    }
+
+    @Override
+    public String getStoredID() {
+        return gameIdentifier;
+    }
 }

@@ -5,6 +5,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.level.Position;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.enemies.enemy.Enemy;
+import org.madblock.towerwars.enemies.events.tower.EnemyUntargettedEvent;
 import org.madblock.towerwars.events.GameListener;
 import org.madblock.towerwars.towers.effects.TowerEffect;
 import org.madblock.towerwars.towers.events.targets.TowerTargetAttackEvent;
@@ -53,7 +54,8 @@ public abstract class Tower implements GameListener, Listener {
         this.entity.kill();
         this.getBehavior().getEventManager().unregister(this);
         for (Enemy target : this.targets) {
-            target.removeViewer(this);
+            EnemyUntargettedEvent event = new EnemyUntargettedEvent(this.behavior, target);
+            this.behavior.getEventManager().callEvent(event);
         }
     }
 
@@ -92,16 +94,28 @@ public abstract class Tower implements GameListener, Listener {
         Set<Enemy> targets = this.properties.getEnemySelector().getTargets(this, enemies);
         if (!targets.equals(this.targets)) {    // Only trigger event if new targets are chosen
 
+            // Select all new towers
             Set<Enemy> newTargets = new HashSet<>();
             for (Enemy target : targets) {
-                TowerTargetSelectEvent event = new TowerTargetSelectEvent(this.behavior, this, target);
-                this.getBehavior().getEventManager().callEvent(event);
-                if (!event.isCancelled()) {
-                    newTargets.add(target);
-                    target.addViewer(this);
+                if (!this.targets.contains(target)) {
+                    TowerTargetSelectEvent event = new TowerTargetSelectEvent(this.behavior, this, target);
+                    this.getBehavior().getEventManager().callEvent(event);
+                    if (!event.isCancelled()) {
+                        newTargets.add(target);
+                    }
                 }
             }
-            this.targets.forEach(enemy -> enemy.removeViewer(this));
+
+            // Remove old towers that are no longer selected
+            this.targets.stream()
+                    .filter(target -> !newTargets.contains(target))
+                    .forEach(target -> {
+                        EnemyUntargettedEvent event = new EnemyUntargettedEvent(this.behavior, target);
+                        this.getBehavior().getEventManager().callEvent(event);
+                        if (event.isCancelled()) {
+                            newTargets.add(target);
+                        }
+                    });
             this.targets = newTargets;
         }
 

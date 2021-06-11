@@ -9,9 +9,6 @@ import org.madblock.newgamesapi.registry.GameRegistry;
 import org.madblock.newgamesapi.registry.KitRegistry;
 import org.madblock.towerwars.behaviors.TowerWarsSoloBehavior;
 import org.madblock.towerwars.kits.DefaultKit;
-import org.madblock.towerwars.menu.MenuManager;
-import org.madblock.towerwars.menu.types.TowerListMenuType;
-import org.madblock.towerwars.menu.types.TowerPurchaseMenuType;
 
 public class TowerWarsPlugin extends PluginBase {
 
@@ -19,9 +16,6 @@ public class TowerWarsPlugin extends PluginBase {
 
     @Override
     public void onEnable() {
-
-        MenuManager.register(new TowerListMenuType());
-        MenuManager.register(new TowerPurchaseMenuType());
 
         KitGroup kitGroup = new KitGroup("towerwars", "Tower Wars", false, new DefaultKit());
         KitRegistry.get().registerKitGroup(kitGroup);

@@ -18,10 +18,15 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.TextFormat;
+import org.madblock.lib.stattrack.StatTrackAPI;
+import org.madblock.lib.stattrack.statistic.FinalEntityID;
+import org.madblock.lib.stattrack.statistic.StatisticCollection;
+import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.exception.LackOfContentException;
 import org.madblock.newgamesapi.game.deaths.DeathManager;
+import org.madblock.newgamesapi.game.pvp.CustomPVPManager;
 import org.madblock.newgamesapi.game.scheduler.GameScheduler;
 import org.madblock.newgamesapi.game.scheduler.tasks.TaskQueueCountdown;
 import org.madblock.newgamesapi.game.scheduler.tasks.TaskStartSessionLoops;
@@ -90,6 +95,7 @@ public class GameHandler implements Listener {
     protected FunctionalRegionManager functionalRegionManager;
     protected PointEntityTypeManager pointEntityTypeManager;
     protected ScoreboardManager scoreboardManager;
+    protected CustomPVPManager customPVPManager;
 
     protected HashSet<Player> tourneyMasters;
     protected boolean tourneyStarted;
@@ -148,6 +154,7 @@ public class GameHandler implements Listener {
         this.functionalRegionManager = new FunctionalRegionManager(this);
         this.pointEntityTypeManager = new PointEntityTypeManager(this);
         this.scoreboardManager = new ScoreboardManager(this);
+        this.customPVPManager = new CustomPVPManager(this);
 
         for(MapRegion region: mapID.getRegions().values()) functionalRegionManager.registerRegion(region, primaryMap);
         for(PointEntity entity: mapID.getPointEntities().values()) pointEntityTypeManager.addPointEntity(entity, primaryMap);
@@ -174,6 +181,7 @@ public class GameHandler implements Listener {
         NewGamesAPI1.get().getServer().getPluginManager().registerEvents(getGameBehaviors(), NewGamesAPI1.get());
         NewGamesAPI1.get().getServer().getPluginManager().registerEvents(deathManager, NewGamesAPI1.get());
         NewGamesAPI1.get().getServer().getPluginManager().registerEvents(spawnManager, NewGamesAPI1.get());
+        NewGamesAPI1.get().getServer().getPluginManager().registerEvents(customPVPManager, NewGamesAPI1.get());
         NewGamesAPI1.get().getServer().getScheduler().scheduleDelayedTask(new TaskQueueCountdown(token, this), onGameBeginResult*20);
 
         applyIntegratedFeatures();
@@ -424,11 +432,23 @@ public class GameHandler implements Listener {
         if(this.token.equals(token)){
             getGameScheduler().registerGameTask(this::checkDeathWinPolicyConditions, 0, 10);
             getGameScheduler().registerGameTask(this::checkAutomaticClosePolicy, 5, 10);
-            for(Team team: getTeams().values()){
-                team.updateTeamBuildingPermissionsState();
-            }
+            for(Team team: getTeams().values()) team.updateTeamBuildingPermissionsState();
+
+            applyGeneralGameStats();
+
             return true;
         } else return false;
+    }
+
+    public void applyGeneralGameStats() {
+        StatisticCollection mapStats = StatisticEntitiesList.get().createCollection(mapID);
+        StatisticCollection gameStats = StatisticEntitiesList.get().createCollection(gameID);
+
+        mapStats.createStatistic("times_played").increment();
+        mapStats.createStatistic("total_players").modify(players.size()); // used to average the player counts
+
+        gameStats.createStatistic("games_started").increment();
+        gameStats.createStatistic("total_players").modify(players.size());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -1041,6 +1061,7 @@ public class GameHandler implements Listener {
     public FunctionalRegionManager getFunctionalRegionManager() { return functionalRegionManager; }
     public PointEntityTypeManager getPointEntityTypeManager() { return pointEntityTypeManager; }
     public ScoreboardManager getScoreboardManager() { return scoreboardManager; }
+    public CustomPVPManager getCustomPVPManager() { return customPVPManager; }
 
     public boolean isTourneyStarted() { return tourneyStarted; }
     public HashSet<Player> getTourneyMasters() { return tourneyMasters; }
@@ -1159,6 +1180,9 @@ public class GameHandler implements Listener {
         }
         HandlerList.unregisterAll(this);
         HandlerList.unregisterAll(getGameBehaviors());
+        HandlerList.unregisterAll(deathManager);
+        HandlerList.unregisterAll(spawnManager);
+        HandlerList.unregisterAll(customPVPManager);
         return true;
     }
 

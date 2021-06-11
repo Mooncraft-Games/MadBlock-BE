@@ -9,7 +9,7 @@ git submodule update --init
 
 ### Building (after cloning)
 
-**All:** `./gradlew clean build copyJars`
+**All:** `./gradlew packageProduction`
 
 **Tools:** `./gradlew :Tool:clean :Tool:assemble copyJars`
 

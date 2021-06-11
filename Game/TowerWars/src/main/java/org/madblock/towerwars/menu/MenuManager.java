@@ -8,6 +8,8 @@ import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import org.madblock.towerwars.TowerWarsPlugin;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.menu.types.MenuType;
+import org.madblock.towerwars.menu.types.TowerListMenuType;
+import org.madblock.towerwars.menu.types.TowerPurchaseMenuType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +23,11 @@ public class MenuManager implements Listener {
     private final Map<UUID, Integer> formOwnerships = new HashMap<>();
 
     private final TowerWarsBehavior behavior;
+
+    static {
+        register(new TowerPurchaseMenuType());
+        register(new TowerListMenuType());
+    }
 
     public MenuManager(TowerWarsBehavior behavior) {
         this.behavior = behavior;
@@ -43,7 +50,7 @@ public class MenuManager implements Listener {
         }
     }
 
-    public static void register(MenuType menuType) {
+    private static void register(MenuType menuType) {
         menuTypes.put(menuType.getId(), menuType);
     }
 
