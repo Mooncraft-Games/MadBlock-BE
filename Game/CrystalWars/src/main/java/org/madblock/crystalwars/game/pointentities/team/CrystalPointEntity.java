@@ -67,8 +67,8 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
     public void onRemovePointEntity(PointEntity entity) {
         super.onRemovePointEntity(entity);
         teamPointEntities.remove(gameHandler.getTeams().get(entity.getStringProperties().get(TEAM_ID_PROPERTY)));
-        crystalHealth.remove(new Vector3((int) entity.getX(), (int) entity.getY(), (int) entity.getZ()));
-        crystals.remove(new Vector3((int) entity.getX(), (int) entity.getY(), (int) entity.getZ()));
+        crystalHealth.remove(new Vector3(entity.getX(), entity.getY(), entity.getZ()));
+        crystals.remove(new Vector3(entity.getX(), entity.getY(), entity.getZ()));
     }
 
     public boolean isCrystalDestroyed(PointEntity entity) {
@@ -109,7 +109,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
         PointEntity entity = data.getPointEntity();
 
-        Vector3 position = new Vector3((int) entity.getX(), (int) entity.getY(), (int) entity.getZ());
+        Vector3 position = new Vector3(entity.getX(), entity.getY(), entity.getZ());
         FullChunk chunk = data.getLevel().getChunk((int) Math.floor(position.getX() / 16), (int) Math.floor(position.getZ() / 16), true);
 
         CompoundTag nbt = new CompoundTag()
@@ -152,8 +152,8 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         PointEntity targetCrystalPointEntity = null;
         for (Team team : teamPointEntities.keySet()) {
             PointEntity entity = teamPointEntities.get(team);
-            if ((int) entity.getX() == location.getFloorX() && (int) entity.getY() == location.getFloorY() &&
-                    (int) entity.getZ() == location.getFloorZ()) {
+            if (entity.getX() == (double) location.getFloorX() + 0.5 && entity.getY() == location.getFloorY() &&
+                    entity.getZ() == (double) location.getFloorZ() + 0.5) {
                 targetCrystalPointEntity = entity;
                 if (entity.getStringProperties().get(TEAM_ID_PROPERTY).equals(playerTeam.get().getId())) {
                     player.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, "You cannot destroy " +
@@ -175,9 +175,6 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             player.getLevel().addSound(player.getPosition(), Sound.HIT_CHAIN, 0.25f, 1);
             if (health - 1 <= 0) {
                 crystals.get(position).kill();
-                getGameHandler().getGameScheduler().registerGameTask(() -> {
-                    crystals.get(position).despawnFromAll();
-                }, 2);
                 crystals.get(position).despawnFromAll();
                 crystals.remove(position);
                 crystalHealth.remove(position);
@@ -221,6 +218,6 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
     protected int getTeamCrystalHealth(Team team) {
         PointEntity entity = teamPointEntities.get(team);
-        return crystalHealth.getOrDefault(new Vector3((int) entity.getX(), (int) entity.getY(), (int) entity.getZ()), 0);
+        return crystalHealth.getOrDefault(new Vector3(entity.getX(), entity.getY(), entity.getZ()), 0);
     }
 }
