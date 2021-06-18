@@ -157,7 +157,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                 targetCrystalPointEntity = entity;
                 if (entity.getStringProperties().get(TEAM_ID_PROPERTY).equals(playerTeam.get().getId())) {
                     player.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, "You cannot destroy " +
-                            "your own crystal.", TextFormat.RED));
+                            "your own crystal!", TextFormat.RED));
                     return;
                 }
                 break;
@@ -182,11 +182,11 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                 for (Player gamePlayer : gameHandler.getPlayers()) {
                     gamePlayer.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, String.format("%s's " +
                             "crystal was destroyed by " + playerTeam.get().getColour().getColourString() + player.getName() +
-                            TextFormat.WHITE + "! They can no longer respawn!", victimTeam.getFormattedDisplayName())));
+                            TextFormat.WHITE + "! They will no longer respawn!", victimTeam.getFormattedDisplayName())));
                 }
                 for (Player victimPlayer : victimTeam.getPlayers()) {
                     victimPlayer.sendTitle(TextFormat.RED + "CRYSTAL DESTROYED", TextFormat.RED +
-                            "You can no longer respawn!", 20, 60, 20);
+                            "You will no longer respawn!", 20, 60, 20);
                     victimPlayer.getLevel().addSound(victimPlayer.getPosition(), Sound.MOB_ENDERDRAGON_GROWL, 0.25f, 1);
                 }
             }
@@ -203,7 +203,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             if (crystalExists || playerCount > 0) {
                 textToDisplay.append(String.format("%s %s[%s] ", CrystalWarsUtility.generateCrystalTeamIcon(team,
                         crystalExistsForTeam(team)),
-                        team.getColour().getColourString(), getTeamCrystalHealth(team)));
+                        team.getColour().getColourString(), getTeamCrystalHealth(team) + Utility.ResourcePackCharacters.HEART_FULL));
             }
         }
 
