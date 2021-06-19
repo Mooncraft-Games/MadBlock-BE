@@ -203,7 +203,9 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             if (crystalExists || playerCount > 0) {
                 textToDisplay.append(String.format("%s %s[%s] ", CrystalWarsUtility.generateCrystalTeamIcon(team,
                         crystalExistsForTeam(team)),
-                        team.getColour().getColourString(), getTeamCrystalHealth(team) + Utility.ResourcePackCharacters.HEART_FULL));
+                        team.getColour().getColourString(), (getTeamCrystalHealth(team) > 0 ? getTeamCrystalHealth(team) +
+                                Utility.ResourcePackCharacters.HEART_FULL : team.getPlayers().size() +
+                                Utility.ResourcePackCharacters.MORE_PEOPLE)));
             }
         }
 

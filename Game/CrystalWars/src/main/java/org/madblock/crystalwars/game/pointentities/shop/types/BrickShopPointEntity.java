@@ -59,7 +59,7 @@ public class BrickShopPointEntity extends ShopPointEntity {
                         CrystalWarsUtility.makeUnbreakable(new ItemBootsIron())
                 }, new ItemBrick(0, 25), "Full Iron Armor", null, gameBehavior),
                 new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemShears()), new ItemBrick(0, 10), gameBehavior),
-                new ShopItem(new ItemBlock(new BlockEndStone(), 0, 8), new ItemBrick(0, 12), gameBehavior)
+                new ShopItem(new ItemBlock(new BlockEndStone(), 0, 16), new ItemBrick(0, 12), gameBehavior)
         };
     }
 
