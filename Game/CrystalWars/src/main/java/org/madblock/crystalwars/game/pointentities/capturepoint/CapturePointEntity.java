@@ -246,7 +246,7 @@ public abstract class CapturePointEntity extends PointEntityType implements List
 
     private void setBlockColor(Vector3 position, Level level, DyeColor color) {
         Block glassBlock = level.getBlock(position);
-        glassBlock.setDamage(color.getDyeData());
+        glassBlock.setDamage(color.getWoolData());
         level.setBlock(position, glassBlock);
 
         Block woolBlock = level.getBlock(position.add(0, -1, 0));
