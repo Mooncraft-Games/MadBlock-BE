@@ -111,6 +111,12 @@ public abstract class ShopPointEntity extends PointEntityType implements Listene
     }
 
     @EventHandler
+    public void onDamage(EntityDamageEvent event) {
+        if (shopEntities.inverse().containsKey(event.getEntity()))
+            event.setCancelled(true);
+    }
+
+    @EventHandler
     public void onInteract(PlayerInteractEntityEvent event) {
         if (shouldOpenShopOnInteraction(event.getPlayer(), event.getEntity())) {
             event.setCancelled(true);
@@ -144,10 +150,7 @@ public abstract class ShopPointEntity extends PointEntityType implements Listene
 
     protected abstract boolean reopenOnQuery();
 
-
-
     protected boolean shouldOpenShopOnInteraction(Entity playerEntity, Entity shopEntity) {
-
         if (playerEntity instanceof Player) {
             Optional<Team> playerTeam = gameHandler.getPlayerTeam((Player)playerEntity);
             return playerTeam.filter(Team::isActiveGameTeam).isPresent() &&
