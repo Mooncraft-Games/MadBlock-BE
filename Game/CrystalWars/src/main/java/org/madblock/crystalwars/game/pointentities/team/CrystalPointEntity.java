@@ -7,6 +7,7 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
@@ -141,6 +142,30 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             if (damager instanceof Player)
                 updateCrystal(((Player) damager), victim.getLocation());
         }
+    }
+
+    @EventHandler
+    private void onQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        if (!gameHandler.getPlayers().contains(player))
+            return;
+        if (!gameHandler.getPlayerTeam(player).isPresent())
+            return;
+        Team team = gameHandler.getPlayerTeam(player).get();
+        PointEntity entity = teamPointEntities.get(team);
+        Vector3 position = new Vector3(entity.getX(), entity.getY(), entity.getZ());
+        if (team.getPlayers().size() > 1 || crystals.get(position) == null)
+            return;
+        crystals.get(position).kill();
+        crystals.get(position).despawnFromAll();
+        crystals.remove(position);
+        crystalHealth.remove(position);
+        teamPointEntities.remove(team);
+        for (Player gamePlayer : gameHandler.getPlayers()) {
+            gamePlayer.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, String.format("%s's crystal has " +
+                    "been destroyed. All players of that team have left.", team.getFormattedDisplayName())));
+        }
+
     }
 
     protected void updateCrystal(Player player, Location location) {
