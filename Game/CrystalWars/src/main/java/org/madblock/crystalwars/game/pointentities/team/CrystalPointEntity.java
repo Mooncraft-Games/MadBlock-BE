@@ -51,6 +51,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         addFunction("spawn_crystal", this::spawnCrystalFunction);
         CrystalWarsPlugin.getInstance().getServer().getPluginManager().registerEvents(this, CrystalWarsPlugin.getInstance());
         getGameHandler().getGameScheduler().registerGameTask(this::updateActionBar, 0, 20);
+        getGameHandler().getGameScheduler().registerGameTask(this::preventCrystalCamping, 0, 20);
     }
 
     @Override
@@ -213,6 +214,17 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                     victimPlayer.sendTitle(TextFormat.RED + "CRYSTAL DESTROYED", TextFormat.RED +
                             "You will no longer respawn!", 20, 60, 20);
                     victimPlayer.getLevel().addSound(victimPlayer.getPosition(), Sound.MOB_ENDERDRAGON_GROWL, 0.25f, 1);
+                }
+            }
+        }
+    }
+
+    protected void preventCrystalCamping() {
+        for (Player player : gameHandler.getPlayers()) {
+            for (Map.Entry<Vector3, EntityEndCrystal> entry : crystals.entrySet()) {
+                if (player.distance(entry.getKey()) < 0.5) {
+                    player.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, "Don't block the crystal!", TextFormat.RED));
+                    player.attack(1f);
                 }
             }
         }
