@@ -24,6 +24,7 @@ public class TeamUpgradeShopPointEntity extends ShopPointEntity {
     public TeamUpgradeShopPointEntity(CrystalWarsGame baseGame) {
         super(ID, baseGame.getSessionHandler(), baseGame);
         base = baseGame;
+        getGameHandler().getGameScheduler().registerGameTask(this::checkForUpgrades, 0, 20);
     }
 
     @Override
@@ -109,6 +110,56 @@ public class TeamUpgradeShopPointEntity extends ShopPointEntity {
                 p.getInventory().sendArmorContents(p);
             }
         });
+    }
+
+    protected void checkForUpgrades() {
+        for (Player player : gameHandler.getPlayers()) {
+            gameHandler.getPlayerTeam(player).filter(Team::isActiveGameTeam).ifPresent(team -> {
+                if (gameBehavior.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.PROTECTION_ONE)
+                        || gameBehavior.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.PROTECTION_TWO)) {
+                    Enchantment protection = Enchantment.get(Enchantment.ID_PROTECTION_ALL);
+                    if (gameBehavior.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.PROTECTION_TWO)) {
+                        protection.setLevel(2);
+                    }
+
+                    for (Player p : team.getPlayers()) {
+                        Item helmet = p.getInventory().getHelmet();
+                        Item chestplate = p.getInventory().getChestplate();
+                        Item leggings = p.getInventory().getLeggings();
+                        Item boots = p.getInventory().getBoots();
+
+                        helmet.addEnchantment(protection);
+                        chestplate.addEnchantment(protection);
+                        leggings.addEnchantment(protection);
+                        boots.addEnchantment(protection);
+
+                        p.getInventory().setHelmet(helmet);
+                        p.getInventory().setChestplate(chestplate);
+                        p.getInventory().setLeggings(leggings);
+                        p.getInventory().setBoots(boots);
+                        p.getInventory().sendArmorContents(p);
+                    }
+                }
+
+                if (gameBehavior.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.SHARPNESS_ONE)
+                        || gameBehavior.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.SHARPNESS_TWO)) {
+                    Enchantment sharpness = Enchantment.get(Enchantment.ID_DAMAGE_ALL);
+                    if (gameBehavior.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.SHARPNESS_TWO)) {
+                        sharpness.setLevel(2);
+                    }
+
+                    for (Player p : team.getPlayers()) {
+                        for (Item item : p.getInventory().getContents().values()) {
+                            if (item.isSword()) {
+                                item.addEnchantment(sharpness);
+                            }
+                        }
+
+                        p.getInventory().sendContents(p);
+                    }
+                }
+            });
+        }
     }
 
     @Override
