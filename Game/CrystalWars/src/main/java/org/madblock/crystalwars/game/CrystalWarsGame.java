@@ -45,6 +45,14 @@ public class CrystalWarsGame extends GameBehavior {
 
         getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new EmeraldCapturePointEntity(getSessionHandler()));
         getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new MiddleCapturePointEntity(getSessionHandler()));
+
+        for (Player player : getSessionHandler().getPlayers()) {
+            if (!getSessionHandler().getPlayerTeam(player).isPresent())
+                return;
+            Team team = getSessionHandler().getPlayerTeam(player).get();
+            getSessionHandler().getScoreboardManager().setLine(player, 0, String.format("%s",
+                    team.getFormattedDisplayName()));
+        }
     }
 
     @Override
