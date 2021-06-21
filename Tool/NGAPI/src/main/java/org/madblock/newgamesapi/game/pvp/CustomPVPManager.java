@@ -113,6 +113,9 @@ public class CustomPVPManager implements Listener {
         hurtAnimationPacket.event = EntityEventPacket.HURT_ANIMATION;
         victim.dataPacket(hurtAnimationPacket);
         Server.broadcastPacket(victim.getViewers().values(), hurtAnimationPacket);
+
+        // Recieving the hurt animation packet event removes hunger client side. We do not want that.
+        victim.getFoodData().sendFoodLevel();
     }
 
     /**
