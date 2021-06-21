@@ -8,12 +8,14 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.SetEntityMotionPacket;
 import org.madblock.newgamesapi.game.GameHandler;
 
@@ -77,6 +79,17 @@ public class CustomPVPManager implements Listener {
             victim.noDamageTicks = settings.getNoHitTicks();
             knockBack(attacker, victim, event.getKnockBack());
 
+        }
+    }
+
+    // Prevent the no damage sound the client sends
+    @EventHandler
+    public void onPlayerSound(DataPacketReceiveEvent event) {
+        if (event.getPacket() instanceof LevelSoundEventPacket && handler.getPlayers().contains(event.getPlayer())) {
+            LevelSoundEventPacket soundEventPacket = (LevelSoundEventPacket)event.getPacket();
+            if (soundEventPacket.sound == LevelSoundEventPacket.SOUND_ATTACK_STRONG || soundEventPacket.sound == LevelSoundEventPacket.SOUND_ATTACK_NODAMAGE) {
+                event.setCancelled();
+            }
         }
     }
 
