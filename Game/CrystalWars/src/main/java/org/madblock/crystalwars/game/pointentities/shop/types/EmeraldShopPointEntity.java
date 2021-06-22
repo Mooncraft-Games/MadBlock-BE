@@ -43,7 +43,7 @@ public class EmeraldShopPointEntity extends ShopPointEntity {
 
         return new IShopData[]{
                 new ShopItem(new ItemAppleGold(), new ItemEmerald(0, 8), gameBehavior),
-                new ShopItem(new ItemSnowball(0, 6), new ItemEmerald(0, 1), gameBehavior),
+                new ShopItem(new ItemSnowball(0, 3), new ItemEmerald(0, 1), gameBehavior),
                 new ShopItem(new ItemEnderPearl(), new ItemEmerald(0, 3), gameBehavior),
                 new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemSwordDiamond()), new ItemEmerald(0, 10), gameBehavior),
                 new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemPickaxeDiamond()), new ItemEmerald(0, 10), gameBehavior),
