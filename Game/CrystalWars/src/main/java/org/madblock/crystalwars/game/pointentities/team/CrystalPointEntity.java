@@ -42,6 +42,8 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
     protected final Map<Vector3, Integer> crystalHealth = new HashMap<>();
     protected final Map<Vector3, EntityEndCrystal> crystals = new HashMap<>();
 
+    protected final Map<Team, Long> lastCrystalAttackNotification = new HashMap<>();
+
     public CrystalPointEntity(GameHandler gameHandler) {
         super(ID, gameHandler);
     }
@@ -71,6 +73,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         teamPointEntities.remove(gameHandler.getTeams().get(entity.getStringProperties().get(TEAM_ID_PROPERTY)));
         crystalHealth.remove(new Vector3(entity.getX(), entity.getY(), entity.getZ()));
         crystals.remove(new Vector3(entity.getX(), entity.getY(), entity.getZ()));
+        lastCrystalAttackNotification.clear();
     }
 
     public boolean isCrystalDestroyed(PointEntity entity) {
@@ -199,12 +202,17 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             Integer health = crystalHealth.get(position);
             crystalHealth.put(position, health - 1);
             player.getLevel().addSound(player.getPosition(), Sound.HIT_CHAIN, 0.25f, 1);
+            Team victimTeam = gameHandler.getTeams().get(targetCrystalPointEntity.getStringProperties().get(TEAM_ID_PROPERTY));
+            if (System.currentTimeMillis() - lastCrystalAttackNotification.getOrDefault(victimTeam, 0L) >= 10000L) {
+                lastCrystalAttackNotification.put(victimTeam, System.currentTimeMillis());
+                for (Player victimPlayer : victimTeam.getPlayers())
+                    victimPlayer.sendTitle("", TextFormat.RED + "Your crystal is under attack!", 0, 80, 0);
+            }
             if (health - 1 <= 0) {
                 crystals.get(position).kill();
                 crystals.get(position).despawnFromAll();
                 crystals.remove(position);
                 crystalHealth.remove(position);
-                Team victimTeam = gameHandler.getTeams().get(targetCrystalPointEntity.getStringProperties().get(TEAM_ID_PROPERTY));
                 for (Player gamePlayer : gameHandler.getPlayers()) {
                     gamePlayer.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, String.format("%s's " +
                             "crystal was destroyed by " + playerTeam.get().getColour().getColourString() + player.getName() +
