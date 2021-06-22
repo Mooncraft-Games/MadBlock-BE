@@ -15,10 +15,10 @@ import org.madblock.crystalwars.util.CrystalWarsUtility;
 /**
  * @author Nicholas
  */
-public class EmeraldShopPointEntity extends ShopPointEntity {
-    public static final String ID = "madblock_crystalwars_emeraldshop";
+public class GoldShopPointEntity extends ShopPointEntity {
+    public static final String ID = "madblock_crystalwars_goldshop";
 
-    public EmeraldShopPointEntity(CrystalWarsGame base) {
+    public GoldShopPointEntity(CrystalWarsGame base) {
         super(ID, base.getSessionHandler(), base);
     }
 
@@ -42,37 +42,37 @@ public class EmeraldShopPointEntity extends ShopPointEntity {
         trackingCompass.setCustomName(TextFormat.GREEN + "Tracking Compass");
 
         return new IShopData[]{
-                new ShopItem(new ItemAppleGold(), new ItemEmerald(0, 8), gameBehavior),
-                new ShopItem(new ItemSnowball(0, 3), new ItemEmerald(0, 1), gameBehavior),
-                new ShopItem(new ItemEnderPearl(), new ItemEmerald(0, 3), gameBehavior),
-                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemSwordDiamond()), new ItemEmerald(0, 10), gameBehavior),
-                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemPickaxeDiamond()), new ItemEmerald(0, 10), gameBehavior),
+                new ShopItem(new ItemAppleGold(), new ItemIngotGold(0, 8), gameBehavior),
+                new ShopItem(new ItemSnowball(0, 3), new ItemIngotGold(0, 1), gameBehavior),
+                new ShopItem(new ItemEnderPearl(), new ItemIngotGold(0, 3), gameBehavior),
+                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemSwordDiamond()), new ItemIngotGold(0, 10), gameBehavior),
+                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemPickaxeDiamond()), new ItemIngotGold(0, 10), gameBehavior),
                 new ShopItem(new Item[] {
                         CrystalWarsUtility.makeUnbreakable(new ItemHelmetDiamond()),
                         CrystalWarsUtility.makeUnbreakable(new ItemChestplateDiamond()),
                         CrystalWarsUtility.makeUnbreakable(new ItemLeggingsDiamond()),
                         CrystalWarsUtility.makeUnbreakable(new ItemBootsDiamond())
-                }, new ItemEmerald(0, 32), "Full Diamond Armor", null, gameBehavior),
-                new ShopItem(knockbackStick, new ItemEmerald(0, 10), gameBehavior),
-                new ShopItem(tntItem, new ItemEmerald(0, 10), gameBehavior),
-                new ShopItem(blastProofGlass, new ItemEmerald(0, 6), gameBehavior),
-                new ShopItem(trackingCompass, new ItemEmerald(0, 1), gameBehavior),
-                new ShopItem(new ItemPotion(ItemPotion.INVISIBLE), new ItemEmerald(0, 3), "Invisibility Potion", null, gameBehavior),
-                new ShopItem(new ItemPotion(ItemPotion.LEAPING), new ItemEmerald(0, 2), "Leaping Potion", null, gameBehavior),
+                }, new ItemIngotGold(0, 32), "Full Diamond Armor", null, gameBehavior),
+                new ShopItem(knockbackStick, new ItemIngotGold(0, 10), gameBehavior),
+                new ShopItem(tntItem, new ItemIngotGold(0, 10), gameBehavior),
+                new ShopItem(blastProofGlass, new ItemIngotGold(0, 6), gameBehavior),
+                new ShopItem(trackingCompass, new ItemIngotGold(0, 1), gameBehavior),
+                new ShopItem(new ItemPotion(ItemPotion.INVISIBLE), new ItemIngotGold(0, 3), "Invisibility Potion", null, gameBehavior),
+                new ShopItem(new ItemPotion(ItemPotion.LEAPING), new ItemIngotGold(0, 2), "Leaping Potion", null, gameBehavior),
         };
     }
 
     @Override
     protected String getTitle(Player player) {
-        int emeralds = player.getInventory().slots.values().stream()
-                .filter(item -> item.getId() == ItemID.EMERALD)
+        int gold = player.getInventory().slots.values().stream()
+                .filter(item -> item.getId() == ItemID.GOLD_INGOT)
                 .map(Item::getCount)
                 .reduce(0, Integer::sum);
-        return "Emerald Shop - " + TextFormat.GREEN + emeralds + TextFormat.RESET + " Emeralds";
+        return "Gold Shop - " + TextFormat.GOLD + gold + TextFormat.RESET + " Gold";
     }
 
     @Override
     protected String getShopNameHeader() {
-        return "" + TextFormat.BOLD + TextFormat.GREEN + "Emerald Shop";
+        return "" + TextFormat.GOLD + TextFormat.BOLD + "Gold Shop";
     }
 }

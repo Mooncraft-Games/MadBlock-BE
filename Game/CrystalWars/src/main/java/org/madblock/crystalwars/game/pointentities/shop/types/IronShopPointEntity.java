@@ -18,10 +18,10 @@ import java.util.Optional;
 /**
  * @author Nicholas
  */
-public class BrickShopPointEntity extends ShopPointEntity {
-    public static String ID = "madblock_crystalwars_brickshop";
+public class IronShopPointEntity extends ShopPointEntity {
+    public static String ID = "madblock_crystalwars_ironshop";
 
-    public BrickShopPointEntity(CrystalWarsGame base) {
+    public IronShopPointEntity(CrystalWarsGame base) {
         super(ID, base.getSessionHandler(), base);
     }
 
@@ -47,33 +47,33 @@ public class BrickShopPointEntity extends ShopPointEntity {
         woodBlock.setCount(32);
 
         return new ShopItem[]{
-                new ShopItem(woolBlock, new ItemBrick(0, 5), gameBehavior),
-                new ShopItem(woodBlock, new ItemBrick(0, 10), gameBehavior),
-                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemSwordIron()), new ItemBrick(0, 5), gameBehavior),
-                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemPickaxeIron()), new ItemBrick(0, 8), gameBehavior),
-                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemAxeIron()), new ItemBrick(0, 8), gameBehavior),
+                new ShopItem(woolBlock, new ItemIngotIron(0, 5), gameBehavior),
+                new ShopItem(woodBlock, new ItemIngotIron(0, 10), gameBehavior),
+                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemSwordIron()), new ItemIngotIron(0, 5), gameBehavior),
+                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemPickaxeIron()), new ItemIngotIron(0, 8), gameBehavior),
+                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemAxeIron()), new ItemIngotIron(0, 8), gameBehavior),
                 new ShopItem(new Item[] {
                         CrystalWarsUtility.makeUnbreakable(new ItemHelmetIron()),
                         CrystalWarsUtility.makeUnbreakable(new ItemChestplateIron()),
                         CrystalWarsUtility.makeUnbreakable(new ItemLeggingsIron()),
                         CrystalWarsUtility.makeUnbreakable(new ItemBootsIron())
-                }, new ItemBrick(0, 25), "Full Iron Armor", null, gameBehavior),
-                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemShears()), new ItemBrick(0, 10), gameBehavior),
-                new ShopItem(new ItemBlock(new BlockEndStone(), 0, 16), new ItemBrick(0, 12), gameBehavior)
+                }, new ItemIngotIron(0, 25), "Full Iron Armor", null, gameBehavior),
+                new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemShears()), new ItemIngotIron(0, 10), gameBehavior),
+                new ShopItem(new ItemBlock(new BlockEndStone(), 0, 16), new ItemIngotIron(0, 12), gameBehavior)
         };
     }
 
     @Override
     protected String getTitle(Player player) {
-        int bricks = player.getInventory().slots.values().stream()
-                .filter(item -> item.getId() == ItemID.BRICK)
+        int iron = player.getInventory().slots.values().stream()
+                .filter(item -> item.getId() == ItemID.IRON_INGOT)
                 .map(Item::getCount)
                 .reduce(0, Integer::sum);
-        return "Brick Shop - " + TextFormat.RED + bricks + TextFormat.RESET + " Bricks";
+        return "Iron Shop - " + TextFormat.WHITE + iron + TextFormat.RESET + " Iron";
     }
 
     @Override
     protected String getShopNameHeader() {
-        return "" + TextFormat.GOLD + TextFormat.BOLD + "Brick Shop";
+        return "" + TextFormat.WHITE + TextFormat.BOLD + "Iron Shop";
     }
 }

@@ -11,10 +11,10 @@ import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.math.Vector3;
-import org.madblock.crystalwars.game.pointentities.capturepoint.EmeraldCapturePointEntity;
+import org.madblock.crystalwars.game.pointentities.capturepoint.GoldCapturePointEntity;
 import org.madblock.crystalwars.game.pointentities.capturepoint.MiddleCapturePointEntity;
-import org.madblock.crystalwars.game.pointentities.shop.types.BrickShopPointEntity;
-import org.madblock.crystalwars.game.pointentities.shop.types.EmeraldShopPointEntity;
+import org.madblock.crystalwars.game.pointentities.shop.types.IronShopPointEntity;
+import org.madblock.crystalwars.game.pointentities.shop.types.GoldShopPointEntity;
 import org.madblock.crystalwars.game.pointentities.shop.types.TeamUpgradeShopPointEntity;
 import org.madblock.crystalwars.game.pointentities.team.CrystalPointEntity;
 import org.madblock.crystalwars.game.pointentities.team.GeneratorPointEntity;
@@ -39,11 +39,11 @@ public class CrystalWarsGame extends GameBehavior {
         getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new CrystalPointEntity(getSessionHandler()));
         getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new GeneratorPointEntity(this));
 
-        getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new BrickShopPointEntity(this));
-        getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new EmeraldShopPointEntity(this));
+        getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new IronShopPointEntity(this));
+        getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new GoldShopPointEntity(this));
         getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new TeamUpgradeShopPointEntity(this));
 
-        getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new EmeraldCapturePointEntity(getSessionHandler()));
+        getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new GoldCapturePointEntity(getSessionHandler()));
         getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new MiddleCapturePointEntity(getSessionHandler()));
 
         for (Player player : getSessionHandler().getPlayers()) {

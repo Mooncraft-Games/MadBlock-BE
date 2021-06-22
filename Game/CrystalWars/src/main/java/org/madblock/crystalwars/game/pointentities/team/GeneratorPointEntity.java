@@ -5,10 +5,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBrick;
-import cn.nukkit.item.ItemDiamond;
-import cn.nukkit.item.ItemEmerald;
+import cn.nukkit.item.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.SimpleAxisAlignedBB;
@@ -16,7 +13,7 @@ import cn.nukkit.nbt.NBTIO;
 import org.madblock.crystalwars.CrystalWarsPlugin;
 import org.madblock.crystalwars.game.CrystalWarsGame;
 import org.madblock.crystalwars.game.pointentities.capturepoint.CapturePointEntity;
-import org.madblock.crystalwars.game.pointentities.capturepoint.EmeraldCapturePointEntity;
+import org.madblock.crystalwars.game.pointentities.capturepoint.GoldCapturePointEntity;
 import org.madblock.crystalwars.game.pointentities.capturepoint.MiddleCapturePointEntity;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
 import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;
@@ -51,12 +48,12 @@ public class GeneratorPointEntity extends PointEntityType implements Listener {
     public void onRegister() {
         CrystalWarsPlugin.getInstance().getServer().getPluginManager().registerEvents(this, CrystalWarsPlugin.getInstance());
 
-        gameHandler.getGameScheduler().registerGameTask(() -> executeFunctionForAll("spawn_bricks", new HashMap<>()), 0, 3 * 20);
-        gameHandler.getGameScheduler().registerGameTask(() -> executeFunctionForAll("spawn_emeralds", new HashMap<>()), 0, 6 * 20);
+        gameHandler.getGameScheduler().registerGameTask(() -> executeFunctionForAll("spawn_iron", new HashMap<>()), 0, 3 * 20);
+        gameHandler.getGameScheduler().registerGameTask(() -> executeFunctionForAll("spawn_gold", new HashMap<>()), 0, 6 * 20);
         gameHandler.getGameScheduler().registerGameTask(() -> executeFunctionForAll("spawn_diamonds", new HashMap<>()), 0, 10 * 20);
 
-        addFunction("spawn_bricks", this::spawnBricks);
-        addFunction("spawn_emeralds", this::spawnEmeralds);
+        addFunction("spawn_iron", this::spawnIron);
+        addFunction("spawn_gold", this::spawnGold);
         addFunction("spawn_diamonds", this::spawnDiamonds);
 
     }
@@ -80,18 +77,18 @@ public class GeneratorPointEntity extends PointEntityType implements Listener {
         super.onRemovePointEntity(entity);
     }
 
-    protected void spawnBricks(PointEntityCallData data) {
+    protected void spawnIron(PointEntityCallData data) {
         String teamId = data.getPointEntity().getStringProperties().get(TEAM_ID_PROPERTY);
-        int bricksToSpawn = getMultiplier(teamId);
-        spawnItem(getPosition(data.getPointEntity(), data.getLevel()), new ItemBrick(0, bricksToSpawn));
+        int ironToSpawn = getMultiplier(teamId);
+        spawnItem(getPosition(data.getPointEntity(), data.getLevel()), new ItemIngotIron(0, ironToSpawn));
     }
 
-    protected void spawnEmeralds(PointEntityCallData data) {
+    protected void spawnGold(PointEntityCallData data) {
         String teamId = data.getPointEntity().getStringProperties().get(TEAM_ID_PROPERTY);
-        int emeraldsToSpawn = getMultiplier(teamId) * getCapturePointsCount(data.getPointEntity().getStringProperties().get(TEAM_ID_PROPERTY),
-                EmeraldCapturePointEntity.ID);
-        if (emeraldsToSpawn > 0) {
-            spawnItem(getPosition(data.getPointEntity(), data.getLevel()), new ItemEmerald(0, emeraldsToSpawn));
+        int goldToSpawn = getMultiplier(teamId) * getCapturePointsCount(data.getPointEntity().getStringProperties().get(TEAM_ID_PROPERTY),
+                GoldCapturePointEntity.ID);
+        if (goldToSpawn > 0) {
+            spawnItem(getPosition(data.getPointEntity(), data.getLevel()), new ItemIngotGold(0, goldToSpawn));
         }
     }
 
