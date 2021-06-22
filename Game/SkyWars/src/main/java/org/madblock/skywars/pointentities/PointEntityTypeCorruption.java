@@ -44,17 +44,13 @@ public class PointEntityTypeCorruption extends PointEntityType {
     private void generateCorruption (PointEntityCallData data) {
         MapRegion playZoneRegion = this.getGameHandler().getPrimaryMapID().getRegions().get("play_zone");;
         int currentRadius = this.getCurrentCorruptionRadius(data.getPointEntity());
-        for (int angle = 0; angle <= 360; angle += 1) {
+        for (double angle = 0; angle <= 360; angle += 0.1) {
             int x = (int)Math.round(Math.cos(angle * Math.PI / 180) * currentRadius + data.getPointEntity().getX());
             int z = (int)Math.round(Math.sin(angle * Math.PI / 180) * currentRadius + data.getPointEntity().getZ());
             for (int y = playZoneRegion.getPosLesser().getY(); y <= playZoneRegion.getPosGreater().getY(); y++) {
-                if (data.getLevel().getBlock(new Vector3(x, y, z)).getId() != Block.AIR) {
-                    data.getLevel().setBlock(new Vector3(x, y, z), SkywarsUtils.getRandomCorruptionBlock(), false, false);
+                if (data.getLevel().getBlock(x, y, z).getId() != Block.AIR) {
+                    data.getLevel().setBlock(x, y, z, SkywarsUtils.getRandomCorruptionBlock(), false, false);
                 }
-                if (data.getLevel().getBlock(new Vector3(x, y, z - 1)).getId() != Block.AIR) {
-                    data.getLevel().setBlock(new Vector3(x, y, z - 1), SkywarsUtils.getRandomCorruptionBlock(), false, false);
-                }
-
             }
         }
         this.currentCorruptionRadius.put(data.getPointEntity(), this.currentCorruptionRadius.get(data.getPointEntity()) - 1);
