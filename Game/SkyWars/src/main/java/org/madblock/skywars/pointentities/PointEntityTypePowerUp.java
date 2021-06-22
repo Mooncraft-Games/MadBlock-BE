@@ -52,7 +52,7 @@ import java.util.UUID;
 
 public class PointEntityTypePowerUp extends PointEntityType implements Listener {
 
-    public static final String ID = "resources/powerup";
+    public static final String ID = "powerup";
 
     private static final String GEOMETRY_NAME = "geometry.skywars_powerup";
 
