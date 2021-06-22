@@ -104,7 +104,6 @@ public class DeathManager implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onGamePlayerDeath(EntityDamageEvent event) {
-        NewGamesAPI1.getPlgLogger().info("Damage | OriginalHealth = "+event.getEntity().getHealth()+"Amount  ="+event.getFinalDamage()+" | Cancelled="+String.valueOf(event.isCancelled()));
 
         // Doesn't belong here but oh well
         // It works without being clunky.
@@ -122,8 +121,7 @@ public class DeathManager implements Listener {
         }
 
         if(!event.isCancelled()) {
-            if (event.getEntity() instanceof Player && ((event.getEntity().getHealth() - event.getFinalDamage()) <= 0.5)) {
-                NewGamesAPI1.getPlgLogger().info("DEATH");
+            if (event.getEntity() instanceof Player && ((event.getEntity().getHealth() - event.getFinalDamage()) < 1)) {
                 Player victim = (Player) event.getEntity();
 
                 if (gameHandler.getPlayers().contains(victim)) {

@@ -51,10 +51,7 @@ public class QuiccccQueueManager implements Listener {
     public void matchmakePlayer(Player player, String gameID){
         String gid = gameID.toLowerCase();
         try {
-            if(reverseQueueMap.containsKey(player)){
-                String queueID = reverseQueueMap.remove(player);
-                queues.get(queueID).remove(player);
-            }
+            leaveQueue(player);
             if (GameRegistry.get().getGameID(gid).isPresent()) {
                 if(startingLobbies.containsKey(gid)){
                     ArrayList<GameHandler> fl = startingLobbies.get(gid);
@@ -87,6 +84,9 @@ public class QuiccccQueueManager implements Listener {
                 q.add(player);
                 reverseQueueMap.put(player, gid);
                 player.getLevel().addSound(player.getPosition(), Sound.RANDOM_LEVELUP, 1, 1f, player);
+                player.sendMessage(Utility.generateServerMessage("QUEUE", TextFormat.GOLD, TextFormat.GRAY + "You have queued for " +
+                        TextFormat.GOLD + game.getGameDisplayName() + TextFormat.GRAY + ". If you would like to leave the queue, type " +
+                        TextFormat.RED + "/leavequeue" + TextFormat.GRAY + "."));
 
                 if(q.size() >= game.getGameProperties().getGuidelinePlayers()){
                     String sessionID = GameManager.get().createGameSession(gameID, 500);
@@ -110,10 +110,18 @@ public class QuiccccQueueManager implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event){
-        if(reverseQueueMap.containsKey(event.getPlayer())){
-            String queueID = reverseQueueMap.remove(event.getPlayer());
-            queues.get(queueID).remove(event.getPlayer());
+        leaveQueue(event.getPlayer());
+    }
+
+    public void leaveQueue(Player player) {
+        if (isInQueue(player)) {
+            String queueID = reverseQueueMap.remove(player);
+            queues.get(queueID).remove(player);
         }
+    }
+
+    public boolean isInQueue(Player player) {
+        return reverseQueueMap.containsKey(player);
     }
 
     /** @return the primary instance of the Manager. */

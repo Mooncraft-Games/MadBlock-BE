@@ -159,6 +159,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.getServer().getCommandMap().register("ngapi", new CommandTourney());
         this.getServer().getCommandMap().register("ngapi", new CommandSuper());
         this.getServer().getCommandMap().register("ngapi", new CommandFirework());
+        this.getServer().getCommandMap().register("ngapi", new CommandLeaveQueue());
 
 
 
