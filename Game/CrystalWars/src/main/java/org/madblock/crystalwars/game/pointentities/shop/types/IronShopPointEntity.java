@@ -11,6 +11,7 @@ import org.madblock.crystalwars.game.CrystalWarsGame;
 import org.madblock.crystalwars.game.pointentities.shop.ShopPointEntity;
 import org.madblock.crystalwars.game.pointentities.shop.item.ShopItem;
 import org.madblock.crystalwars.util.CrystalWarsUtility;
+import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.team.Team;
 
 import java.util.Optional;
@@ -69,7 +70,7 @@ public class IronShopPointEntity extends ShopPointEntity {
                 .filter(item -> item.getId() == ItemID.IRON_INGOT)
                 .map(Item::getCount)
                 .reduce(0, Integer::sum);
-        return "Iron Shop - " + TextFormat.WHITE + iron + TextFormat.RESET + " Iron";
+        return "Iron Shop - " + TextFormat.WHITE + iron + TextFormat.RESET + " " + Utility.ResourcePackCharacters.IRON_INGOT;
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.madblock.crystalwars.game.pointentities.shop.ShopPointEntity;
 import org.madblock.crystalwars.game.pointentities.shop.item.IShopData;
 import org.madblock.crystalwars.game.pointentities.shop.item.ShopItem;
 import org.madblock.crystalwars.util.CrystalWarsUtility;
+import org.madblock.newgamesapi.Utility;
 
 /**
  * @author Nicholas
@@ -68,7 +69,7 @@ public class GoldShopPointEntity extends ShopPointEntity {
                 .filter(item -> item.getId() == ItemID.GOLD_INGOT)
                 .map(Item::getCount)
                 .reduce(0, Integer::sum);
-        return "Gold Shop - " + TextFormat.GOLD + gold + TextFormat.RESET + " Gold";
+        return "Gold Shop - " + TextFormat.GOLD + gold + TextFormat.RESET + " " + Utility.ResourcePackCharacters.GOLD_INGOT;
     }
 
     @Override

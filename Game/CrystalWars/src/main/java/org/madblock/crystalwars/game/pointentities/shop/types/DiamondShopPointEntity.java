@@ -11,6 +11,7 @@ import org.madblock.crystalwars.game.pointentities.shop.ShopPointEntity;
 import org.madblock.crystalwars.game.pointentities.shop.item.IShopData;
 import org.madblock.crystalwars.game.pointentities.shop.item.ShopTeamUpgrade;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
+import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.team.Team;
 
 /**
@@ -168,7 +169,7 @@ public class DiamondShopPointEntity extends ShopPointEntity {
                 .filter(item -> item.getId() == ItemID.DIAMOND)
                 .map(Item::getCount)
                 .reduce(0, Integer::sum);
-        return "Diamond Shop - " + TextFormat.BLUE + diamonds + TextFormat.RESET + " Diamonds";
+        return "Diamond Shop - " + TextFormat.AQUA + diamonds + TextFormat.RESET + " " + Utility.ResourcePackCharacters.DIAMOND;
     }
 
     @Override
