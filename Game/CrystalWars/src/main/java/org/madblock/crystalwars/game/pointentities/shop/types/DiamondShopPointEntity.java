@@ -16,12 +16,12 @@ import org.madblock.newgamesapi.team.Team;
 /**
  * @author Nicholas
  */
-public class TeamUpgradeShopPointEntity extends ShopPointEntity {
-    public static final String ID = "madblock_crystalwars_upgradeshop";
+public class DiamondShopPointEntity extends ShopPointEntity {
+    public static final String ID = "madblock_crystalwars_diamondshop";
 
     protected CrystalWarsGame base;
 
-    public TeamUpgradeShopPointEntity(CrystalWarsGame baseGame) {
+    public DiamondShopPointEntity(CrystalWarsGame baseGame) {
         super(ID, baseGame.getSessionHandler(), baseGame);
         base = baseGame;
         getGameHandler().getGameScheduler().registerGameTask(this::checkForUpgrades, 0, 20);
@@ -164,15 +164,15 @@ public class TeamUpgradeShopPointEntity extends ShopPointEntity {
 
     @Override
     protected String getTitle(Player player) {
-        int stars = player.getInventory().slots.values().stream()
+        int diamonds = player.getInventory().slots.values().stream()
                 .filter(item -> item.getId() == ItemID.DIAMOND)
                 .map(Item::getCount)
                 .reduce(0, Integer::sum);
-        return "Team Upgrade Shop - " + TextFormat.BLUE + stars + TextFormat.RESET + " Diamonds";
+        return "Diamond Shop - " + TextFormat.BLUE + diamonds + TextFormat.RESET + " Diamonds";
     }
 
     @Override
     protected String getShopNameHeader() {
-        return "" + TextFormat.BOLD + TextFormat.AQUA + "Team Upgrade Shop";
+        return "" + TextFormat.BOLD + TextFormat.AQUA + "Diamond Shop";
     }
 }

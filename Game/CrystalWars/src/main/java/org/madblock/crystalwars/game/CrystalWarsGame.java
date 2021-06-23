@@ -15,7 +15,7 @@ import org.madblock.crystalwars.game.pointentities.capturepoint.GoldCapturePoint
 import org.madblock.crystalwars.game.pointentities.capturepoint.MiddleCapturePointEntity;
 import org.madblock.crystalwars.game.pointentities.shop.types.IronShopPointEntity;
 import org.madblock.crystalwars.game.pointentities.shop.types.GoldShopPointEntity;
-import org.madblock.crystalwars.game.pointentities.shop.types.TeamUpgradeShopPointEntity;
+import org.madblock.crystalwars.game.pointentities.shop.types.DiamondShopPointEntity;
 import org.madblock.crystalwars.game.pointentities.team.CrystalPointEntity;
 import org.madblock.crystalwars.game.pointentities.team.GeneratorPointEntity;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
@@ -41,7 +41,7 @@ public class CrystalWarsGame extends GameBehavior {
 
         getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new IronShopPointEntity(this));
         getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new GoldShopPointEntity(this));
-        getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new TeamUpgradeShopPointEntity(this));
+        getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new DiamondShopPointEntity(this));
 
         getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new GoldCapturePointEntity(getSessionHandler()));
         getSessionHandler().getPointEntityTypeManager().registerPointEntityType(new MiddleCapturePointEntity(getSessionHandler()));

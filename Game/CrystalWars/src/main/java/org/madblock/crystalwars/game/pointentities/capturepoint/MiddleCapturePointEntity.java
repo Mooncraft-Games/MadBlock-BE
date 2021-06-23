@@ -1,5 +1,6 @@
 package org.madblock.crystalwars.game.pointentities.capturepoint;
 
+import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 
 /**
@@ -14,6 +15,6 @@ public class MiddleCapturePointEntity extends CapturePointEntity {
 
     @Override
     public String getName() {
-        return "the Middle";
+        return "the " + Utility.ResourcePackCharacters.DIAMOND;
     }
 }
