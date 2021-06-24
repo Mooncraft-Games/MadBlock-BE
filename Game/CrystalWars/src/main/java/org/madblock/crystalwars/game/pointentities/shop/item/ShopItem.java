@@ -10,6 +10,8 @@ import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.team.Team;
 
+import java.util.Map;
+
 /**
  * @author Nicholas
  */
@@ -80,7 +82,51 @@ public class ShopItem implements IShopData {
                 inventory.setBoots(item);
             } else {
                 // Not Armor
-                inventory.addItem(item);
+                if (item.isSword()) {
+                    int slot = 0;
+                    boolean replace = false;
+                    for (Map.Entry<Integer, Item> entry : inventory.getContents().entrySet()) {
+                        if (entry.getValue().isSword()) {
+                            slot = entry.getKey();
+                            replace = true;
+                            inventory.remove(entry.getValue());
+                        }
+                    }
+                    if (replace)
+                        inventory.setItem(slot, item);
+                    else
+                        inventory.addItem(item);
+                } else if (item.isPickaxe()) {
+                    int slot = 0;
+                    boolean replace = false;
+                    for (Map.Entry<Integer, Item> entry : inventory.getContents().entrySet()) {
+                        if (entry.getValue().isPickaxe()) {
+                            slot = entry.getKey();
+                            replace = true;
+                            inventory.remove(entry.getValue());
+                            break;
+                        }
+                    }
+                    if (replace)
+                        inventory.setItem(slot, item);
+                    else
+                        inventory.addItem(item);
+                } else if (item.isAxe()) {
+                    int slot = 0;
+                    boolean replace = false;
+                    for (Map.Entry<Integer, Item> entry : inventory.getContents().entrySet()) {
+                        if (entry.getValue().isAxe()) {
+                            slot = entry.getKey();
+                            replace = true;
+                            inventory.remove(entry.getValue());
+                            break;
+                        }
+                    }
+                    if (replace)
+                        inventory.setItem(slot, item);
+                    else
+                        inventory.addItem(item);
+                }
             }
         }
         player.getInventory().sendContents(player);
