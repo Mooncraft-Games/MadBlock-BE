@@ -126,6 +126,8 @@ public class ShopItem implements IShopData {
                         inventory.setItem(slot, item);
                     else
                         inventory.addItem(item);
+                } else {
+                    inventory.addItem(item);
                 }
             }
         }
