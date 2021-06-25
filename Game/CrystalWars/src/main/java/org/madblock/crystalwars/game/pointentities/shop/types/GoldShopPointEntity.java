@@ -49,11 +49,11 @@ public class GoldShopPointEntity extends ShopPointEntity {
                 new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemSwordDiamond()), new ItemIngotGold(0, 10), gameBehavior),
                 new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemPickaxeDiamond()), new ItemIngotGold(0, 10), gameBehavior),
                 new ShopItem(new Item[] {
-                        CrystalWarsUtility.makeUnbreakable(new ItemHelmetDiamond()),
-                        CrystalWarsUtility.makeUnbreakable(new ItemChestplateDiamond()),
-                        CrystalWarsUtility.makeUnbreakable(new ItemLeggingsDiamond()),
-                        CrystalWarsUtility.makeUnbreakable(new ItemBootsDiamond())
-                }, new ItemIngotGold(0, 32), "Full Diamond Armor", null, gameBehavior),
+                        CrystalWarsUtility.makeUnbreakable(new ItemHelmetIron()),
+                        CrystalWarsUtility.makeUnbreakable(new ItemChestplateIron()),
+                        CrystalWarsUtility.makeUnbreakable(new ItemLeggingsIron()),
+                        CrystalWarsUtility.makeUnbreakable(new ItemBootsIron())
+                }, new ItemIngotGold(0, 32), "Full Iron Armor", null, gameBehavior),
                 new ShopItem(knockbackStick, new ItemIngotGold(0, 10), gameBehavior),
                 new ShopItem(tntItem, new ItemIngotGold(0, 10), gameBehavior),
                 new ShopItem(blastProofGlass, new ItemIngotGold(0, 6), gameBehavior),

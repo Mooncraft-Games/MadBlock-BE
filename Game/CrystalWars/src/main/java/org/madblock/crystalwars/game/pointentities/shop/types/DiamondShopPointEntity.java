@@ -1,16 +1,16 @@
 package org.madblock.crystalwars.game.pointentities.shop.types;
 
 import cn.nukkit.Player;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDiamond;
-import cn.nukkit.item.ItemID;
+import cn.nukkit.item.*;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.game.CrystalWarsGame;
 import org.madblock.crystalwars.game.pointentities.shop.ShopPointEntity;
 import org.madblock.crystalwars.game.pointentities.shop.item.IShopData;
+import org.madblock.crystalwars.game.pointentities.shop.item.ShopItem;
 import org.madblock.crystalwars.game.pointentities.shop.item.ShopTeamUpgrade;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
+import org.madblock.crystalwars.util.CrystalWarsUtility;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.team.Team;
 
@@ -35,36 +35,44 @@ public class DiamondShopPointEntity extends ShopPointEntity {
 
     @Override
     protected IShopData[] getShopItems(Player player) {
-        IShopData[] upgrades = new IShopData[3];
+        IShopData[] items = new IShopData[4];
         Team team = gameHandler.getPlayerTeam(player).get();
 
         if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.PROTECTION_ONE)) {
-            upgrades[0] = new ShopTeamUpgrade(CrystalTeamUpgrade.PROTECTION_ONE, new ItemDiamond(0, 6), base);
+            items[0] = new ShopTeamUpgrade(CrystalTeamUpgrade.PROTECTION_ONE, new ItemDiamond(0, 6), base);
         } else if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.PROTECTION_TWO)) {
-            upgrades[0] = new ShopTeamUpgrade(CrystalTeamUpgrade.PROTECTION_TWO, new ItemDiamond(0, 12), base);
+            items[0] = new ShopTeamUpgrade(CrystalTeamUpgrade.PROTECTION_TWO, new ItemDiamond(0, 12), base);
         } else {
-            upgrades[0] = new ShopTeamUpgrade(CrystalTeamUpgrade.PROTECTION_TWO, base);
+            items[0] = new ShopTeamUpgrade(CrystalTeamUpgrade.PROTECTION_TWO, base);
         }
-        ((ShopTeamUpgrade) upgrades[0]).setPurchaseCallback(this::upgradedProtection);
+        ((ShopTeamUpgrade) items[0]).setPurchaseCallback(this::upgradedProtection);
 
         if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.SHARPNESS_ONE)) {
-            upgrades[1] = new ShopTeamUpgrade(CrystalTeamUpgrade.SHARPNESS_ONE, new ItemDiamond(0, 6), base);
+            items[1] = new ShopTeamUpgrade(CrystalTeamUpgrade.SHARPNESS_ONE, new ItemDiamond(0, 6), base);
         } else if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.SHARPNESS_TWO)) {
-            upgrades[1] = new ShopTeamUpgrade(CrystalTeamUpgrade.SHARPNESS_TWO, new ItemDiamond(0, 12), base);
+            items[1] = new ShopTeamUpgrade(CrystalTeamUpgrade.SHARPNESS_TWO, new ItemDiamond(0, 12), base);
         } else {
-            upgrades[1] = new ShopTeamUpgrade(CrystalTeamUpgrade.SHARPNESS_TWO, base);
+            items[1] = new ShopTeamUpgrade(CrystalTeamUpgrade.SHARPNESS_TWO, base);
         }
-        ((ShopTeamUpgrade) upgrades[1]).setPurchaseCallback(this::upgradedSharpness);
+        ((ShopTeamUpgrade) items[1]).setPurchaseCallback(this::upgradedSharpness);
 
         if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.RESOURCES_ONE)) {
-            upgrades[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_ONE, new ItemDiamond(0, 10), base);
+            items[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_ONE, new ItemDiamond(0, 10), base);
         } else if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.RESOURCES_TWO)) {
-            upgrades[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_TWO, new ItemDiamond(0, 20), base);
+            items[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_TWO, new ItemDiamond(0, 20), base);
         } else {
-            upgrades[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_TWO, base);
+            items[2] = new ShopTeamUpgrade(CrystalTeamUpgrade.RESOURCES_TWO, base);
         }
 
-        return upgrades;
+        // Actual Items
+        items[3] = new ShopItem(new Item[] {
+                CrystalWarsUtility.makeUnbreakable(new ItemHelmetDiamond()),
+                CrystalWarsUtility.makeUnbreakable(new ItemChestplateDiamond()),
+                CrystalWarsUtility.makeUnbreakable(new ItemLeggingsDiamond()),
+                CrystalWarsUtility.makeUnbreakable(new ItemBootsDiamond())
+        }, new ItemDiamond(0, 32), "Full Diamond Armor", null, gameBehavior);
+
+        return items;
     }
 
     protected void upgradedSharpness(Player player) {

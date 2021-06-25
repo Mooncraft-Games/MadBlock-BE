@@ -63,6 +63,7 @@ public class ShopTeamUpgrade implements IShopData {
     @Override
     public String getLabel() {
         StringBuilder label = new StringBuilder(upgrade.getName()).append('\n');
+        label.append(TextFormat.YELLOW);
         if (soldItem != null) {
             label.append(soldItem.getCount()).append(" ").append(TextFormat.clean(soldItem.getName()));
         } else {

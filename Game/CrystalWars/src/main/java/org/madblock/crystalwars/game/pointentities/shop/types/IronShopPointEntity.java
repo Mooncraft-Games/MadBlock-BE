@@ -54,11 +54,11 @@ public class IronShopPointEntity extends ShopPointEntity {
                 new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemPickaxeIron()), new ItemIngotIron(0, 8), gameBehavior),
                 new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemAxeIron()), new ItemIngotIron(0, 8), gameBehavior),
                 new ShopItem(new Item[] {
-                        CrystalWarsUtility.makeUnbreakable(new ItemHelmetIron()),
-                        CrystalWarsUtility.makeUnbreakable(new ItemChestplateIron()),
-                        CrystalWarsUtility.makeUnbreakable(new ItemLeggingsIron()),
-                        CrystalWarsUtility.makeUnbreakable(new ItemBootsIron())
-                }, new ItemIngotIron(0, 25), "Full Iron Armor", null, gameBehavior),
+                        CrystalWarsUtility.makeUnbreakable(new ItemHelmetChain()),
+                        CrystalWarsUtility.makeUnbreakable(new ItemChestplateChain()),
+                        CrystalWarsUtility.makeUnbreakable(new ItemLeggingsChain()),
+                        CrystalWarsUtility.makeUnbreakable(new ItemBootsChain())
+                }, new ItemIngotIron(0, 25), "Full Chain Armor", null, gameBehavior),
                 new ShopItem(CrystalWarsUtility.makeUnbreakable(new ItemShears()), new ItemIngotIron(0, 10), gameBehavior),
                 new ShopItem(new ItemBlock(new BlockEndStone(), 0, 16), new ItemIngotIron(0, 12), gameBehavior)
         };
