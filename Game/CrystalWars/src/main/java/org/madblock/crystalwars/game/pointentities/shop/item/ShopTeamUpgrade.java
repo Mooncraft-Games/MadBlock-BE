@@ -67,19 +67,18 @@ public class ShopTeamUpgrade implements IShopData {
         label.append(TextFormat.RESET);
         String character = null;
 
-        switch (soldItem.getId()) {
-            case ItemID.GOLD_INGOT:
-                character = Utility.ResourcePackCharacters.GOLD_INGOT;
-                break;
-            case ItemID.IRON_INGOT:
-                character = Utility.ResourcePackCharacters.IRON_INGOT;
-                break;
-            case ItemID.DIAMOND:
-                character = Utility.ResourcePackCharacters.DIAMOND;
-                break;
-        }
-
         if (soldItem != null) {
+            switch (soldItem.getId()) {
+                case ItemID.GOLD_INGOT:
+                    character = Utility.ResourcePackCharacters.GOLD_INGOT;
+                    break;
+                case ItemID.IRON_INGOT:
+                    character = Utility.ResourcePackCharacters.IRON_INGOT;
+                    break;
+                case ItemID.DIAMOND:
+                    character = Utility.ResourcePackCharacters.DIAMOND;
+                    break;
+            }
             label.append(soldItem.getCount()).append(" ").append(character);
         } else {
             label.append("Max Reached");
