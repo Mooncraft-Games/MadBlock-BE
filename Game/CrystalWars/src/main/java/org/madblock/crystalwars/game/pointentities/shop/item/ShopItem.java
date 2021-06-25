@@ -3,6 +3,7 @@ package org.madblock.crystalwars.game.pointentities.shop.item;
 import cn.nukkit.Player;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.game.CrystalWarsGame;
@@ -153,9 +154,23 @@ public class ShopItem implements IShopData {
             label.append(TextFormat.clean(name));
         }
 
-        label.append('\n').append(TextFormat.YELLOW);
+        label.append('\n').append(TextFormat.RESET);
 
-        label.append(soldItem.getCount()).append(" ").append(TextFormat.clean(soldItem.getName()));
+        String character = null;
+
+        switch (soldItem.getId()) {
+            case ItemID.GOLD_INGOT:
+                character = Utility.ResourcePackCharacters.GOLD_INGOT;
+                break;
+            case ItemID.IRON_INGOT:
+                character = Utility.ResourcePackCharacters.IRON_INGOT;
+                break;
+            case ItemID.DIAMOND:
+                character = Utility.ResourcePackCharacters.DIAMOND;
+                break;
+        }
+
+        label.append(soldItem.getCount()).append(" ").append(character);
 
         return label.toString();
     }
