@@ -2,6 +2,7 @@ package org.madblock.crystalwars.game;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityPrimedTNT;
@@ -134,6 +135,10 @@ public class CrystalWarsGame extends GameBehavior {
             Iterator<Block> blockIterator = event.getBlockList().iterator();
             while (blockIterator.hasNext()) {
                 Block block = blockIterator.next();
+                if (block.getId() == BlockID.GLASS) {
+                    blockIterator.remove();
+                    continue;
+                }
                 if (!placedBlocks.contains(block)) {
                     blockIterator.remove();
                 } else {
