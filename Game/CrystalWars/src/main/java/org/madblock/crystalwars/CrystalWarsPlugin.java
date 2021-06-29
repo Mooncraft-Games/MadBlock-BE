@@ -4,7 +4,6 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginBase;
 import lombok.Getter;
 import org.madblock.crystalwars.game.CrystalWarsGame;
-import org.madblock.crystalwars.game.kit.ArcherKit;
 import org.madblock.crystalwars.game.kit.WarriorKit;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.game.GameHandler;
@@ -22,7 +21,7 @@ public class CrystalWarsPlugin extends PluginBase {
     public void onEnable() {
         instance = this;
 
-        KitGroup kitGroup = new KitGroup("crystalwars", "Crystal Wars", true, new WarriorKit(), new ArcherKit());
+        KitGroup kitGroup = new KitGroup("crystalwars", "Crystal Wars", true, new WarriorKit());
 
         GameProperties regularCrystalWarsProperties = new GameProperties(GameHandler.AutomaticWinPolicy.MANUAL_CALLS_ONLY)
                 .setCanWorldBeManipulated(true)
@@ -33,7 +32,7 @@ public class CrystalWarsPlugin extends PluginBase {
                 .setGuidelinePlayers(2)
                 .setMaximumPlayers(4)
                 .setMinimumPlayers(2)
-                .setDefaultCountdownLength(5);
+                .setDefaultCountdownLength(15);
 
         NewGamesAPI1.getGameRegistry().registerGame(new GameID(CrystalWarsConstants.BASE_GAME_ID, CrystalWarsConstants.BASE_GAME_SERVER_ID,
                 "Crystal Wars Regular", "Destroy the other crystals, but make sure to defend your own!",
