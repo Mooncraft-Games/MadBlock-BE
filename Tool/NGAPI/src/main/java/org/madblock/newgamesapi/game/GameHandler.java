@@ -399,6 +399,7 @@ public class GameHandler implements Listener {
             scoreboardManager.cleanUp(player);
             players.remove(player);
             gameManager.removePlayerFromLookup(player, this);
+            player.getEnderChestInventory().clearAll();
             if(!beingTransferredToNewGame) {
                 player.switchLevel(NewGamesAPI1.get().getServer().getDefaultLevel());
                 player.teleport(NewGamesAPI1.get().getServer().getDefaultLevel().getSpawnLocation());
