@@ -353,6 +353,10 @@ public class Utility {
         public static final String FOOD_FULL = "\uE1BB";
         public static final String FOOD_HALF = "\uE1BC";
 
+        public static final String IRON_INGOT = "\uE1BD";
+        public static final String GOLD_INGOT = "\uE1BE";
+        public static final String DIAMOND = "\uE1BF";
+
         public static final String PING_BEST = "\uE1C0";
         public static final String PING_BETTER = "\uE1C1";
         public static final String PING_GOOD = "\uE1C2";
