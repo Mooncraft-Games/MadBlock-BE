@@ -1,5 +1,6 @@
 package org.madblock.towerwars.pathfinding;
 
+import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
@@ -16,14 +17,18 @@ import java.util.concurrent.CompletableFuture;
 
 public class Pathfinder implements Listener {
 
-    // Note: This is a list because it is possible for two pathfinding operations to run at the same time and use the same chunks.
-    private final List<FullChunk> usedChunks = Collections.synchronizedList(new ArrayList<>());
+    // List of chunks to not unload
+    private final List<FullChunk> usedChunks = new ArrayList<>();
 
-    private final ChunkManager level;
+    private final ChunkManager chunkManager;
 
-    public Pathfinder(ChunkManager level) {
-        this.level = level;
-        TowerWarsPlugin.get().getServer().getPluginManager().registerEvents(this, TowerWarsPlugin.get());
+
+    public Pathfinder(ChunkManager chunkManager) {
+        this.chunkManager = chunkManager;
+
+        Server.getInstance()
+                .getPluginManager()
+                .registerEvents(this, TowerWarsPlugin.get());
     }
 
     /**
@@ -38,17 +43,17 @@ public class Pathfinder implements Listener {
         this.usedChunks.addAll(loadedChunks);
 
         return CompletableFuture
-                .supplyAsync(() -> new SpacityMap(this.level, gameRegion.getPlayArea()))
-                .thenApplyAsync(spacityMap -> new PathfinderAsyncConsumer(
-                        new PathfinderAsyncConsumer.Settings.Builder()
-                            .setLevel(this.level)
+                .supplyAsync(() -> new SpacityMap(this.chunkManager, gameRegion.getPlayArea()))
+                .thenApplyAsync(spacityMap -> new PathfinderJob(
+                        new PathfinderJob.Settings.Builder()
+                            .setLevel(this.chunkManager)
                             .setBoundaries(gameRegion.getPlayArea())
                             .setEndGoalRegion(gameRegion.getEndGoalArea())
                             .setInitialPosition(currentPosition)
                             .setSpacityMap(spacityMap)
                             .build()
                 ).get())
-                .thenApplyAsync(bestPath -> {
+                .thenApply(bestPath -> {
                     // This pathfinding operation is done using these chunks. They can be unloaded.
                     loadedChunks.forEach(this.usedChunks::remove);
                     return bestPath;
@@ -64,7 +69,7 @@ public class Pathfinder implements Listener {
         Set<FullChunk> loadedChunks = new HashSet<>();
         for (int x = playArea.getPosLesser().getX() / 16; x <= Math.ceil(playArea.getPosGreater().getX() / 16d); x++) {
             for (int z = playArea.getPosLesser().getZ() / 16; z <= Math.ceil(playArea.getPosGreater().getZ() / 16d); z++) {
-                loadedChunks.add(this.level.getChunk(x, z));
+                loadedChunks.add(this.chunkManager.getChunk(x, z));
             }
         }
         return loadedChunks;

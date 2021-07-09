@@ -9,7 +9,7 @@ import org.madblock.towerwars.menu.MenuParameters;
 /**
  * MenuTypes should not implement any listeners
  */
-public interface MenuType {
+public interface MenuType<P extends MenuParameters> {
 
     String getId();
 
@@ -20,7 +20,7 @@ public interface MenuType {
      * @param params
      * @return
      */
-    FormWindow createFormForPlayer(Player player, TowerWarsBehavior behavior, MenuParameters params);
+    FormWindow createFormForPlayer(Player player, TowerWarsBehavior behavior, P params);
 
     /**
      * Called when the player responds to a the corresponding menu's form

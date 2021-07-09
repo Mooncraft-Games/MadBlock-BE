@@ -48,11 +48,11 @@ public class EventManager {
 
     private static List<Method> getValidEventMethods(Class<?> clazz, GameEvent event) {
         return Arrays.stream(clazz.getMethods())
-                .filter(method -> method.isAnnotationPresent(TowerWarsEventHandler.class))
+                .filter(method -> method.isAnnotationPresent(TWEventHandler.class))
                 .filter(method -> method.getParameterTypes().length == 1 && method.getParameterTypes()[0].getName().equals(event.getClass().getName()))
                 .sorted((methodA, methodB) -> {
-                    TowerWarsEventHandler.Priority priorityA = methodA.getAnnotation(TowerWarsEventHandler.class).callPriority();
-                    TowerWarsEventHandler.Priority priorityB = methodB.getAnnotation(TowerWarsEventHandler.class).callPriority();
+                    TWEventHandler.Priority priorityA = methodA.getAnnotation(TWEventHandler.class).callPriority();
+                    TWEventHandler.Priority priorityB = methodB.getAnnotation(TWEventHandler.class).callPriority();
                     return priorityB.compareTo(priorityA);
                 })
                 .collect(Collectors.toList());

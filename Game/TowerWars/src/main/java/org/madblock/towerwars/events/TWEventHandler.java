@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TowerWarsEventHandler {
+public @interface TWEventHandler {
 
     Priority callPriority() default Priority.REGULAR;
 

@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
-import org.madblock.towerwars.events.TowerWarsEventHandler;
+import org.madblock.towerwars.events.TWEventHandler;
 import org.madblock.towerwars.towers.events.targets.TowerTargetMoveEvent;
 import org.madblock.towerwars.towers.events.targets.TowerTargetSelectEvent;
 import org.madblock.towerwars.towers.tower.Tower;
@@ -38,7 +38,7 @@ public class ArcherTower extends Tower {
         return skeleton;
     }
 
-    @TowerWarsEventHandler
+    @TWEventHandler
     public void onTarget(TowerTargetSelectEvent event) {
         if (event.getTower() == this) {
             if (event.getTarget() == null) {
@@ -53,7 +53,7 @@ public class ArcherTower extends Tower {
         }
     }
 
-    @TowerWarsEventHandler
+    @TWEventHandler
     public void onTargetMove(TowerTargetMoveEvent event) {
         if (event.getTower() == this) {
             EntityUtils.lookAt(this.getEntity(), event.getTarget().getEntity());

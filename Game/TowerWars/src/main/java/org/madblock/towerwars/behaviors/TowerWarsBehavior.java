@@ -37,6 +37,7 @@ public abstract class TowerWarsBehavior extends GameBehavior {
     // Mapped by teamId
     protected final Map<String, GameRegion> gameRegions = new HashMap<>();
 
+
     public TowerWarsBehavior() {
         this.registerEnemies();
         this.registerTowers();

@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TestPathfinderAsyncConsumer {
+public class TestPathfinderJob {
 
     @Test
     public void shouldPathfindToAnswer() {
@@ -48,8 +48,8 @@ public class TestPathfinderAsyncConsumer {
         );
 
         ChunkManager mockChunkManager = new MockChunkManager(gameMap);
-        PathfinderAsyncConsumer pathfinder = new PathfinderAsyncConsumer(
-                new PathfinderAsyncConsumer.Settings.Builder()
+        PathfinderJob pathfinder = new PathfinderJob(
+                new PathfinderJob.Settings.Builder()
                         .setLevel(mockChunkManager)
                         .setInitialPosition(new Vector3(0, 0, 0))
                         .setBoundaries(boundaries)
@@ -103,8 +103,8 @@ public class TestPathfinderAsyncConsumer {
         ChunkManager mockChunkManager = new MockChunkManager(gameMap);
         SpacityMap spacityMap = new SpacityMap(mockChunkManager, boundaries);
 
-        PathfinderAsyncConsumer pathfinder = new PathfinderAsyncConsumer(
-                new PathfinderAsyncConsumer.Settings.Builder()
+        PathfinderJob pathfinder = new PathfinderJob(
+                new PathfinderJob.Settings.Builder()
                         .setLevel(mockChunkManager)
                         .setInitialPosition(initialPosition)
                         .setBoundaries(boundaries)

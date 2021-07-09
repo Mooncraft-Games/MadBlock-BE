@@ -19,12 +19,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class TowerListMenuType implements MenuType {
+public class TowerListMenuType implements MenuType<TowerListMenuType.TowerListInternalMenuParameters> {
 
     public static final String ID = "tower_list_menu";
 
     // Stores the options available for the player.
-    private final Map<UUID, TowerListInternalMenuData> openMenus = new HashMap<>();
+    private final Map<UUID, TowerListInternalMenuParameters> openMenus = new HashMap<>();
+
 
     @Override
     public String getId() {
@@ -32,8 +33,8 @@ public class TowerListMenuType implements MenuType {
     }
 
     @Override
-    public FormWindow createFormForPlayer(Player player, TowerWarsBehavior behavior, MenuParameters params) {
-        TowerListMenuData data = (TowerListMenuData)params;
+    public FormWindow createFormForPlayer(Player player, TowerWarsBehavior behavior, TowerListInternalMenuParameters params) {
+        TowerListMenuParameters data = params;
         FormWindowSimple form = new FormWindowSimple("Purchase Tower - " + TextFormat.GOLD + behavior.getBalance(player) + " " + Utility.ResourcePackCharacters.COIN, "");
 
         // Lowest to highest in cost, if they have the same cost sort alphabetically.
@@ -52,7 +53,7 @@ public class TowerListMenuType implements MenuType {
             form.addButton(button);
         }
 
-        this.openMenus.put(player.getUniqueId(), new TowerListInternalMenuData(data.getBuildPosition(), types));
+        this.openMenus.put(player.getUniqueId(), new TowerListInternalMenuParameters(data.getBuildPosition(), types));
         return form;
     }
 
@@ -60,11 +61,11 @@ public class TowerListMenuType implements MenuType {
     public void handlePlayerResponse(Player player, TowerWarsBehavior behavior, FormResponse response) {
         FormResponseSimple simpleResponse = (FormResponseSimple)response;
 
-        TowerListInternalMenuData menuParameters = this.openMenus.get(player.getUniqueId());
+        TowerListInternalMenuParameters menuParameters = this.openMenus.get(player.getUniqueId());
         TowerType chosenType = menuParameters.getTowers().get(simpleResponse.getClickedButtonId());
         this.openMenus.remove(player.getUniqueId());
 
-        TowerPurchaseMenuType.TowerPurchaseMenuData params = new TowerPurchaseMenuType.TowerPurchaseMenuData(chosenType, menuParameters.getBuildPosition());
+        TowerPurchaseMenuType.TowerPurchaseMenuParameters params = new TowerPurchaseMenuType.TowerPurchaseMenuParameters(chosenType, menuParameters.getBuildPosition());
         behavior.getMenuManager().showMenu(player, TowerPurchaseMenuType.ID, params);
     }
 
@@ -78,11 +79,13 @@ public class TowerListMenuType implements MenuType {
         this.openMenus.clear();
     }
 
-    public static class TowerListMenuData implements MenuParameters {
+
+    public static class TowerListMenuParameters implements MenuParameters {
 
         private final Position position;
 
-        public TowerListMenuData(Position position) {
+
+        public TowerListMenuParameters(Position position) {
             this.position = position;
         }
 
@@ -93,11 +96,12 @@ public class TowerListMenuType implements MenuType {
     }
 
     // Used to add towers list parameter
-    private static class TowerListInternalMenuData extends TowerListMenuData {
+    public static class TowerListInternalMenuParameters extends TowerListMenuParameters {
 
         private final List<TowerType> towers;
 
-        public TowerListInternalMenuData(Position position, List<TowerType> towers) {
+
+        public TowerListInternalMenuParameters(Position position, List<TowerType> towers) {
             super(position);
             this.towers = towers;
         }

@@ -19,11 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class TowerPurchaseMenuType implements MenuType {
+public class TowerPurchaseMenuType implements MenuType<TowerPurchaseMenuType.TowerPurchaseMenuParameters> {
 
     public static final String ID = "tower_purchase_menu";
 
-    private final Map<UUID, TowerPurchaseMenuData> openMenus = new HashMap<>();
+    private final Map<UUID, TowerPurchaseMenuParameters> openMenus = new HashMap<>();
+
 
     @Override
     public String getId() {
@@ -31,8 +32,8 @@ public class TowerPurchaseMenuType implements MenuType {
     }
 
     @Override
-    public FormWindow createFormForPlayer(Player player, TowerWarsBehavior behavior, MenuParameters params) {
-        TowerPurchaseMenuData menuParameters = (TowerPurchaseMenuData)params;
+    public FormWindow createFormForPlayer(Player player, TowerWarsBehavior behavior, TowerPurchaseMenuParameters params) {
+        TowerPurchaseMenuParameters menuParameters = (TowerPurchaseMenuParameters)params;
         TowerType towerType = menuParameters.getTowerType();
         Position buildPosition = menuParameters.getBuildPosition();
 
@@ -61,7 +62,7 @@ public class TowerPurchaseMenuType implements MenuType {
         FormResponseModal formResponse = (FormResponseModal)response;
         if (formResponse.getClickedButtonId() == 0) {
             // Build
-            TowerPurchaseMenuData data = this.openMenus.get(player.getUniqueId());
+            TowerPurchaseMenuParameters data = this.openMenus.get(player.getUniqueId());
             this.cleanUp(player, behavior);
 
             if (behavior.getBalance(player) < data.getTowerType().getCost()) {
@@ -91,12 +92,14 @@ public class TowerPurchaseMenuType implements MenuType {
         this.openMenus.clear();
     }
 
-    public static class TowerPurchaseMenuData implements MenuParameters {
+
+    public static class TowerPurchaseMenuParameters implements MenuParameters {
 
         private final TowerType towerType;
         private final Position position;
 
-        public TowerPurchaseMenuData(TowerType towerType, Position position) {
+
+        public TowerPurchaseMenuParameters(TowerType towerType, Position position) {
             this.towerType = towerType;
             this.position = position;
         }

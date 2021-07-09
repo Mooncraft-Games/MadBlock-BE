@@ -29,6 +29,7 @@ public class MenuManager implements Listener {
         register(new TowerListMenuType());
     }
 
+
     public MenuManager(TowerWarsBehavior behavior) {
         this.behavior = behavior;
         TowerWarsPlugin.get().getServer().getPluginManager().registerEvents(this, TowerWarsPlugin.get());

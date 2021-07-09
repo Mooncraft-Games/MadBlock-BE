@@ -51,7 +51,7 @@ public class DefaultKitFeatures extends ExtendedKit {
                     }
 
                     Position towerPosition = Position.fromObject(event.getBlock().getLocation().add(0.5d, 1, 0.5d), event.getBlock().getLevel());
-                    behavior.getMenuManager().showMenu(event.getPlayer(), TowerListMenuType.ID, new TowerListMenuType.TowerListMenuData(towerPosition));
+                    behavior.getMenuManager().showMenu(event.getPlayer(), TowerListMenuType.ID, new TowerListMenuType.TowerListMenuParameters(towerPosition));
                     break;
 
                 case ItemID.SPAWN_EGG:      // Spawn monsters
