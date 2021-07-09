@@ -36,7 +36,7 @@ public class TestPathfinder {
                 { 1, 1, 1, 1, 1, 1, 2, 2, 2, 1 },
         };
 
-        int[][] constructedSpacityMap = Pathfinder.getSpacityMap(new ChunkManager() {
+        SpacityMap constructedSpacityMap = new SpacityMap(new ChunkManager() {
             @Override
             public int getBlockIdAt(int x, int y, int z) {
                 return gameMap[z][x];
@@ -95,7 +95,7 @@ public class TestPathfinder {
         ));
 
         for (int rowI = 0; rowI < gameMap.length; rowI++) {
-            assertArrayEquals(spacityMap[rowI], constructedSpacityMap[rowI]);
+            assertArrayEquals(spacityMap[rowI], constructedSpacityMap.getMap()[rowI]);
         }
 
     }

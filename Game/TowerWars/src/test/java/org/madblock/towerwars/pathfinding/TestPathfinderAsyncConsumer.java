@@ -54,7 +54,7 @@ public class TestPathfinderAsyncConsumer {
                         .setInitialPosition(new Vector3(0, 0, 0))
                         .setBoundaries(boundaries)
                         .setEndGoalRegion(endGoalRegion)
-                        .setSpacityMap(Pathfinder.getSpacityMap(mockChunkManager, boundaries))
+                        .setSpacityMap(new SpacityMap(mockChunkManager, boundaries))
                         .build()
         );
         List<Vector2> path = pathfinder.get();
@@ -101,7 +101,7 @@ public class TestPathfinderAsyncConsumer {
         );
         Vector3 initialPosition = new Vector3(0, 0, 2);
         ChunkManager mockChunkManager = new MockChunkManager(gameMap);
-        int[][] spacityMap = Pathfinder.getSpacityMap(mockChunkManager, boundaries);
+        SpacityMap spacityMap = new SpacityMap(mockChunkManager, boundaries);
 
         PathfinderAsyncConsumer pathfinder = new PathfinderAsyncConsumer(
                 new PathfinderAsyncConsumer.Settings.Builder()
@@ -120,13 +120,13 @@ public class TestPathfinderAsyncConsumer {
         }
 
         // We should only be travelling on our spacity for this game map.
-        int targetSpacity = spacityMap[initialPosition.getFloorZ()][initialPosition.getFloorX()];
+        int targetSpacity = spacityMap.getSpacityAt(initialPosition.getFloorX(), initialPosition.getFloorZ());
         int incorrectSpacities = 0;
         for (Vector2 step : path) {
-            if (spacityMap[(int)step.getZ()][(int)step.getX()] != targetSpacity) {
+            if (spacityMap.getSpacityAt((int)step.getX(), (int)step.getZ()) != targetSpacity) {
                 incorrectSpacities++;
-                if (incorrectSpacities > path.size() / 2) {
-                    //fail("Spacity test failed. Majority of path returned spacity of " + spacityMap[step.getZ()][step.getX()] + " instead of " + targetSpacity);
+                if (incorrectSpacities > path.size() / 4) {
+                    fail("Spacity test failed. Majority of path returned spacity of " + spacityMap.getSpacityAt((int)step.getX(), (int)step.getZ()) + " instead of " + targetSpacity);
                 }
             }
         }

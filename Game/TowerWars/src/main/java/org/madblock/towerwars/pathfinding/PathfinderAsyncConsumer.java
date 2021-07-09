@@ -140,7 +140,7 @@ public class PathfinderAsyncConsumer implements Supplier<List<Vector2>> {
     }
 
     private int getSpacity(Vector2 position) {
-        return this.settings.getSpacityMap()[(int)Math.abs(this.settings.getBoundaries().getPosLesser().getZ() - position.getZ())][(int)Math.abs(this.settings.getBoundaries().getPosLesser().getX() - position.getX())];
+        return this.settings.getSpacityMap().getSpacityAt((int)Math.abs(this.settings.getBoundaries().getPosLesser().getX() - position.getX()), (int)Math.abs(this.settings.getBoundaries().getPosLesser().getZ() - position.getZ()));
     }
 
     /**
@@ -177,14 +177,14 @@ public class PathfinderAsyncConsumer implements Supplier<List<Vector2>> {
         private final Vector3 initialPosition;
         private final MapRegion boundaries;
         private final MapRegion endGoalRegion;
-        private final int[][] spacityMap;
+        private final SpacityMap spacityMap;
 
         private Settings(
                 ChunkManager level,
                 Vector3 initialPosition,
                 MapRegion boundaries,
                 MapRegion endGoalRegion,
-                int[][] spacityMap
+                SpacityMap spacityMap
         ) {
             this.level = level;
             this.initialPosition = initialPosition;
@@ -209,7 +209,7 @@ public class PathfinderAsyncConsumer implements Supplier<List<Vector2>> {
             return this.endGoalRegion;
         }
 
-        public int[][] getSpacityMap() {
+        public SpacityMap getSpacityMap() {
             return this.spacityMap;
         }
 
@@ -221,7 +221,7 @@ public class PathfinderAsyncConsumer implements Supplier<List<Vector2>> {
             private Vector3 initialPosition;
             private MapRegion boundaries;
             private MapRegion endGoalRegion;
-            private int[][] spacityMap;
+            private SpacityMap spacityMap;
 
             public Builder setLevel(ChunkManager level) {
                 this.level = level;
@@ -243,7 +243,7 @@ public class PathfinderAsyncConsumer implements Supplier<List<Vector2>> {
                 return this;
             }
 
-            public Builder setSpacityMap(int[][] spacityMap) {
+            public Builder setSpacityMap(SpacityMap spacityMap) {
                 this.spacityMap = spacityMap;
                 return this;
             }

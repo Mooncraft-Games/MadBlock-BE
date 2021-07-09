@@ -1,10 +1,8 @@
 package org.madblock.towerwars.pathfinding;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.level.ChunkUnloadEvent;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
@@ -17,8 +15,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class Pathfinder implements Listener {
-
-    public static int WALL_SPACITY = 1;
 
     // Note: This is a list because it is possible for two pathfinding operations to run at the same time and use the same chunks.
     private final List<FullChunk> usedChunks = Collections.synchronizedList(new ArrayList<>());
@@ -42,7 +38,7 @@ public class Pathfinder implements Listener {
         this.usedChunks.addAll(loadedChunks);
 
         return CompletableFuture
-                .supplyAsync(() -> Pathfinder.getSpacityMap(this.level, gameRegion.getPlayArea()))
+                .supplyAsync(() -> new SpacityMap(this.level, gameRegion.getPlayArea()))
                 .thenApplyAsync(spacityMap -> new PathfinderAsyncConsumer(
                         new PathfinderAsyncConsumer.Settings.Builder()
                             .setLevel(this.level)
@@ -91,70 +87,6 @@ public class Pathfinder implements Listener {
         if (this.usedChunks.contains(event.getChunk())) {
             event.setCancelled();   // We're still using this chunk in pathfinding.
         }
-    }
-
-    /**
-     * Will construct a spacity map based off of the chunkManager.
-     * It will use the y level of the lower boundary.
-     * @param chunkManager
-     * @param boundaries
-     * @return
-     */
-    public static int[][] getSpacityMap(ChunkManager chunkManager, MapRegion boundaries) {
-        int width = boundaries.getPosGreater().getX() - boundaries.getPosLesser().getX();
-        int height = boundaries.getPosGreater().getZ() - boundaries.getPosLesser().getZ();
-        int[][] spacityMap = new int[height + 1][width + 1];
-        boolean incomplete = true;
-
-        // Fill in all the walls
-        for (int z = 0; z < spacityMap.length; z++) {
-            for (int x = 0; x < spacityMap[0].length; x++) {
-                if (chunkManager.getBlockIdAt(boundaries.getPosLesser().getX() + x, boundaries.getPosLesser().getY(), boundaries.getPosLesser().getZ() + z) != Block.AIR) {
-                    spacityMap[z][x] = WALL_SPACITY;
-                } else if (x == 0 || x == spacityMap[0].length - 1 || z == 0 || z == spacityMap.length - 1) {
-                    spacityMap[z][x] = WALL_SPACITY + 1;
-                }
-            }
-        }
-
-        // Start creating spacity grid data
-        int triggerSpacity = WALL_SPACITY; // what spacity value should we change the adjacent neighbours on?
-        while (incomplete) {
-            incomplete = false; // This is kept false if no changes are made to the 2d array.
-            for (int z = 0; z < spacityMap.length; z++) {
-                for (int x = 0; x < spacityMap[0].length; x++) {
-                    if (spacityMap[z][x] == triggerSpacity) {
-
-                        // Up
-                        if (z > 0 && spacityMap[z - 1][x] == 0) {
-                            spacityMap[z - 1][x] = triggerSpacity + 1;
-                            incomplete = true;
-                        }
-
-                        // Down
-                        if (z + 1 < spacityMap.length && spacityMap[z + 1][x] == 0) {
-                            spacityMap[z + 1][x] = triggerSpacity + 1;
-                            incomplete = true;
-                        }
-
-                        // Left
-                        if (x > 0 && spacityMap[z][x - 1] == 0) {
-                            spacityMap[z][x - 1] = triggerSpacity + 1;
-                            incomplete = true;
-                        }
-
-                        // Right
-                        if (x + 1 < spacityMap[0].length && spacityMap[z][x + 1] == 0) {
-                            spacityMap[z][x + 1] = triggerSpacity + 1;
-                            incomplete = true;
-                        }
-
-                    }
-                }
-            }
-            triggerSpacity++;
-        }
-        return spacityMap;
     }
 
 }
