@@ -1,4 +1,4 @@
-package org.madblock.towerwars.pathfinding;
+package org.madblock.towerwars.utils;
 
 import java.util.Objects;
 
@@ -41,4 +41,5 @@ public class Vector2 {
             return false;
         }
     }
+
 }

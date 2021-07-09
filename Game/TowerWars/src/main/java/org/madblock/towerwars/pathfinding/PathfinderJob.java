@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.Vector3;
 import org.madblock.newgamesapi.map.types.MapRegion;
+import org.madblock.towerwars.utils.Vector2i;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -21,19 +22,19 @@ import java.util.function.Supplier;
  * If there is a node that meets the spacity requirement, it will ignore any adjacent nodes that do not meet this requirement as to ensure we stay in our spacity lane.
  * If there is no node that meets the spacity requirements, it will choose the node with the lowest score.
  */
-public class PathfinderJob implements Supplier<List<Vector2>> {
+public class PathfinderJob implements Supplier<List<Vector2i>> {
 
-    private static final Vector2[] POSSIBLE_MOVE_ADJUSTMENTS = new Vector2[]{
-            new Vector2(0, -1), // Up
-            new Vector2(0, 1),  // Down
-            new Vector2(1, 0),  // Right
-            new Vector2(-1, 0)  // Left
+    private static final Vector2i[] POSSIBLE_MOVE_ADJUSTMENTS = new Vector2i[]{
+            new Vector2i(0, -1), // Up
+            new Vector2i(0, 1),  // Down
+            new Vector2i(1, 0),  // Right
+            new Vector2i(-1, 0)  // Left
     };
 
     private final Settings settings;
 
     private final Set<Node> activeNodes = new HashSet<>();  // Nodes we have seen but have yet to explore.
-    private final Map<Vector2, Node> smallestScores = new HashMap<>();       // Record of smallest scored node (most efficient) for each vector
+    private final Map<Vector2i, Node> smallestScores = new HashMap<>();       // Record of smallest scored node (most efficient) for each vector
                                                                               // to ensure that we don't explore a node twice
 
 
@@ -45,8 +46,8 @@ public class PathfinderJob implements Supplier<List<Vector2>> {
 
     // Find the path to take
     @Override
-    public List<Vector2> get() {
-        Vector2 initialPosition = new Vector2((int)this.settings.getInitialPosition().getX(), (int)this.settings.getInitialPosition().getZ());
+    public List<Vector2i> get() {
+        Vector2i initialPosition = new Vector2i(this.settings.getInitialPosition().getFloorX(), (int)this.settings.getInitialPosition().getFloorZ());
         this.targetSpacity = this.getSpacity(initialPosition);  // Spacity to follow
 
         Node currentNode = new Node(
@@ -76,7 +77,7 @@ public class PathfinderJob implements Supplier<List<Vector2>> {
 
         // Return the path found if any
         if (this.isVectorWithinEndGoal(currentNode.getPosition())) {
-            LinkedList<Vector2> orders = new LinkedList<>();
+            LinkedList<Vector2i> orders = new LinkedList<>();
 
             // Construct the path
             while (currentNode.getParentNode() != null) {
@@ -99,13 +100,13 @@ public class PathfinderJob implements Supplier<List<Vector2>> {
      * @return
      */
     private Set<Node> getAdjacentNodes(Node parentNode) {
-        Vector2 position = parentNode.getPosition();
+        Vector2i position = parentNode.getPosition();
 
         Set<Node> nodes = new HashSet<>();
         Set<Node> prioritizedNodes = new HashSet<>();
 
-        for (Vector2 adjustment : POSSIBLE_MOVE_ADJUSTMENTS) {
-            Vector2 nodePosition = position.add(adjustment);
+        for (Vector2i adjustment : POSSIBLE_MOVE_ADJUSTMENTS) {
+            Vector2i nodePosition = position.add(adjustment);
 
             // Ensure that they cannot go back to their previous position
             if (parentNode.getParentNode() != null && parentNode.getParentNode().getPosition().equals(nodePosition)) {
@@ -154,10 +155,10 @@ public class PathfinderJob implements Supplier<List<Vector2>> {
         }
     }
 
-    private int getSpacity(Vector2 position) {
+    private int getSpacity(Vector2i position) {
         return this.settings.getSpacityMap().getSpacityAt(
-                (int)Math.abs(this.settings.getBoundaries().getPosLesser().getX() - position.getX()),
-                (int)Math.abs(this.settings.getBoundaries().getPosLesser().getZ() - position.getZ()));
+                Math.abs(this.settings.getBoundaries().getPosLesser().getX() - position.getX()),
+                Math.abs(this.settings.getBoundaries().getPosLesser().getZ() - position.getZ()));
     }
 
     /**
@@ -165,12 +166,12 @@ public class PathfinderJob implements Supplier<List<Vector2>> {
      * @param position our current position
      * @return
      */
-    private double calculateDistanceToEndGoal(Vector2 position) {
-        double lowestDistance = Double.MAX_VALUE;
+    private int calculateDistanceToEndGoal(Vector2i position) {
+        int lowestDistance = Integer.MAX_VALUE;
         for (int x = this.settings.getEndGoalRegion().getPosLesser().getX(); x <= this.settings.getEndGoalRegion().getPosGreater().getX(); x++) {
             for (int z = this.settings.getEndGoalRegion().getPosLesser().getZ(); z <= this.settings.getEndGoalRegion().getPosGreater().getZ(); z++) {
 
-                double distance = Math.abs(x - position.getX()) + Math.abs(z - position.getZ());
+                int distance = Math.abs(x - position.getX()) + Math.abs(z - position.getZ());
                 if (distance < lowestDistance) {
                     lowestDistance = distance;
                 }
@@ -179,11 +180,11 @@ public class PathfinderJob implements Supplier<List<Vector2>> {
         return lowestDistance;
     }
 
-    private boolean isBlockAir(Vector2 position) {
-        return this.settings.getLevel().getBlockIdAt((int)position.getX(), this.settings.getBoundaries().getPosLesser().getY(), (int)position.getZ()) == Block.AIR;
+    private boolean isBlockAir(Vector2i position) {
+        return this.settings.getLevel().getBlockIdAt(position.getX(), this.settings.getBoundaries().getPosLesser().getY(), position.getZ()) == Block.AIR;
     }
 
-    private boolean isVectorWithinEndGoal(Vector2 position) {
+    private boolean isVectorWithinEndGoal(Vector2i position) {
         return this.settings.getEndGoalRegion().isWithinThisRegion(new Vector3(position.getX(), this.settings.getEndGoalRegion().getPosLesser().getY(), position.getZ()));
     }
 

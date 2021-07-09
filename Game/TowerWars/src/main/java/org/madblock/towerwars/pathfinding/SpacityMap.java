@@ -22,7 +22,7 @@ public class SpacityMap {
         int height = boundaries.getPosGreater().getZ() - boundaries.getPosLesser().getZ();
         this.map = new int[height + 1][width + 1];
 
-        // Fill in all the walls
+        // Fill in all the impassible blocks and mark available blocks
         for (int z = 0; z < this.map.length; z++) {
             for (int x = 0; x < this.map[0].length; x++) {
                 if (chunkManager.getBlockIdAt(boundaries.getPosLesser().getX() + x, boundaries.getPosLesser().getY(), boundaries.getPosLesser().getZ() + z) != Block.AIR) {

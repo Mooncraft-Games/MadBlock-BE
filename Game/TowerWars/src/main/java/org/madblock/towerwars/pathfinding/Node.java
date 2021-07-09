@@ -1,14 +1,16 @@
 package org.madblock.towerwars.pathfinding;
 
+import org.madblock.towerwars.utils.Vector2i;
+
 public class Node {
 
     private final Node parentNode;
-    private final Vector2 position;
+    private final Vector2i position;
     private final double distanceFromEndGoal;
     private final int stepsTaken;
     private final int spacity;  // How close you are to the wall. Higher values = farther away from a wall
 
-    public Node(Node parentNode, Vector2 position, double distanceFromEndGoal, int stepsTaken, int spacity) {
+    public Node(Node parentNode, Vector2i position, double distanceFromEndGoal, int stepsTaken, int spacity) {
         this.parentNode = parentNode;
         this.position = position;
         this.distanceFromEndGoal = distanceFromEndGoal;
@@ -16,7 +18,7 @@ public class Node {
         this.spacity = spacity;
     }
 
-    public Node(Vector2 position, double distanceFromEndGoal, int stepsTaken, int spacity) {
+    public Node(Vector2i position, double distanceFromEndGoal, int stepsTaken, int spacity) {
         this.parentNode = null;
         this.position = position;
         this.distanceFromEndGoal = distanceFromEndGoal;
@@ -48,7 +50,7 @@ public class Node {
         return this.stepsTaken;
     }
 
-    public Vector2 getPosition() {
+    public Vector2i getPosition() {
         return this.position;
     }
 

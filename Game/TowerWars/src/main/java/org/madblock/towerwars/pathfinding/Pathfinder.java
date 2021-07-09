@@ -11,6 +11,7 @@ import cn.nukkit.math.Vector3;
 import org.madblock.newgamesapi.map.types.MapRegion;
 import org.madblock.towerwars.TowerWarsPlugin;
 import org.madblock.towerwars.utils.GameRegion;
+import org.madblock.towerwars.utils.Vector2i;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +38,7 @@ public class Pathfinder implements Listener {
      * @param currentPosition Where we are currently
      * @return the positions to goto starting from currentPosition
      */
-    public CompletableFuture<List<Vector2>> solve(GameRegion gameRegion, Vector3 currentPosition) {
+    public CompletableFuture<List<Vector2i>> solve(GameRegion gameRegion, Vector3 currentPosition) {
         // Make sure the chunks stay loaded throughout our pathfinding
         Set<FullChunk> loadedChunks = this.loadChunks(gameRegion.getPlayArea());
         this.usedChunks.addAll(loadedChunks);

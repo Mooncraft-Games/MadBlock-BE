@@ -1,4 +1,4 @@
-package org.madblock.towerwars.towers.events;
+package org.madblock.towerwars.events.tower;
 
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.towers.tower.Tower;

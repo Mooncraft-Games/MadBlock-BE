@@ -1,18 +1,21 @@
 package org.madblock.towerwars.enemies.enemy;
 
+import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import org.madblock.towerwars.TowerWarsPlugin;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.enemies.effects.EnemyEffect;
-import org.madblock.towerwars.enemies.events.states.EnemyMoveEvent;
-import org.madblock.towerwars.enemies.events.states.EnemyTakeLifeEvent;
+import org.madblock.towerwars.events.enemy.states.EnemyMoveEvent;
+import org.madblock.towerwars.events.enemy.states.EnemyTakeLifeEvent;
 import org.madblock.towerwars.events.GameListener;
-import org.madblock.towerwars.pathfinding.Vector2;
+import org.madblock.towerwars.utils.Vector2;
 import org.madblock.towerwars.towers.tower.Tower;
 import org.madblock.towerwars.utils.EntityUtils;
 import org.madblock.towerwars.utils.GameRegion;
+import org.madblock.towerwars.utils.Vector2i;
 
 import java.util.*;
 
@@ -26,8 +29,9 @@ public abstract class Enemy implements GameListener {
 
     private final List<EnemyEffect> effects = new ArrayList<>();
 
-    private List<Vector2> path = Collections.emptyList();
+    private List<Vector2i> path = Collections.emptyList();
     private int currentPathIndex = 0;
+
 
     public Enemy(EnemyProperties properties, TowerWarsBehavior behavior, GameRegion gameRegion) {
         this.properties = properties;
@@ -95,10 +99,13 @@ public abstract class Enemy implements GameListener {
     }
 
     public void tick() {
+        this.doMoveTick();
+    }
 
-        // Follow pathfinding to next location
+    private void doMoveTick() {
+        // Use pathfinding to get to next location
         if (this.path.size() > 0 && this.currentPathIndex < this.path.size()) {
-            Vector2 nextVector = this.path.get(this.currentPathIndex);
+            Vector2i nextVector = this.path.get(this.currentPathIndex);
             if ((int)this.entity.getX() == (int)nextVector.getX() && (int)this.entity.getZ() == (int)nextVector.getZ()) {
                 // They already reached their destination. Next index!
                 this.currentPathIndex++;
@@ -109,8 +116,11 @@ public abstract class Enemy implements GameListener {
             EnemyMoveEvent event = new EnemyMoveEvent(this.behavior, this, movement);
             this.behavior.getEventManager().callEvent(event);
             if (!event.isCancelled()) {
-                this.entity.setPosition(this.entity.getPosition().add(event.getMovementVector().getX(), 0, event.getMovementVector().getZ()));
-                EntityUtils.lookAt(this.entity, new Vector3(event.getMovementVector().getX(), this.entity.getY() + 1, event.getMovementVector().getZ()));
+                Position currentPosition = this.entity.getPosition();
+                Position newPosition = currentPosition.add(event.getMovementVector().getX(), 0, event.getMovementVector().getZ());
+                
+                this.entity.setPosition(newPosition);
+                EntityUtils.lookAt(this.entity, new Vector3(nextVector.getX(), this.entity.getY() + 1, nextVector.getZ()));
             }
         }
 
@@ -123,12 +133,27 @@ public abstract class Enemy implements GameListener {
                 this.kill();
             }
         }
-
     }
 
-    private Vector2 getMovementToGotoVector(Vector2 targetVector) {
-        double x = targetVector.getX() > this.entity.getX() ? this.properties.getMovementPerTick() : -this.properties.getMovementPerTick();
-        double z = targetVector.getZ() > this.entity.getZ() ? this.properties.getMovementPerTick() : -this.properties.getMovementPerTick();
+    private Vector2 getMovementToGotoVector(Vector2i targetVector) {
+        double x = 0;
+        if ((int)this.entity.getX() != targetVector.getX()) {
+            if (targetVector.getX() > (int)this.entity.getX()) {
+                x = this.properties.getMovementPerTick();
+            } else {
+                x = -this.properties.getMovementPerTick();
+            }
+        }
+
+        double z = 0;
+        if ((int)this.entity.getZ() != targetVector.getZ()) {
+            if (targetVector.getZ() > this.entity.getZ()) {
+                z = this.properties.getMovementPerTick();
+            } else {
+                z = -this.properties.getMovementPerTick();
+            }
+        }
+
         return new Vector2(x, z);
     }
 

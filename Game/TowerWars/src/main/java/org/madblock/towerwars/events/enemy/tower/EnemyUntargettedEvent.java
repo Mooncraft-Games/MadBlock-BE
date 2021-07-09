@@ -1,8 +1,8 @@
-package org.madblock.towerwars.enemies.events.tower;
+package org.madblock.towerwars.events.enemy.tower;
 
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.enemies.enemy.Enemy;
-import org.madblock.towerwars.enemies.events.EnemyEvent;
+import org.madblock.towerwars.events.enemy.EnemyEvent;
 
 public class EnemyUntargettedEvent extends EnemyEvent {
 

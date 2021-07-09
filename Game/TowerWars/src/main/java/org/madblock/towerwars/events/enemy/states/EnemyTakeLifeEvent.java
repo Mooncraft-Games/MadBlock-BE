@@ -1,8 +1,8 @@
-package org.madblock.towerwars.enemies.events.states;
+package org.madblock.towerwars.events.enemy.states;
 
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.enemies.enemy.Enemy;
-import org.madblock.towerwars.enemies.events.EnemyEvent;
+import org.madblock.towerwars.events.enemy.EnemyEvent;
 
 /**
  * Called when a enemy makes it to the end

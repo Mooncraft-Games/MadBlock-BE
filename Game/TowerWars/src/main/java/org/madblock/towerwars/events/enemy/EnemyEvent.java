@@ -1,4 +1,4 @@
-package org.madblock.towerwars.enemies.events;
+package org.madblock.towerwars.events.enemy;
 
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.enemies.enemy.Enemy;

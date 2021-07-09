@@ -10,7 +10,7 @@ import cn.nukkit.utils.TextFormat;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.menu.MenuParameters;
-import org.madblock.towerwars.towers.events.structure.TowerCreationEvent;
+import org.madblock.towerwars.events.tower.structure.TowerCreationEvent;
 import org.madblock.towerwars.towers.tower.Tower;
 import org.madblock.towerwars.towers.tower.TowerProperties;
 import org.madblock.towerwars.towers.types.TowerType;

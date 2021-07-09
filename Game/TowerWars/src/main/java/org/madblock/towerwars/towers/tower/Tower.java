@@ -5,11 +5,11 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.level.Position;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.enemies.enemy.Enemy;
-import org.madblock.towerwars.enemies.events.tower.EnemyUntargettedEvent;
+import org.madblock.towerwars.events.enemy.tower.EnemyUntargettedEvent;
 import org.madblock.towerwars.events.GameListener;
 import org.madblock.towerwars.towers.effects.TowerEffect;
-import org.madblock.towerwars.towers.events.targets.TowerTargetAttackEvent;
-import org.madblock.towerwars.towers.events.targets.TowerTargetSelectEvent;
+import org.madblock.towerwars.events.tower.targets.TowerTargetAttackEvent;
+import org.madblock.towerwars.events.tower.targets.TowerTargetSelectEvent;
 import org.madblock.towerwars.utils.GameRegion;
 
 import java.util.*;

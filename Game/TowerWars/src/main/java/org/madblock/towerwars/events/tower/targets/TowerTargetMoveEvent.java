@@ -1,9 +1,9 @@
-package org.madblock.towerwars.towers.events.targets;
+package org.madblock.towerwars.events.tower.targets;
 
 import cn.nukkit.level.Position;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.enemies.enemy.Enemy;
-import org.madblock.towerwars.towers.events.TowerEvent;
+import org.madblock.towerwars.events.tower.TowerEvent;
 import org.madblock.towerwars.towers.tower.Tower;
 
 public class TowerTargetMoveEvent extends TowerEvent {
