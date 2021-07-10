@@ -130,7 +130,7 @@ public class TestPathfinderJob {
             if (spacityMap.getSpacityAt(step.getX(), step.getZ()) != targetSpacity) {
                 incorrectSpacities++;
                 if (incorrectSpacities > path.size() / 2) {
-                    // fail("Spacity test failed. Majority of path returned spacity of " + spacityMap.getSpacityAt((int)step.getX(), (int)step.getZ()) + " instead of " + targetSpacity);
+                    fail("Spacity test failed. Majority of path returned spacity of " + spacityMap.getSpacityAt((int)step.getX(), (int)step.getZ()) + " instead of " + targetSpacity);
                 }
             }
         }
