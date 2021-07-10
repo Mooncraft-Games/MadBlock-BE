@@ -42,7 +42,7 @@ public class MenuManager implements Listener {
     public void showMenu(Player player, String menuId, MenuParameters params) {
         if (menuTypes.containsKey(menuId)) {
             this.handlePlayerMenuCleanUp(player);
-            MenuType menu = menuTypes.get(menuId);
+            MenuType<MenuParameters> menu = menuTypes.get(menuId);
             int formId = player.showFormWindow(menu.createFormForPlayer(player, this.behavior, params));
             this.forms.put(formId, menu);
             this.formOwnerships.put(player.getUniqueId(), formId);
@@ -51,7 +51,7 @@ public class MenuManager implements Listener {
         }
     }
 
-    private static void register(MenuType menuType) {
+    private static void register(MenuType<? extends MenuParameters> menuType) {
         menuTypes.put(menuType.getId(), menuType);
     }
 

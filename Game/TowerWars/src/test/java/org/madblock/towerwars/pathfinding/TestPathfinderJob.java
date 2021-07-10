@@ -10,7 +10,9 @@ import org.madblock.newgamesapi.map.types.MapRegion;
 import org.madblock.towerwars.utils.Vector2;
 import org.madblock.towerwars.utils.Vector2i;
 
+import java.util.ArrayDeque;
 import java.util.List;
+import java.util.Queue;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -59,7 +61,7 @@ public class TestPathfinderJob {
                         .setSpacityMap(new SpacityMap(mockChunkManager, boundaries))
                         .build()
         );
-        List<Vector2i> path = pathfinder.get();
+        ArrayDeque<Vector2i> path = new ArrayDeque<>(pathfinder.get());
         for (Vector2i step : path) {
             if (mockChunkManager.getBlockIdAt(step.getX(), 0, step.getZ()) != Block.AIR) {
                 fail("Attempted to walk through wall while pathfinding.");
@@ -67,7 +69,7 @@ public class TestPathfinderJob {
         }
 
         assertTrue(path.size() > 0, "There should be a path found.");
-        Vector2i endPosition = path.get(path.size() - 1);
+        Vector2i endPosition = path.getLast();
         assertTrue(endGoalRegion.isWithinThisRegion(new Vector3(endPosition.getX(), endGoalRegion.getPosLesser().getY(), endPosition.getZ())), "Should be in end goal.");
     }
 
@@ -115,7 +117,7 @@ public class TestPathfinderJob {
                         .build()
         );
 
-        List<Vector2i> path = pathfinder.get();
+        Queue<Vector2i> path = pathfinder.get();
 
         if (path.size() == 0) {
             throw new AssertionError("Spacity test refused to return path. Is pathfinder properly configured?");

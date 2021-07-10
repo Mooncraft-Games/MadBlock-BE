@@ -1,7 +1,6 @@
 package org.madblock.towerwars.enemies.enemy;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
@@ -29,8 +28,7 @@ public abstract class Enemy implements GameListener {
 
     private final List<EnemyEffect> effects = new ArrayList<>();
 
-    private List<Vector2i> path = Collections.emptyList();
-    private int currentPathIndex = 0;
+    private Queue<Vector2i> path = new LinkedList<>();
 
 
     public Enemy(EnemyProperties properties, TowerWarsBehavior behavior, GameRegion gameRegion) {
@@ -72,7 +70,6 @@ public abstract class Enemy implements GameListener {
                 this.cleanUp();
             } else {
                 this.path = path;
-                this.currentPathIndex = 0;
             }
         });
     }
@@ -104,13 +101,9 @@ public abstract class Enemy implements GameListener {
 
     private void doMoveTick() {
         // Use pathfinding to get to next location
-        if (this.path.size() > 0 && this.currentPathIndex < this.path.size()) {
-            Vector2i nextVector = this.path.get(this.currentPathIndex);
-            if ((int)this.entity.getX() == (int)nextVector.getX() && (int)this.entity.getZ() == (int)nextVector.getZ()) {
-                // They already reached their destination. Next index!
-                this.currentPathIndex++;
-                nextVector = this.path.get(this.currentPathIndex);
-            }
+        Vector2i nextVector = this.getNextPath();
+
+        if (nextVector != null) {
             Vector2 movement = this.getMovementToGotoVector(nextVector);
 
             EnemyMoveEvent event = new EnemyMoveEvent(this.behavior, this, movement);
@@ -118,7 +111,7 @@ public abstract class Enemy implements GameListener {
             if (!event.isCancelled()) {
                 Position currentPosition = this.entity.getPosition();
                 Position newPosition = currentPosition.add(event.getMovementVector().getX(), 0, event.getMovementVector().getZ());
-                
+
                 this.entity.setPosition(newPosition);
                 EntityUtils.lookAt(this.entity, new Vector3(nextVector.getX(), this.entity.getY() + 1, nextVector.getZ()));
             }
@@ -135,23 +128,46 @@ public abstract class Enemy implements GameListener {
         }
     }
 
-    private Vector2 getMovementToGotoVector(Vector2i targetVector) {
-        double x = 0;
-        if ((int)this.entity.getX() != targetVector.getX()) {
-            if (targetVector.getX() > (int)this.entity.getX()) {
-                x = this.properties.getMovementPerTick();
-            } else {
-                x = -this.properties.getMovementPerTick();
-            }
+    private Vector2i getNextPath() {
+        if (this.path.peek() == null) {
+            return null;
         }
 
-        double z = 0;
-        if ((int)this.entity.getZ() != targetVector.getZ()) {
-            if (targetVector.getZ() > this.entity.getZ()) {
-                z = this.properties.getMovementPerTick();
-            } else {
-                z = -this.properties.getMovementPerTick();
-            }
+        Vector2i nextPath = this.path.peek();
+        boolean isAtCorrectBlock = this.entity.getFloorX() == nextPath.getX() && this.entity.getFloorZ() == nextPath.getZ();
+
+        // Where are we on the block?
+        double absBlockX = Math.abs(this.entity.getX() % 1);
+        double absBlockZ = Math.abs(this.entity.getZ() % 1);
+        boolean isAtMiddleOfBlock = ((absBlockX > 0.4) && (absBlockX < 0.6)) &&
+                                     ((absBlockZ > 0.4) && (absBlockZ < 0.6));
+
+        if (isAtCorrectBlock && isAtMiddleOfBlock) {
+            this.path.poll();
+            return this.getNextPath();
+        }
+        return nextPath;
+    }
+
+    private Vector2 getMovementToGotoVector(Vector2i targetVector) {
+        double middleOfTargetX = targetVector.getX() + 0.5;
+        double middleOfTargetZ = targetVector.getZ() + 0.5;
+        double distanceToMidX = middleOfTargetX - this.entity.getX();
+        double distanceToMidZ = middleOfTargetZ - this.entity.getZ();
+        double movementSpeed = this.properties.getMovementPerTick();
+
+        double x;
+        if (distanceToMidX > 0) {
+            x = Math.min(movementSpeed, distanceToMidX);
+        } else {
+            x = -Math.min(movementSpeed, -distanceToMidX);
+        }
+
+        double z;
+        if (distanceToMidZ > 0) {
+            z = Math.min(movementSpeed, distanceToMidZ);
+        } else {
+            z = -Math.min(movementSpeed, -distanceToMidZ);
         }
 
         return new Vector2(x, z);

@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class TowerListMenuType implements MenuType<TowerListMenuType.TowerListInternalMenuParameters> {
+public class TowerListMenuType implements MenuType<TowerListMenuType.TowerListMenuParameters> {
 
     public static final String ID = "tower_list_menu";
 
@@ -33,8 +33,7 @@ public class TowerListMenuType implements MenuType<TowerListMenuType.TowerListIn
     }
 
     @Override
-    public FormWindow createFormForPlayer(Player player, TowerWarsBehavior behavior, TowerListInternalMenuParameters params) {
-        TowerListMenuParameters data = params;
+    public FormWindow createFormForPlayer(Player player, TowerWarsBehavior behavior, TowerListMenuParameters params) {
         FormWindowSimple form = new FormWindowSimple("Purchase Tower - " + TextFormat.GOLD + behavior.getBalance(player) + " " + Utility.ResourcePackCharacters.COIN, "");
 
         // Lowest to highest in cost, if they have the same cost sort alphabetically.
@@ -53,7 +52,7 @@ public class TowerListMenuType implements MenuType<TowerListMenuType.TowerListIn
             form.addButton(button);
         }
 
-        this.openMenus.put(player.getUniqueId(), new TowerListInternalMenuParameters(data.getBuildPosition(), types));
+        this.openMenus.put(player.getUniqueId(), new TowerListInternalMenuParameters(params.getBuildPosition(), types));
         return form;
     }
 

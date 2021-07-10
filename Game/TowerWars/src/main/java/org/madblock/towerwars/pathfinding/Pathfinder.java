@@ -38,7 +38,7 @@ public class Pathfinder implements Listener {
      * @param currentPosition Where we are currently
      * @return the positions to goto starting from currentPosition
      */
-    public CompletableFuture<List<Vector2i>> solve(GameRegion gameRegion, Vector3 currentPosition) {
+    public CompletableFuture<Queue<Vector2i>> solve(GameRegion gameRegion, Vector3 currentPosition) {
         // Make sure the chunks stay loaded throughout our pathfinding
         Set<FullChunk> loadedChunks = this.loadChunks(gameRegion.getPlayArea());
         this.usedChunks.addAll(loadedChunks);
@@ -59,6 +59,7 @@ public class Pathfinder implements Listener {
                     loadedChunks.forEach(this.usedChunks::remove);
                     return bestPath;
                 });
+
     }
 
     /**

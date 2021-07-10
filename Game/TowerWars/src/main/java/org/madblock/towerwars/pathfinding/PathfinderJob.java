@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * If there is a node that meets the spacity requirement, it will ignore any adjacent nodes that do not meet this requirement as to ensure we stay in our spacity lane.
  * If there is no node that meets the spacity requirements, it will choose the node with the lowest score.
  */
-public class PathfinderJob implements Supplier<List<Vector2i>> {
+public class PathfinderJob implements Supplier<Queue<Vector2i>> {
 
     private static final Vector2i[] POSSIBLE_MOVE_ADJUSTMENTS = new Vector2i[]{
             new Vector2i(0, -1), // Up
@@ -46,8 +46,8 @@ public class PathfinderJob implements Supplier<List<Vector2i>> {
 
     // Find the path to take
     @Override
-    public List<Vector2i> get() {
-        Vector2i initialPosition = new Vector2i(this.settings.getInitialPosition().getFloorX(), (int)this.settings.getInitialPosition().getFloorZ());
+    public Queue<Vector2i> get() {
+        Vector2i initialPosition = new Vector2i(this.settings.getInitialPosition().getFloorX(), this.settings.getInitialPosition().getFloorZ());
         this.targetSpacity = this.getSpacity(initialPosition);  // Spacity to follow
 
         Node currentNode = new Node(
@@ -87,7 +87,7 @@ public class PathfinderJob implements Supplier<List<Vector2i>> {
             }
             return orders;
         } else {
-            return Collections.emptyList();
+            return new LinkedList<>();
         }
     }
 

@@ -1,11 +1,7 @@
 package org.madblock.towerwars.behaviors;
 
 import cn.nukkit.Player;
-import cn.nukkit.event.EventHandler;
-import cn.nukkit.event.player.PlayerChatEvent;
 import org.madblock.newgamesapi.team.Team;
-import org.madblock.towerwars.enemies.enemy.Enemy;
-import org.madblock.towerwars.enemies.types.SilverfishEnemyType;
 import org.madblock.towerwars.utils.GameRegion;
 
 import java.util.HashMap;
@@ -17,15 +13,6 @@ public class TowerWarsSoloBehavior extends TowerWarsBehavior {
     private final Map<UUID, Integer> lives = new HashMap<>();
     private final Map<UUID, Integer> balances = new HashMap<>();
 
-
-    @EventHandler
-    public void test(PlayerChatEvent event) {
-        Enemy enemy = this.getEnemyRegistry().getEnemyType(SilverfishEnemyType.ID)
-                .create(this.getPlayerGameRegion(event.getPlayer()));
-        enemy.spawn(event.getPlayer().getPosition());
-        this.addEnemy(enemy);
-        event.getPlayer().sendMessage("spawned");
-    }
 
     @Override
     public Team.GenericTeamBuilder[] getTeams() {
