@@ -1,6 +1,8 @@
 package org.madblock.towerwars.behaviors;
 
 import cn.nukkit.Player;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.map.types.MapRegion;
@@ -36,7 +38,7 @@ public abstract class TowerWarsBehavior extends GameBehavior {
     private final Set<Tower> activeTowers = new HashSet<>();
 
     // Mapped by teamId
-    protected final Map<String, GameRegion> gameRegions = new HashMap<>();
+    protected final BiMap<String, GameRegion> gameRegions = HashBiMap.create();
 
 
     public TowerWarsBehavior() {
@@ -207,11 +209,17 @@ public abstract class TowerWarsBehavior extends GameBehavior {
 
     protected void updateScoreboardTask() {
         for (Player player : this.getActivePlayers()) {
-            // Gold
-            this.getSessionHandler().getScoreboardManager().setLine(player, 0, Utility.ResourcePackCharacters.COIN + " " + this.getBalance(player));
-            // Lives
-            this.getSessionHandler().getScoreboardManager().setLine(player, 1, Utility.ResourcePackCharacters.HEART_FULL + " " + this.getLives(player));
+            this.updateScoreboardCoinsFor(player);
+            this.updateScoreboardLivesFor(player);
         }
+    }
+
+    protected void updateScoreboardCoinsFor(Player player) {
+        this.getSessionHandler().getScoreboardManager().setLine(player, 0, Utility.ResourcePackCharacters.COIN + " " + this.getBalance(player));
+    }
+
+    protected void updateScoreboardLivesFor(Player player) {
+        this.getSessionHandler().getScoreboardManager().setLine(player, 1, Utility.ResourcePackCharacters.HEART_FULL + " " + this.getLives(player));
     }
 
     private void gameTick() {

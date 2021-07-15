@@ -4,9 +4,7 @@ import cn.nukkit.Player;
 import org.madblock.newgamesapi.team.Team;
 import org.madblock.towerwars.utils.GameRegion;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class TowerWarsSoloBehavior extends TowerWarsBehavior {
 
@@ -46,11 +44,13 @@ public class TowerWarsSoloBehavior extends TowerWarsBehavior {
     @Override
     public void setLives(Player player, int lives) {
         this.lives.put(player.getUniqueId(), lives);
+        this.updateScoreboardLivesFor(player);
     }
 
     @Override
     public void setBalance(Player player, int balance) {
         this.balances.put(player.getUniqueId(), balance);
+        this.updateScoreboardCoinsFor(player);
     }
 
     @Override
@@ -68,6 +68,12 @@ public class TowerWarsSoloBehavior extends TowerWarsBehavior {
 
     @Override
     public Player getGameRegionOwner(GameRegion gameRegion) {
+        String teamId = this.gameRegions.inverse().get(gameRegion);
+        Set<Player> players = this.getSessionHandler().getTeams().get(teamId).getPlayers();
+        Iterator<Player> iterator = players.iterator();
+        if (iterator.hasNext()) {
+            return iterator.next();
+        }
         return null;
     }
 }
