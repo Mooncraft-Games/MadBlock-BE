@@ -34,6 +34,10 @@ public abstract class Tower implements GameListener, Listener {
         behavior.getEventManager().register(this);
     }
 
+    public TowerProperties getProperties() {
+        return this.properties;
+    }
+
     public void build(Position position) {
         this.entity = this.createEntity(position);
     }
