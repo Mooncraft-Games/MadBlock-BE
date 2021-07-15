@@ -8,6 +8,7 @@ import org.madblock.newgamesapi.team.Team;
 import org.madblock.towerwars.TowerWarsPlugin;
 import org.madblock.towerwars.enemies.EnemyRegistry;
 import org.madblock.towerwars.enemies.enemy.Enemy;
+import org.madblock.towerwars.enemies.types.EnemyType;
 import org.madblock.towerwars.enemies.types.SilverfishEnemyType;
 import org.madblock.towerwars.events.EventManager;
 import org.madblock.towerwars.menu.MenuManager;
@@ -103,6 +104,23 @@ public abstract class TowerWarsBehavior extends GameBehavior {
     public List<TowerType> getUnlockedTowerTypes(Player player) {
         // TODO: Implement calculation for figuring out what towers are unlocked
         return new ArrayList<>(this.getTowerRegistry().getTypes());
+    }
+
+    public List<EnemyType> getUnlockedEnemyTypes(Player player) {
+        return new ArrayList<>(this.getEnemyRegistry().getTypes());
+    }
+
+    public List<Player> getActivePlayers() {
+        return this.getSessionHandler().getPlayers().stream()
+                .filter(p -> this.getSessionHandler().getPlayerTeam(p).filter(Team::isActiveGameTeam).isPresent())
+                .collect(Collectors.toList());
+    }
+
+    public Set<GameRegion> getActiveGameRegions() {
+        return this.gameRegions.values()
+                .stream()
+                .filter(gameRegion -> this.getActivePlayers().contains(this.getGameRegionOwner(gameRegion)))
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -201,12 +219,6 @@ public abstract class TowerWarsBehavior extends GameBehavior {
                 .forEachRemaining(Tower::tick);
         this.activeEnemies.iterator()
                 .forEachRemaining(Enemy::tick);
-    }
-
-    private List<Player> getActivePlayers() {
-        return this.getSessionHandler().getPlayers().stream()
-                .filter(p -> this.getSessionHandler().getPlayerTeam(p).filter(Team::isActiveGameTeam).isPresent())
-                .collect(Collectors.toList());
     }
 
 }

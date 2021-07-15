@@ -20,9 +20,24 @@ public class SilverfishEnemyType extends EnemyType {
     }
 
     @Override
+    public String getName() {
+        return "Silverfish";
+    }
+
+    @Override
+    public String getDescription() {
+        return "yeah, this is a silverfish. Pretty pog am I right?";
+    }
+
+    @Override
     public EnemyProperties getProperties() {
         return new EnemyProperties.Builder()
                 .setMovementSpeedPerTick(1 / 5d).build();
+    }
+
+    @Override
+    public int getCost() {
+        return 0;
     }
 
     @Override

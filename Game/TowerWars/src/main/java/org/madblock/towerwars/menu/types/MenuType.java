@@ -31,7 +31,7 @@ public interface MenuType<P extends MenuParameters> {
     void handlePlayerResponse(Player player, TowerWarsBehavior behavior, FormResponse response);
 
     /**
-     * Called if the player leaves with a active menu, if the menu is closed without a response.
+     * Called if the player leaves with a active menu or if the menu is closed without a response.
      * @param player
      */
     void cleanUp(Player player, TowerWarsBehavior behavior);

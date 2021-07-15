@@ -15,7 +15,7 @@ public class EnemyRegistry {
         return this.enemyTypes.get(enemyTypeId);
     }
 
-    public Set<EnemyType> getEnemyTypes() {
+    public Set<EnemyType> getTypes() {
         return new HashSet<>(this.enemyTypes.values());
     }
 

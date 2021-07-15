@@ -1,15 +1,14 @@
 package org.madblock.towerwars.menu;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import org.madblock.towerwars.TowerWarsPlugin;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
-import org.madblock.towerwars.menu.types.MenuType;
-import org.madblock.towerwars.menu.types.TowerListMenuType;
-import org.madblock.towerwars.menu.types.TowerPurchaseMenuType;
+import org.madblock.towerwars.menu.types.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,12 +26,14 @@ public class MenuManager implements Listener {
     static {
         register(new TowerPurchaseMenuType());
         register(new TowerListMenuType());
+        register(new MonsterListMenuType());
+        register(new MonsterPurchaseMenuType());
     }
 
 
     public MenuManager(TowerWarsBehavior behavior) {
         this.behavior = behavior;
-        TowerWarsPlugin.get().getServer().getPluginManager().registerEvents(this, TowerWarsPlugin.get());
+        Server.getInstance().getPluginManager().registerEvents(this, TowerWarsPlugin.get());
     }
 
     public void showMenu(Player player, String menuId) {

@@ -11,6 +11,7 @@ import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.kits.ExtendedKit;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
+import org.madblock.towerwars.menu.types.MonsterListMenuType;
 import org.madblock.towerwars.menu.types.TowerListMenuType;
 
 public class DefaultKitFeatures extends ExtendedKit {
@@ -65,6 +66,7 @@ public class DefaultKitFeatures extends ExtendedKit {
                         event.getPlayer().sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, "Sorry, you can only use this during the game.", TextFormat.RED));
                         return;
                     }
+                    behavior.getMenuManager().showMenu(event.getPlayer(), MonsterListMenuType.ID);
                     break;
             }
 

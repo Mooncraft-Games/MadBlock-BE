@@ -59,7 +59,6 @@ public class TowerListMenuType implements MenuType<TowerListMenuType.TowerListMe
     @Override
     public void handlePlayerResponse(Player player, TowerWarsBehavior behavior, FormResponse response) {
         FormResponseSimple simpleResponse = (FormResponseSimple)response;
-
         TowerListInternalMenuParameters menuParameters = this.openMenus.get(player.getUniqueId());
         TowerType chosenType = menuParameters.getTowers().get(simpleResponse.getClickedButtonId());
         this.openMenus.remove(player.getUniqueId());

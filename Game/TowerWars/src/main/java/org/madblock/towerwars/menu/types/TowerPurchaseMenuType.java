@@ -10,7 +10,7 @@ import cn.nukkit.utils.TextFormat;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.menu.MenuParameters;
-import org.madblock.towerwars.events.tower.structure.TowerCreationEvent;
+import org.madblock.towerwars.events.tower.states.TowerCreationEvent;
 import org.madblock.towerwars.towers.tower.Tower;
 import org.madblock.towerwars.towers.tower.TowerProperties;
 import org.madblock.towerwars.towers.types.TowerType;
@@ -33,10 +33,7 @@ public class TowerPurchaseMenuType implements MenuType<TowerPurchaseMenuType.Tow
 
     @Override
     public FormWindow createFormForPlayer(Player player, TowerWarsBehavior behavior, TowerPurchaseMenuParameters params) {
-        TowerPurchaseMenuParameters menuParameters = (TowerPurchaseMenuParameters)params;
-        TowerType towerType = menuParameters.getTowerType();
-        Position buildPosition = menuParameters.getBuildPosition();
-
+        TowerType towerType = params.getTowerType();
         TowerProperties properties = towerType.getTowerProperties();
 
         String formContent = towerType.getDescription() + "\n" +
@@ -53,7 +50,7 @@ public class TowerPurchaseMenuType implements MenuType<TowerPurchaseMenuType.Tow
                 "Cancel"
         );
 
-        this.openMenus.put(player.getUniqueId(), menuParameters);
+        this.openMenus.put(player.getUniqueId(), params);
         return form;
     }
 
@@ -63,7 +60,7 @@ public class TowerPurchaseMenuType implements MenuType<TowerPurchaseMenuType.Tow
         if (formResponse.getClickedButtonId() == 0) {
             // Build
             TowerPurchaseMenuParameters data = this.openMenus.get(player.getUniqueId());
-            this.cleanUp(player, behavior);
+            this.openMenus.remove(player.getUniqueId());
 
             if (behavior.getBalance(player) < data.getTowerType().getCost()) {
                 player.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, "You do not have enough gold!", TextFormat.RED));

@@ -1,6 +1,5 @@
 package org.madblock.towerwars.enemies.types;
 
-import org.madblock.newgamesapi.map.types.MapRegion;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.enemies.enemy.Enemy;
 import org.madblock.towerwars.enemies.enemy.EnemyProperties;
@@ -15,7 +14,11 @@ public abstract class EnemyType {
     }
 
     public abstract String getId();
+    public abstract String getName();
+    public abstract String getDescription();
     public abstract EnemyProperties getProperties();
+
+    public abstract int getCost();
 
     public abstract Enemy create(GameRegion gameRegion);
 
