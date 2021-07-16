@@ -8,7 +8,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.events.TWEventHandler;
-import org.madblock.towerwars.events.tower.targets.TowerTargetMoveEvent;
+import org.madblock.towerwars.events.enemy.states.EnemyMoveEvent;
 import org.madblock.towerwars.events.tower.targets.TowerTargetSelectEvent;
 import org.madblock.towerwars.towers.tower.Tower;
 import org.madblock.towerwars.towers.tower.TowerProperties;
@@ -47,6 +47,7 @@ public class ArcherTower extends Tower {
                 this.getEntity().setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_FIRE_IMMUNE);
             } else {
                 // Bring bow to attacking position
+                EntityUtils.lookAt(this.getEntity(), event.getTarget().getEntity());
                 this.getEntity().setDataProperty(new LongEntityData(Entity.DATA_TARGET_EID, event.getTarget().getEntity().getId()));
                 this.getEntity().setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK + Entity.DATA_FLAG_FIRE_IMMUNE);
             }
@@ -54,9 +55,9 @@ public class ArcherTower extends Tower {
     }
 
     @TWEventHandler
-    public void onTargetMove(TowerTargetMoveEvent event) {
-        if (this.equals(event.getTower())) {
-            EntityUtils.lookAt(this.getEntity(), event.getTarget().getEntity());
+    public void onTargetMove(EnemyMoveEvent event) {
+        if (this.getTargets().contains(event.getEnemy())) {
+            EntityUtils.lookAt(this.getEntity(), event.getEnemy().getEntity());
         }
     }
 

@@ -71,6 +71,10 @@ public abstract class Tower implements GameListener, Listener {
         return Collections.unmodifiableList(this.effects);
     }
 
+    public Set<Enemy> getTargets() {
+        return this.targets;
+    }
+
     public TowerWarsBehavior getBehavior() {
         return this.behavior;
     }
