@@ -1,6 +1,5 @@
 package org.madblock.towerwars.enemies.enemy;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
@@ -112,8 +111,13 @@ public abstract class Enemy implements GameListener {
                 Position currentPosition = this.entity.getPosition();
                 Position newPosition = currentPosition.add(event.getMovementVector().getX(), 0, event.getMovementVector().getZ());
 
+                // Update enemy location and rotation
+                // Bedrock entities don't update their rotation immediately unfortunately so we have to assume their direction.
                 this.entity.setPosition(newPosition);
-                EntityUtils.lookAt(this.entity, new Vector3(nextVector.getX(), this.entity.getY() + 1, nextVector.getZ()));
+                EntityUtils.lookAt(this.entity, new Vector3(
+                    nextVector.getX() + (event.getMovementVector().getX() * 50),
+                    this.entity.getY() + 1,
+                    nextVector.getZ() + (event.getMovementVector().getZ() * 50)));
             }
         }
 
