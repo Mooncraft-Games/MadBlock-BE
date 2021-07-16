@@ -40,7 +40,7 @@ public class ArcherTower extends Tower {
 
     @TWEventHandler
     public void onTarget(TowerTargetSelectEvent event) {
-        if (event.getTower() == this) {
+        if (this.equals(event.getTower())) {
             if (event.getTarget() == null) {
                 // Bring bow back to non-attacking position
                 this.getEntity().setDataProperty(new LongEntityData(Entity.DATA_TARGET_EID, 0));
@@ -55,7 +55,7 @@ public class ArcherTower extends Tower {
 
     @TWEventHandler
     public void onTargetMove(TowerTargetMoveEvent event) {
-        if (event.getTower() == this) {
+        if (this.equals(event.getTower())) {
             EntityUtils.lookAt(this.getEntity(), event.getTarget().getEntity());
         }
     }

@@ -34,7 +34,7 @@ public class EventManager {
         for (GameListener listener : listeners) {
             for (Method method : getValidEventMethods(listener.getClass(), event)) {
                 try {
-                    method.invoke(this, event);
+                    method.invoke(listener, event);
                 } catch (IllegalAccessException | InvocationTargetException exception) {
                     TowerWarsPlugin.get().getLogger().error("An error occurred while triggering a GameEvent: " + event.getClass().getName(), exception);
                 }
