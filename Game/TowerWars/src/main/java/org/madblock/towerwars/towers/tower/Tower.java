@@ -101,29 +101,39 @@ public abstract class Tower implements GameListener, Listener {
         Set<Enemy> enemies = this.behavior.getActiveEnemies(this.gameRegion);
         Set<Enemy> targets = this.properties.getEnemySelector().getTargets(this, enemies);
         if (!targets.equals(this.targets)) {    // Only trigger event if new targets are chosen
+            // Call unselecting event for all of the targets that are going to be removed before calling the selecting event
 
             // Select all new towers
             Set<Enemy> newTargets = new HashSet<>();
             for (Enemy target : targets) {
                 if (!this.targets.contains(target)) {
-                    TowerTargetSelectEvent event = new TowerTargetSelectEvent(this.behavior, this, target);
-                    this.getBehavior().getEventManager().callEvent(event);
-                    if (!event.isCancelled()) {
-                        newTargets.add(target);
-                    }
+                    newTargets.add(target);
                 }
             }
 
-            // Remove old towers that are no longer selected
+            // Try to unselect our old targets that aren't in newTargets
+            Set<Enemy> keepTargets = new HashSet<>();   // targets to keep due to unselect event getting cancelled
             this.targets.stream()
                     .filter(target -> !newTargets.contains(target))
                     .forEach(target -> {
                         TowerTargetUnselectedEvent event = new TowerTargetUnselectedEvent(this.behavior, this, target);
                         this.getBehavior().getEventManager().callEvent(event);
                         if (event.isCancelled()) {
-                            newTargets.add(target);
+                            keepTargets.add(target); // This tower should remain selected
                         }
                     });
+
+            Iterator<Enemy> newTargetsIterator = newTargets.iterator();
+            while (newTargetsIterator.hasNext()) {
+                Enemy target = newTargetsIterator.next();
+                TowerTargetSelectEvent event = new TowerTargetSelectEvent(this.behavior, this, target);
+                this.getBehavior().getEventManager().callEvent(event);
+                if (event.isCancelled()) {
+                    newTargetsIterator.remove();
+                }
+            }
+
+            newTargets.addAll(keepTargets);
             this.targets = newTargets;
         }
 
