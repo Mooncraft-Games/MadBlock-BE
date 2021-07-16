@@ -10,6 +10,7 @@ import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.events.TWEventHandler;
 import org.madblock.towerwars.events.enemy.states.EnemyMoveEvent;
 import org.madblock.towerwars.events.tower.targets.TowerTargetSelectEvent;
+import org.madblock.towerwars.events.tower.targets.TowerTargetUnselectedEvent;
 import org.madblock.towerwars.towers.tower.Tower;
 import org.madblock.towerwars.towers.tower.TowerProperties;
 import org.madblock.towerwars.utils.EntityUtils;
@@ -41,16 +42,19 @@ public class ArcherTower extends Tower {
     @TWEventHandler
     public void onTarget(TowerTargetSelectEvent event) {
         if (this.equals(event.getTower())) {
-            if (event.getTarget() == null) {
-                // Bring bow back to non-attacking position
-                this.getEntity().setDataProperty(new LongEntityData(Entity.DATA_TARGET_EID, 0));
-                this.getEntity().setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_FIRE_IMMUNE);
-            } else {
-                // Bring bow to attacking position
-                EntityUtils.lookAt(this.getEntity(), event.getTarget().getEntity());
-                this.getEntity().setDataProperty(new LongEntityData(Entity.DATA_TARGET_EID, event.getTarget().getEntity().getId()));
-                this.getEntity().setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK + Entity.DATA_FLAG_FIRE_IMMUNE);
-            }
+            // Bring bow to attacking position
+            EntityUtils.lookAt(this.getEntity(), event.getTarget().getEntity());
+            this.getEntity().setDataProperty(new LongEntityData(Entity.DATA_TARGET_EID, event.getTarget().getEntity().getId()));
+            this.getEntity().setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK + Entity.DATA_FLAG_FIRE_IMMUNE);
+        }
+    }
+
+    @TWEventHandler
+    public void onUntarget(TowerTargetUnselectedEvent event) {
+        if (this.equals(event.getTower())) {
+            // Bring bow back to non-attacking position
+            this.getEntity().setDataProperty(new LongEntityData(Entity.DATA_TARGET_EID, 0));
+            this.getEntity().setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_FIRE_IMMUNE);
         }
     }
 

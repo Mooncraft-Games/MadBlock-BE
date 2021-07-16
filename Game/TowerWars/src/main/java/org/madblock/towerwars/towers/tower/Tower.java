@@ -5,7 +5,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.level.Position;
 import org.madblock.towerwars.behaviors.TowerWarsBehavior;
 import org.madblock.towerwars.enemies.enemy.Enemy;
-import org.madblock.towerwars.events.enemy.tower.EnemyUntargettedEvent;
+import org.madblock.towerwars.events.tower.targets.TowerTargetUnselectedEvent;
 import org.madblock.towerwars.events.GameListener;
 import org.madblock.towerwars.towers.effects.TowerEffect;
 import org.madblock.towerwars.events.tower.targets.TowerTargetAttackEvent;
@@ -58,7 +58,7 @@ public abstract class Tower implements GameListener, Listener {
         this.entity.kill();
         this.getBehavior().getEventManager().unregister(this);
         for (Enemy target : this.targets) {
-            EnemyUntargettedEvent event = new EnemyUntargettedEvent(this.behavior, target);
+            TowerTargetUnselectedEvent event = new TowerTargetUnselectedEvent(this.behavior, this, target);
             this.behavior.getEventManager().callEvent(event);
         }
     }
@@ -118,7 +118,7 @@ public abstract class Tower implements GameListener, Listener {
             this.targets.stream()
                     .filter(target -> !newTargets.contains(target))
                     .forEach(target -> {
-                        EnemyUntargettedEvent event = new EnemyUntargettedEvent(this.behavior, target);
+                        TowerTargetUnselectedEvent event = new TowerTargetUnselectedEvent(this.behavior, this, target);
                         this.getBehavior().getEventManager().callEvent(event);
                         if (event.isCancelled()) {
                             newTargets.add(target);
