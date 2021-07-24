@@ -13,6 +13,7 @@ import cn.nukkit.event.entity.EntitySpawnEvent;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
+import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.plugin.PluginLogger;
 import cn.nukkit.utils.TextFormat;
@@ -30,6 +31,7 @@ import org.madblock.newgamesapi.kits.builtingroup.KitFinalSpectator;
 import org.madblock.newgamesapi.kits.hub.KitHub;
 import org.madblock.newgamesapi.kits.hub.KitHubBuilder;
 import org.madblock.newgamesapi.map.MapManager;
+import org.madblock.newgamesapi.packet.AnimateEntityPacket;
 import org.madblock.newgamesapi.registry.GameRegistry;
 import org.madblock.newgamesapi.registry.KitRegistry;
 import org.madblock.newgamesapi.registry.LibraryRegistry;
@@ -160,6 +162,8 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.getServer().getCommandMap().register("ngapi", new CommandSuper());
         this.getServer().getCommandMap().register("ngapi", new CommandFirework());
         this.getServer().getCommandMap().register("ngapi", new CommandLeaveQueue());
+
+        this.getServer().getNetwork().registerPacket(ProtocolInfo.ANIMATE_ENTITY_PACKET, AnimateEntityPacket.class);
 
 
 
