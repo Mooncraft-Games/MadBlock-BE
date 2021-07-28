@@ -1,6 +1,6 @@
 rootProject.name = 'MadBlockServer'
 include 'Tool:NGAPI', 'Tool:Database', 'Tool:PlayerRegistry', 'Tool:StatTrackAPI',
         'Component:Ranks', 'Component:Punishments', 'Component:Social',
-        'Game:BlockSwap', 'Game:SumoX', 'Game:TowerWars', 'Game:SkyWars',
+        'Game:CrystalWars', 'Game:BlockSwap', 'Game:SumoX', 'Game:TowerWars', 'Game:SkyWars',
         'External:NukkitTables', 'External:ScoreboardAPI'
 
