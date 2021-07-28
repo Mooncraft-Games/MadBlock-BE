@@ -79,7 +79,7 @@ public class GameEventListeners implements Listener {
 
 
                 Vector3 directionVector = event.getPlayer().getDirectionVector();
-                event.getPlayer().setMotion(new Vector3(directionVector.getX(), Math.abs(directionVector.getY()), directionVector.getZ()).multiply(BlockSwapConstants.LEAP_STRENGTH));
+                event.getPlayer().setMotion(new Vector3(directionVector.getX(), Math.abs(directionVector.getY()) / 2, directionVector.getZ()).multiply(BlockSwapConstants.LEAP_STRENGTH));
 
                 int itemIndex = event.getPlayer().getInventory().getHeldItemIndex();
                 behaviour.getSessionHandler().getGameScheduler().registerGameTask(() -> {
