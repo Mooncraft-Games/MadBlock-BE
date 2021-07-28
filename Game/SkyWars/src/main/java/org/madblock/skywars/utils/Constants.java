@@ -20,8 +20,8 @@ public class Constants {
             TNTPowerUp.class,
             LeapPowerUp.class,
             EscapePowerUp.class,
-            GiantSnowBallPowerUp.class,
-            DelusionalPowerUp.class
+            GiantSnowBallPowerUp.class
+            //DelusionalPowerUp.class
     ));
 
     public static final int MINIMUM_PLAYERS = 2;
