@@ -103,10 +103,10 @@ public class KitHub extends Kit {
                 hubselector,
                 leap, // Leap feather
                 new BlockAir().toItem(),
-                friends,
+                new BlockAir().toItem(),
+                new BlockAir().toItem(),
                 crates,
                 wardrobe,
-                new BlockAir().toItem(),
                 changelog,
                 discord
         };
