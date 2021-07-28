@@ -29,16 +29,18 @@ import org.madblock.newgamesapi.team.Team;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author Nicholas
  */
 public abstract class ShopPointEntity extends PointEntityType implements Listener {
     public static final String SHOP_DIRECTION_PROPERTY = "direction";
+    public static final String NBT_SHOP_ID = "crystalwars_shop_id";
 
     protected final String entityTypeId;
 
-    protected final BiMap<PointEntity, Entity> shopEntities = HashBiMap.create();
+    protected final BiMap<PointEntity, String> shopEntities = HashBiMap.create();
 
     protected final Set<Integer> openPlayerGuis = new HashSet<>();
 
@@ -64,9 +66,11 @@ public abstract class ShopPointEntity extends PointEntityType implements Listene
     public void onAddPointEntity(PointEntity entity) {
         super.onAddPointEntity(entity);
 
+        String shopId = UUID.randomUUID().toString();
         Entity shopEntity = Entity.createEntity(EntityVillager.NETWORK_ID, new Position(entity.getX(), entity.getY(), entity.getZ(), gameHandler.getPrimaryMap()));
         shopEntity.setNameTagAlwaysVisible(true);
         shopEntity.setNameTag(getShopNameHeader() + "\n" + getShopNameFooter());
+        shopEntity.namedTag.putString(NBT_SHOP_ID, shopId);
         int yaw;
         switch (entity.getStringProperties().getOrDefault(SHOP_DIRECTION_PROPERTY, "north").toLowerCase()) {
             case "north":
@@ -88,16 +92,12 @@ public abstract class ShopPointEntity extends PointEntityType implements Listene
         }
         shopEntity.setRotation(yaw, 0);
         shopEntity.spawnToAll();
-        shopEntities.put(entity, shopEntity);
+        shopEntities.put(entity, shopId);
     }
 
     @Override
     public void onRemovePointEntity(PointEntity entity) {
         super.onRemovePointEntity(entity);
-        if (shopEntities.containsKey(entity)) {
-            shopEntities.get(entity).despawnFromAll();
-            shopEntities.remove(entity);
-        }
     }
 
     @EventHandler
@@ -112,7 +112,7 @@ public abstract class ShopPointEntity extends PointEntityType implements Listene
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (shopEntities.inverse().containsKey(event.getEntity()))
+        if (shopEntities.inverse().containsKey(event.getEntity().namedTag.getString(NBT_SHOP_ID)))
             event.setCancelled(true);
     }
 
@@ -155,7 +155,7 @@ public abstract class ShopPointEntity extends PointEntityType implements Listene
             Optional<Team> playerTeam = gameHandler.getPlayerTeam((Player)playerEntity);
             return playerTeam.filter(Team::isActiveGameTeam).isPresent() &&
                     gameHandler.getPlayers().contains(playerEntity) &&
-                    shopEntities.inverse().containsKey(shopEntity);
+                    shopEntities.inverse().containsKey(shopEntity.namedTag.getString(NBT_SHOP_ID));
         } else {
             return false;
         }
