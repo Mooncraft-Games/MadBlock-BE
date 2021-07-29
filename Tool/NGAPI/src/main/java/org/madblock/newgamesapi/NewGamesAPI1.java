@@ -2,6 +2,7 @@ package org.madblock.newgamesapi;
 
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -31,7 +32,8 @@ import org.madblock.newgamesapi.kits.builtingroup.KitFinalSpectator;
 import org.madblock.newgamesapi.kits.hub.KitHub;
 import org.madblock.newgamesapi.kits.hub.KitHubBuilder;
 import org.madblock.newgamesapi.map.MapManager;
-import org.madblock.newgamesapi.packet.AnimateEntityPacket;
+import org.madblock.newgamesapi.nukkit.entity.EntityHumanPlus;
+import org.madblock.newgamesapi.nukkit.packet.AnimateEntityPacket;
 import org.madblock.newgamesapi.registry.GameRegistry;
 import org.madblock.newgamesapi.registry.KitRegistry;
 import org.madblock.newgamesapi.registry.LibraryRegistry;
@@ -164,7 +166,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.getServer().getCommandMap().register("ngapi", new CommandLeaveQueue());
 
         this.getServer().getNetwork().registerPacket(ProtocolInfo.ANIMATE_ENTITY_PACKET, AnimateEntityPacket.class);
-
+        Entity.registerEntity("human_plus", EntityHumanPlus.class);
 
 
         if(loadConfiguartion()) {

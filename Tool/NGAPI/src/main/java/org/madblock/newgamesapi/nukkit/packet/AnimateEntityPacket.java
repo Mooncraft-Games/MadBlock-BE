@@ -1,4 +1,4 @@
-package org.madblock.newgamesapi.packet;
+package org.madblock.newgamesapi.nukkit.packet;
 
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
