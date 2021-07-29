@@ -12,6 +12,7 @@ import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;
 import org.madblock.newgamesapi.map.types.PointEntity;
+import org.madblock.newgamesapi.nukkit.entity.EntityHumanPlus;
 import org.madblock.newgamesapi.nukkit.packet.AnimateEntityPacket;
 
 import java.util.ArrayList;
@@ -67,8 +68,8 @@ public class PointEntityTypeInteractableNPC extends PointEntityTypeNPC {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDamage(EntityDamageByEntityEvent event){
-        if(event.getEntity() instanceof EntityHuman && event.getDamager() instanceof Player){
-            EntityHuman human = (EntityHuman) event.getEntity();
+        if(event.getEntity() instanceof EntityHumanPlus && event.getDamager() instanceof Player){
+            EntityHumanPlus human = (EntityHumanPlus) event.getEntity();
             Player player = (Player) event.getDamager();
             String uuidloc = human.namedTag.getString(getPersistentUuidNbtLocation());
             if(!uuidloc.equals("")) {

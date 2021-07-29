@@ -22,6 +22,7 @@ import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.map.pointentities.PointEntityType;
 import org.madblock.newgamesapi.map.types.PointEntity;
+import org.madblock.newgamesapi.nukkit.entity.EntityHumanPlus;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -37,7 +38,7 @@ import java.util.UUID;
 public abstract class PointEntityTypeNPC extends PointEntityType implements Listener {
 
     protected BiMap<PointEntity, UUID> npcIDs;
-    protected HashMap<PointEntity, EntityHuman> lastInstances;
+    protected HashMap<PointEntity, EntityHumanPlus> lastInstances;
 
     public PointEntityTypeNPC(String id, GameHandler gameHandler) {
         super(id, gameHandler);
@@ -64,7 +65,7 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
             Level npcLevel = getParentManager().getLevelLookup().get(entity);
 
             if (lastInstances.containsKey(entity)) {
-                EntityHuman npc = lastInstances.get(entity);
+                EntityHumanPlus npc = lastInstances.get(entity);
                 npc.getLevel().removeEntity(npc);
             }
 
@@ -116,7 +117,7 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
             nbt.putCompound("Skin", skinDataTag);
             nbt.putBoolean("ishuman", true);
             // -- END snippet --
-            EntityHuman newHuman = new EntityHuman(chunk, nbt);
+            EntityHumanPlus newHuman = new EntityHumanPlus(chunk, nbt);
             newHuman.setPositionAndRotation(position, entity.getYaw(), entity.getPitch());
             newHuman.setImmobile(true);
             newHuman.setSneaking(entity.getBooleanProperties().getOrDefault("sneaking", false));
@@ -213,8 +214,8 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
 
     @EventHandler
     public void onDamage(EntityDamageEvent event){
-        if(event.getEntity() instanceof EntityHuman){
-            EntityHuman human = (EntityHuman) event.getEntity();
+        if(event.getEntity() instanceof EntityHumanPlus){
+            EntityHumanPlus human = (EntityHumanPlus) event.getEntity();
             String uuidloc = human.namedTag.getString(getPersistentUuidNbtLocation());
             if(!uuidloc.equals("")) {
                 UUID uuid = UUID.fromString(uuidloc);
@@ -230,8 +231,8 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
     // If the entity is respawned we need should update the last instance of it
     @EventHandler
     public void onNPCSpawn(EntitySpawnEvent event) {
-        if (event.getEntity() instanceof EntityHuman) {
-            EntityHuman human = (EntityHuman)event.getEntity();
+        if (event.getEntity() instanceof EntityHumanPlus) {
+            EntityHumanPlus human = (EntityHumanPlus)event.getEntity();
             if (human.namedTag.contains(getPersistentUuidNbtLocation())) {
                 UUID uuid = UUID.fromString(human.namedTag.getString(getPersistentUuidNbtLocation()));
                 lastInstances.put(npcIDs.inverse().get(uuid), human);
