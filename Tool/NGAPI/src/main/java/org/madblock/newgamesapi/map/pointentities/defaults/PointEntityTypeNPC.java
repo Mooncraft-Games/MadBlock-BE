@@ -140,9 +140,6 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
 
     // Notes for parsing a skin.
     // - skin.setGeometryName() must be your skin's complete name within the model file (including the "geometry" at the start)
-    // - Skin files must be in the "1.8.0" format. This is the same as Blockbench's Legacy Bedrock Model format (except it
-    //   needs changing from "1.10.0")
-    // - There's no other needs as long as the above criteria are met afaik
     protected Optional<Skin> getSkin(PointEntity entity) {
         Skin skin = new Skin();
         Optional<BufferedImage> skinImage = loadSkinFile(entity.getStringProperties().get("skin_file"));
