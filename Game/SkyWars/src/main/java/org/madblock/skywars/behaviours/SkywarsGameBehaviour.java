@@ -230,21 +230,6 @@ public class SkywarsGameBehaviour extends GameBehavior {
         }
     }
 
-    // PvP is terrible atm. Let's modify it!
-    @EventHandler
-    public void onPlayerAttack (EntityDamageByEntityEvent event) {
-        if (event.getEntity().getLevel().getId() == getSessionHandler().getPrimaryMap().getId() && event.getDamager() instanceof Player && getSessionHandler().getPlayerTeam((Player)event.getDamager()).filter(Team::isActiveGameTeam).isPresent()) {
-
-            float baseModifier = 1f;
-            if (event.getDamager().namedTag.contains(GiantSnowBallPowerUp.GIANT_SNOWBALL_NBT_TAG)) {
-                baseModifier = 4f;
-            }
-
-            event.setKnockBack(0.2f * baseModifier);
-            getSessionHandler().getGameScheduler().registerGameTask(() -> event.getEntity().setMotion(event.getEntity().getMotion().add(new Vector3(0, 0.25f, 0))), 1);
-        }
-    }
-
     public boolean isInCorruption (Vector3 pos) {
         for (PointEntity pointEntity : this.getSessionHandler().getPrimaryMapID().getPointEntities().values()) {
             if (pointEntity.getType().equals(PointEntityTypeCorruption.POINT_ENTITY_TYPE)) {
