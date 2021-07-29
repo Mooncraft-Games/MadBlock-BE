@@ -74,6 +74,7 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
             Vector2 rotation = entity.rotationToVector2();
             FullChunk chunk = npcLevel.getChunk((int) Math.floor(position.getX() / 16), (int) Math.floor(position.getZ() / 16), true);
             Optional<Skin> sk = getSkin(entity);
+
             if(!sk.isPresent()) {
                 getParentManager().removePointEntity(entity);
                 NewGamesAPI1.getPlgLogger().warning("Skipped invalid NPCHuman entity.");
@@ -117,7 +118,12 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
             nbt.putCompound("Skin", skinDataTag);
             nbt.putBoolean("ishuman", true);
             // -- END snippet --
-            EntityHumanPlus newHuman = new EntityHumanPlus(chunk, nbt);
+            EntityHumanPlus newHuman = new EntityHumanPlus(chunk, nbt)
+                    .setClientSpawnAnimation(
+                            entity.getStringProperties().get("spawn_anim"),
+                            entity.getStringProperties().get("spawn_anim_controller")
+                    );
+
             newHuman.setPositionAndRotation(position, entity.getYaw(), entity.getPitch());
             newHuman.setImmobile(true);
             newHuman.setSneaking(entity.getBooleanProperties().getOrDefault("sneaking", false));
