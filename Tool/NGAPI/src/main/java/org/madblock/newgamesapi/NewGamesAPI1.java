@@ -44,6 +44,7 @@ import org.madblock.ranks.api.RankProfile;
 import org.madblock.ranks.enums.PrimaryRankID;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class NewGamesAPI1 extends PluginBase implements Listener {
@@ -61,6 +62,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
     private GameManager gameManager;
     private HubManager hubManager;
     private PlayerKitsManager playerKitsManager;
+    private DimensionWatchdog dimensionWatchdog;
 
     private RewardsManager rewardsManager;
     private NavigationManager navigationManager;
@@ -80,8 +82,9 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.gameManager = new GameManager();
         this.hubManager = new HubManager(gameManager);
         this.playerKitsManager = new PlayerKitsManager();
-        this.rewardsManager = new RewardsManager();
+        this.dimensionWatchdog = new DimensionWatchdog();
 
+        this.rewardsManager = new RewardsManager();
         this.navigationManager = new NavigationManager();
         this.queueManager = new QuiccccQueueManager();
 
@@ -96,6 +99,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.gameManager.setAsPrimaryManager();
         this.hubManager.setAsPrimaryManager();
         this.playerKitsManager.setAsPrimaryManager();
+        this.dimensionWatchdog.setAsPrimary();
  
         this.rewardsManager.setAsPrimaryManager();
 
@@ -171,6 +175,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
 
         if(loadConfiguartion()) {
             this.getServer().getPluginManager().registerEvents(this, this);
+            this.getServer().getPluginManager().registerEvents(dimensionWatchdog, this);
         } else {
             newGamesAPI1 = null;
         }
