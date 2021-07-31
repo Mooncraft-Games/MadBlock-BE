@@ -9,16 +9,33 @@ import org.madblock.newgamesapi.nukkit.packet.AnimateEntityPacket;
 
 public class EntityHumanPlus extends EntityHuman {
 
+    public static final String NBT_SPAWN_ANIM_ID = "spawn_animation_identifier";
+    public static final String NBT_SPAWN_ANIM_CONTROL = "spawn_animation_controller";
+
     protected String spawnAnimationID;
     protected String spawnAnimationController;
 
     public EntityHumanPlus(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+
+        String animID = this.namedTag.getString(NBT_SPAWN_ANIM_ID);
+        String animControl = this.namedTag.getString(NBT_SPAWN_ANIM_CONTROL);
+
+        this.spawnAnimationID = animID.length() == 0 ? "" : animID;
+        this.spawnAnimationController = animControl.length() == 0 ? "" : animControl;
     }
+
 
     public EntityHumanPlus setClientSpawnAnimation(String animID, String animController) {
         this.spawnAnimationID = animID;
         this.spawnAnimationController = animController;
+
+        if(animID == null) this.namedTag.remove(NBT_SPAWN_ANIM_ID);
+        else this.namedTag.putString(NBT_SPAWN_ANIM_ID, animID);
+
+        if(animController == null) this.namedTag.remove(NBT_SPAWN_ANIM_CONTROL);
+        else this.namedTag.putString(NBT_SPAWN_ANIM_CONTROL, animController);
+
         return this;
     }
 
