@@ -2,9 +2,10 @@ package org.madblock.newgamesapi.game;
 
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
+import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -55,6 +56,17 @@ public class DimensionWatchdog implements Listener {
             player.setLevel(target);
             freshPlayers.remove(player.getId());
 
+            NetworkChunkPublisherUpdatePacket publishPacket = new NetworkChunkPublisherUpdatePacket();
+            publishPacket.position = position.asBlockVector3();
+            publishPacket.radius = CHUNK_RADIUS * 16;
+            player.dataPacket(publishPacket);
+
+            for (int cX = position.getChunkX() - CHUNK_RADIUS; cX <= position.getChunkX() + CHUNK_RADIUS; cX++) {
+                for (int cZ = position.getChunkZ() - CHUNK_RADIUS; cZ <= position.getChunkZ() + CHUNK_RADIUS; cZ++) {
+                    target.requestChunk(cX, cZ, player);
+                }
+            }
+
         } else {
             switchDimension(position, player, target,true);
         }
@@ -65,7 +77,7 @@ public class DimensionWatchdog implements Listener {
 
         ChangeDimensionPacket changeDimensionPacket = new ChangeDimensionPacket();
         changeDimensionPacket.dimension = fake ? 1 : 0;
-        changeDimensionPacket.respawn = false;
+        changeDimensionPacket.respawn = true;
         changeDimensionPacket.x = (float) pos.x;
         changeDimensionPacket.y = (float) pos.y;
         changeDimensionPacket.z = (float) pos.z;
@@ -127,8 +139,8 @@ public class DimensionWatchdog implements Listener {
     }
 
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onJoin(PlayerRespawnEvent event) {
         freshPlayers.add(event.getPlayer().getId());
     }
 

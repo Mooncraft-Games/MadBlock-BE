@@ -2,6 +2,7 @@ package org.madblock.newgamesapi;
 
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.EventHandler;
@@ -32,6 +33,8 @@ import org.madblock.newgamesapi.kits.builtingroup.KitFinalSpectator;
 import org.madblock.newgamesapi.kits.hub.KitHub;
 import org.madblock.newgamesapi.kits.hub.KitHubBuilder;
 import org.madblock.newgamesapi.map.MapManager;
+import org.madblock.newgamesapi.nukkit.block.BlockLeaves;
+import org.madblock.newgamesapi.nukkit.block.BlockLeaves2;
 import org.madblock.newgamesapi.nukkit.entity.EntityHumanPlus;
 import org.madblock.newgamesapi.nukkit.packet.AnimateEntityPacket;
 import org.madblock.newgamesapi.registry.GameRegistry;
@@ -169,8 +172,15 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.getServer().getCommandMap().register("ngapi", new CommandFirework());
         this.getServer().getCommandMap().register("ngapi", new CommandLeaveQueue());
 
+
+        // -- Nukkit Overrides --
+
         this.getServer().getNetwork().registerPacket(ProtocolInfo.ANIMATE_ENTITY_PACKET, AnimateEntityPacket.class);
+
         Entity.registerEntity("human_plus", EntityHumanPlus.class);
+
+        Block.list[Block.LEAVES] = BlockLeaves.class;
+        Block.list[Block.LEAVES2] = BlockLeaves2.class;
 
 
         if(loadConfiguartion()) {
@@ -237,7 +247,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onTeleportToDefaultLevel(EntityPortalEnterEvent event){
+    public void onEnterLobbyPortal(EntityPortalEnterEvent event){
 
         if(event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
