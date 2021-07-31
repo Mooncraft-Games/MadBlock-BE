@@ -6,6 +6,8 @@ import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.Utility;
@@ -15,10 +17,7 @@ import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.nukkit.entity.EntityHumanPlus;
 import org.madblock.newgamesapi.nukkit.packet.AnimateEntityPacket;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class PointEntityTypeInteractableNPC extends PointEntityTypeNPC {
 
@@ -45,7 +44,7 @@ public class PointEntityTypeInteractableNPC extends PointEntityTypeNPC {
             if(p.isPresent()){
                 p.get().sendMessage(Utility.DEFAULT_TEXT_COLOUR + TextFormat.colorize(data.getParameters().getOrDefault("message", "[I am a bug and should be ashamed of my existence]")));
             } else {
-                NewGamesAPI1.getPlgLogger().warning("Player passed into interact function doesn't exist. Scooby Dooby where the hell are you?");
+                NewGamesAPI1.getPlgLogger().warning("Player passed into interact function doesn't exist. Scooby Dooby Doo where the hell are you?");
             }
         } catch (Exception err){
             NewGamesAPI1.getPlgLogger().warning("Invalid data passed via NPCHuman interact. Pls Fix.");
@@ -90,15 +89,15 @@ public class PointEntityTypeInteractableNPC extends PointEntityTypeNPC {
                         getParentManager().getRegisteredTypes().get(entity.getType()).executeFunction("interact_pcommand", entity, human.getLevel(), parameters);
                     }
 
-                    if(interactionType.equalsIgnoreCase("twirl")) {
-                        AnimateEntityPacket dataPacket = new AnimateEntityPacket();
-                        dataPacket.eid = human.getId();
-                        dataPacket.animation = "animation.humanoid.custom.twirl";
-                        dataPacket.controller = "controller.animation.humanoid.base_pose";
+                    if(interactionType.equalsIgnoreCase("debug_coords")) {
+                        ListTag<DoubleTag> pos = human.namedTag.getList("Pos", DoubleTag.class);
 
-                        for (Player v: new ArrayList<>(human.getViewers().values())) {
-                            v.dataPacket(dataPacket);
-                        }
+                        player.sendMessage(String.format(
+                                "eid: %s | coords official: (%s, %s, %s) | coords nbt: (%s, %s, %s)",
+                                human.getId(),
+                                human.getX(), human.getY(), human.getZ(),
+                                pos.get(0).getData(), pos.get(1).getData(), pos.get(2).getData()
+                        ));
                     }
                 }
             }
