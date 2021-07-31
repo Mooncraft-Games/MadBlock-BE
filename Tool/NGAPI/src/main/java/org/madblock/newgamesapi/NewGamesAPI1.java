@@ -15,6 +15,8 @@ import cn.nukkit.event.entity.EntitySpawnEvent;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
+import cn.nukkit.event.player.PlayerToggleSneakEvent;
+import cn.nukkit.level.format.Chunk;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.plugin.PluginLogger;
@@ -181,6 +183,8 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
 
         Block.list[Block.LEAVES] = BlockLeaves.class;
         Block.list[Block.LEAVES2] = BlockLeaves2.class;
+        Block.fullList[Block.LEAVES] = new BlockLeaves();
+        Block.fullList[Block.LEAVES2] = new BlockLeaves();
 
 
         if(loadConfiguartion()) {
@@ -226,15 +230,24 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onJoin(PlayerRespawnEvent event){
-        event.getPlayer().setCheckMovement(false);
-        runMicroNodeHubSequence(event.getPlayer());
-        event.setRespawnPosition(event.getPlayer().getPosition());
-        if (!RewardsManager.get().getRewards(event.getPlayer()).isPresent()) {
-            try {
-                RewardsManager.get().fetchRewards(event.getPlayer());
-            } catch (SQLException exception) {
-                exception.printStackTrace();
+        if(event.isFirstSpawn()) {
+            event.getPlayer().setCheckMovement(false);
+            runMicroNodeHubSequence(event.getPlayer());
+            event.setRespawnPosition(event.getPlayer().getPosition());
+            if (!RewardsManager.get().getRewards(event.getPlayer()).isPresent()) {
+                try {
+                    RewardsManager.get().fetchRewards(event.getPlayer());
+                } catch (SQLException exception) {
+                    exception.printStackTrace();
+                }
             }
+        }
+    }
+
+    @EventHandler
+    public void onDebugCrouch(PlayerToggleSneakEvent event) {
+        if(event.isSneaking()) {
+            // Just dump anything here to test stuff.
         }
     }
 
