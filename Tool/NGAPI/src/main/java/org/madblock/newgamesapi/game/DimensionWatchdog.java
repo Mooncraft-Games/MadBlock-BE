@@ -4,15 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.player.PlayerCreationEvent;
-import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.network.protocol.*;
-import org.madblock.newgamesapi.NewGamesAPI1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,10 +53,7 @@ public class DimensionWatchdog implements Listener {
 
         if(freshPlayers.contains(player.getId())) {
             freshPlayers.remove(player.getId());
-
-            NewGamesAPI1.get().getServer().getDefaultLevel().getPlayers().remove(player.getId());
-
-            player.setLevel(target);
+            player.switchLevel(target);
             player.teleport(position);
 
         } else {
@@ -121,7 +115,7 @@ public class DimensionWatchdog implements Listener {
                 if(dimensionAckXUIDs.containsKey(event.getPlayer().getUniqueId())) {
                     Location pos = dimensionAckXUIDs.remove(event.getPlayer().getUniqueId());
                     event.getPlayer().teleport(pos);
-                    event.getPlayer().setLevel(pos.level);
+                    event.getPlayer().switchLevel(pos.level);
                     switchDimension(pos, event.getPlayer(), pos.level, false);
 
                     StopSoundPacket stopSoundPacket = new StopSoundPacket();

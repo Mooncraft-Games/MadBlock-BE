@@ -69,7 +69,7 @@ public class EntityHumanPlus extends EntityHuman {
                 dataPacket.controller = spawnAnimationController;
                 player.dataPacket(dataPacket);
             }
-        }, 5);
+        }, 20);
 
     }
 }

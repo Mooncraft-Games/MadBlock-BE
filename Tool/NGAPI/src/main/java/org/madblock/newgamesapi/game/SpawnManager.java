@@ -115,6 +115,7 @@ public final class SpawnManager implements Listener {
                     DimensionWatchdog.get().dimensionTransfer(player, position, handler.getPrimaryMap());
 
                 } else {
+                    player.switchLevel(handler.getPrimaryMap());
                     position.setLevel(handler.getPrimaryMap());
                     player.teleport(position);
                 }
