@@ -24,7 +24,7 @@ public class AnimateEntityPacket extends DataPacket {
         this.reset();
         this.putString(animation);
         this.putString("default");
-        this.putString("\"\"");
+        this.putString("false");
         this.putString(controller);
         this.putLFloat(0);
         this.putUnsignedVarInt(1);

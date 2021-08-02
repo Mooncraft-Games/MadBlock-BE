@@ -90,14 +90,22 @@ public class PointEntityTypeInteractableNPC extends PointEntityTypeNPC {
                     }
 
                     if(interactionType.equalsIgnoreCase("debug_coords")) {
-                        ListTag<DoubleTag> pos = human.namedTag.getList("Pos", DoubleTag.class);
+                        try {
+                            ListTag<DoubleTag> pos = human.namedTag.getList("Pos", DoubleTag.class);
 
-                        player.sendMessage(String.format(
-                                "eid: %s | coords official: (%s, %s, %s) | coords nbt: (%s, %s, %s)",
-                                human.getId(),
-                                human.getX(), human.getY(), human.getZ(),
-                                pos.get(0).getData(), pos.get(1).getData(), pos.get(2).getData()
-                        ));
+                            String message = String.format(
+                                    "eid: %s | coords official: (%s, %s, %s) | coords nbt: (%s, %s, %s)",
+                                    human.getId(),
+                                    human.getX(), human.getY(), human.getZ(),
+                                    pos.get(0).getData(), pos.get(1).getData(), pos.get(2).getData()
+                            );
+
+                            NewGamesAPI1.getPlgLogger().info(message);
+                            player.sendMessage(message);
+
+                        } catch (Exception err) {
+                            err.printStackTrace();
+                        }
                     }
                 }
             }

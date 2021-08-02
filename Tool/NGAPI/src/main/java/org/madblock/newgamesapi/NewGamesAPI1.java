@@ -2,6 +2,7 @@ package org.madblock.newgamesapi;
 
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.EventHandler;
@@ -11,9 +12,7 @@ import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityPortalEnterEvent;
 import cn.nukkit.event.entity.EntitySpawnEvent;
-import cn.nukkit.event.player.PlayerChatEvent;
-import cn.nukkit.event.player.PlayerRespawnEvent;
-import cn.nukkit.event.player.PlayerTeleportEvent;
+import cn.nukkit.event.player.*;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.plugin.PluginLogger;
@@ -32,6 +31,8 @@ import org.madblock.newgamesapi.kits.builtingroup.KitFinalSpectator;
 import org.madblock.newgamesapi.kits.hub.KitHub;
 import org.madblock.newgamesapi.kits.hub.KitHubBuilder;
 import org.madblock.newgamesapi.map.MapManager;
+import org.madblock.newgamesapi.nukkit.block.BlockLeaves;
+import org.madblock.newgamesapi.nukkit.block.BlockLeaves2;
 import org.madblock.newgamesapi.nukkit.entity.EntityHumanPlus;
 import org.madblock.newgamesapi.nukkit.packet.AnimateEntityPacket;
 import org.madblock.newgamesapi.registry.GameRegistry;
@@ -44,6 +45,7 @@ import org.madblock.ranks.api.RankProfile;
 import org.madblock.ranks.enums.PrimaryRankID;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class NewGamesAPI1 extends PluginBase implements Listener {
@@ -61,6 +63,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
     private GameManager gameManager;
     private HubManager hubManager;
     private PlayerKitsManager playerKitsManager;
+    private DimensionWatchdog dimensionWatchdog;
 
     private RewardsManager rewardsManager;
     private NavigationManager navigationManager;
@@ -80,8 +83,9 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.gameManager = new GameManager();
         this.hubManager = new HubManager(gameManager);
         this.playerKitsManager = new PlayerKitsManager();
-        this.rewardsManager = new RewardsManager();
+        this.dimensionWatchdog = new DimensionWatchdog();
 
+        this.rewardsManager = new RewardsManager();
         this.navigationManager = new NavigationManager();
         this.queueManager = new QuiccccQueueManager();
 
@@ -96,6 +100,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.gameManager.setAsPrimaryManager();
         this.hubManager.setAsPrimaryManager();
         this.playerKitsManager.setAsPrimaryManager();
+        this.dimensionWatchdog.setAsPrimary();
  
         this.rewardsManager.setAsPrimaryManager();
 
@@ -165,12 +170,22 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.getServer().getCommandMap().register("ngapi", new CommandFirework());
         this.getServer().getCommandMap().register("ngapi", new CommandLeaveQueue());
 
+
+        // -- Nukkit Overrides --
+
         this.getServer().getNetwork().registerPacket(ProtocolInfo.ANIMATE_ENTITY_PACKET, AnimateEntityPacket.class);
+
         Entity.registerEntity("human_plus", EntityHumanPlus.class);
+
+        Block.list[Block.LEAVES] = BlockLeaves.class;
+        Block.list[Block.LEAVES2] = BlockLeaves2.class;
+        Block.fullList[Block.LEAVES] = new BlockLeaves();
+        Block.fullList[Block.LEAVES2] = new BlockLeaves();
 
 
         if(loadConfiguartion()) {
             this.getServer().getPluginManager().registerEvents(this, this);
+            this.getServer().getPluginManager().registerEvents(dimensionWatchdog, this);
         } else {
             newGamesAPI1 = null;
         }
@@ -211,15 +226,24 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onJoin(PlayerRespawnEvent event){
-        event.getPlayer().setCheckMovement(false);
-        runMicroNodeHubSequence(event.getPlayer());
-        event.setRespawnPosition(event.getPlayer().getPosition());
-        if (!RewardsManager.get().getRewards(event.getPlayer()).isPresent()) {
-            try {
-                RewardsManager.get().fetchRewards(event.getPlayer());
-            } catch (SQLException exception) {
-                exception.printStackTrace();
+        if(event.isFirstSpawn()) {
+            event.getPlayer().setCheckMovement(false);
+            runMicroNodeHubSequence(event.getPlayer());
+            event.setRespawnPosition(event.getPlayer().getPosition());
+            if (!RewardsManager.get().getRewards(event.getPlayer()).isPresent()) {
+                try {
+                    RewardsManager.get().fetchRewards(event.getPlayer());
+                } catch (SQLException exception) {
+                    exception.printStackTrace();
+                }
             }
+        }
+    }
+
+    @EventHandler
+    public void onDebugCrouch(PlayerToggleSneakEvent event) {
+        if(event.isSneaking()) {
+            // Just dump anything here to test stuff.
         }
     }
 
@@ -232,7 +256,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onTeleportToDefaultLevel(EntityPortalEnterEvent event){
+    public void onEnterLobbyPortal(EntityPortalEnterEvent event){
 
         if(event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();

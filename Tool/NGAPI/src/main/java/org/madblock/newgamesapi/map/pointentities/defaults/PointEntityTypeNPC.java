@@ -72,7 +72,7 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
             UUID uuid = UUID.randomUUID();
             Vector3 position = entity.positionToVector3().add(!entity.isAccuratePosition() ? 0.5d : 0, 0, !entity.isAccuratePosition() ? 0.5d : 0);
             Vector2 rotation = entity.rotationToVector2();
-            FullChunk chunk = npcLevel.getChunk((int) Math.floor(position.getX() / 16), (int) Math.floor(position.getZ() / 16), true);
+            FullChunk chunk = npcLevel.getChunk((int) Math.floor(position.getX()) >> 4, (int) Math.floor(position.getZ()) >> 4, true);
             Optional<Skin> sk = getSkin(entity);
 
             if(!sk.isPresent()) {
@@ -124,7 +124,7 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
                             entity.getStringProperties().get("spawn_anim_controller")
                     );
 
-            newHuman.setPositionAndRotation(position, entity.getYaw(), entity.getPitch());
+            //newHuman.setPositionAndRotation(position, entity.getYaw(), entity.getPitch());
             newHuman.setImmobile(true);
             newHuman.setSneaking(entity.getBooleanProperties().getOrDefault("sneaking", false));
             newHuman.setNameTagAlwaysVisible(true);
