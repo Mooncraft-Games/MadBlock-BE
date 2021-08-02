@@ -5,6 +5,7 @@ import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.scheduler.Task;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.nukkit.packet.AnimateEntityPacket;
 
@@ -16,6 +17,7 @@ public class EntityHumanPlus extends EntityHuman {
     protected String spawnAnimationID;
     protected String spawnAnimationController;
 
+    protected EntityHumanPlus thiss() { return this; }
     public EntityHumanPlus(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
 
@@ -44,6 +46,33 @@ public class EntityHumanPlus extends EntityHuman {
     public void spawnTo(Player player) {
         super.spawnTo(player);
 
+        if(player.locallyInitialized) {
+            fixEverythingPlsThankYou(player);
+
+        } else {
+            Task fixTask = new Task() {
+
+                @Override
+                public void onRun(int currentTick) {
+                    if(thiss().getViewers().containsKey(player.getLoaderId())) {
+                        if(player.locallyInitialized) {
+                            fixEverythingPlsThankYou(player);
+                            this.cancel();
+                        }
+                        return;
+                    }
+
+                    this.cancel();
+                }
+
+            };
+
+            NewGamesAPI1.get().getServer().getScheduler().scheduleRepeatingTask(fixTask, 3);
+        }
+
+    }
+
+    protected void fixEverythingPlsThankYou(Player player) {
         NewGamesAPI1.get().getServer().getScheduler().scheduleDelayedTask(NewGamesAPI1.get(), () -> {
             this.teleport(new Vector3(this.x, this.y, this.z), null);
 
@@ -54,7 +83,6 @@ public class EntityHumanPlus extends EntityHuman {
                 dataPacket.controller = spawnAnimationController;
                 player.dataPacket(dataPacket);
             }
-        }, 40);
-
+        }, 5);
     }
 }

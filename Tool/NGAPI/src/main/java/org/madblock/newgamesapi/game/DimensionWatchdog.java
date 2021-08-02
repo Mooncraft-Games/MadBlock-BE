@@ -70,6 +70,7 @@ public class DimensionWatchdog implements Listener {
         changeDimensionPacket.x = (float) pos.x;
         changeDimensionPacket.y = (float) pos.y;
         changeDimensionPacket.z = (float) pos.z;
+        player.locallyInitialized = false;
         player.dataPacket(changeDimensionPacket);
 
         // Send empty chunks for the nether.
@@ -98,6 +99,7 @@ public class DimensionWatchdog implements Listener {
 
             PlayStatusPacket statusPacket = new PlayStatusPacket();
             statusPacket.status = PlayStatusPacket.PLAYER_SPAWN;
+            player.locallyInitialized = false;
             player.dataPacket(statusPacket);
 
         }
@@ -111,6 +113,7 @@ public class DimensionWatchdog implements Listener {
             PlayerActionPacket actionPacket = (PlayerActionPacket) event.getPacket();
 
             if (actionPacket.action == PlayerActionPacket.ACTION_DIMENSION_CHANGE_ACK) {
+                event.getPlayer().locallyInitialized = true;
 
                 if(dimensionAckXUIDs.containsKey(event.getPlayer().getUniqueId())) {
                     Location pos = dimensionAckXUIDs.remove(event.getPlayer().getUniqueId());
