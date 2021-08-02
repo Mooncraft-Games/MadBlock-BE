@@ -53,8 +53,8 @@ public class DimensionWatchdog implements Listener {
 
         if(freshPlayers.contains(player.getId())) {
             freshPlayers.remove(player.getId());
-            player.switchLevel(target);
-            player.teleport(position);
+            Location location = new Location(position.x, position.y, position.z, position.pitch, position.yaw, target);
+            player.teleport(location);
 
         } else {
             switchDimension(position, player, target,true);
@@ -115,7 +115,6 @@ public class DimensionWatchdog implements Listener {
                 if(dimensionAckXUIDs.containsKey(event.getPlayer().getUniqueId())) {
                     Location pos = dimensionAckXUIDs.remove(event.getPlayer().getUniqueId());
                     event.getPlayer().teleport(pos);
-                    event.getPlayer().switchLevel(pos.level);
                     switchDimension(pos, event.getPlayer(), pos.level, false);
 
                     StopSoundPacket stopSoundPacket = new StopSoundPacket();

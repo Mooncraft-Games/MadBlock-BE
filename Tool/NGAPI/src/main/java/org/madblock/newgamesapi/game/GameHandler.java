@@ -14,6 +14,8 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.DummyBossBar;
@@ -287,8 +289,10 @@ public class GameHandler implements Listener {
 
             gameManager.removePlayerFromLookup(player, this);
             if(!beingTransferredToNewGame) {
-                player.switchLevel(NewGamesAPI1.get().getServer().getDefaultLevel());
-                player.teleport(NewGamesAPI1.get().getServer().getDefaultLevel().getSpawnLocation());
+                Position spawn = NewGamesAPI1.get().getServer().getDefaultLevel().getSpawnLocation();
+                Location dest = spawn.getLocation();
+                dest.setLevel(NewGamesAPI1.get().getServer().getDefaultLevel());
+                player.teleport(dest);
             }
             return true;
         }
@@ -401,8 +405,10 @@ public class GameHandler implements Listener {
             gameManager.removePlayerFromLookup(player, this);
             player.getEnderChestInventory().clearAll();
             if(!beingTransferredToNewGame) {
-                player.switchLevel(NewGamesAPI1.get().getServer().getDefaultLevel());
-                player.teleport(NewGamesAPI1.get().getServer().getDefaultLevel().getSpawnLocation());
+                Position spawn = NewGamesAPI1.get().getServer().getDefaultLevel().getSpawnLocation();
+                Location dest = spawn.getLocation();
+                dest.setLevel(NewGamesAPI1.get().getServer().getDefaultLevel());
+                player.teleport(dest);
             }
         }
     }
