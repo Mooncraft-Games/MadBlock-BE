@@ -186,7 +186,6 @@ public class Team implements Listener {
                     newname = getFormattedDisplayName() + " " + colour.getColourString() + player.getName();
                 }
                 player.setNameTag(newname);
-                player.setDisplayName(getFormattedDisplayName() + " " + colour.getColourString() + player.getName());
             } else {
                 String newname;
                 if (rankProfile.isPresent()) {
@@ -200,7 +199,6 @@ public class Team implements Listener {
                     newname = colour.getColourString() + player.getName();
                 }
                 player.setNameTag(newname);
-                player.setDisplayName(colour.getColourString() + player.getName());
             }
         }
         if(isLeavingTeam){
@@ -211,10 +209,8 @@ public class Team implements Listener {
                 } else {
                     player.setNameTag(player.getName());
                 }
-                player.setDisplayName(player.getName());
             } else {
                 player.setNameTag(player.getName());
-                player.setDisplayName(player.getName());
             }
             return;
         }
