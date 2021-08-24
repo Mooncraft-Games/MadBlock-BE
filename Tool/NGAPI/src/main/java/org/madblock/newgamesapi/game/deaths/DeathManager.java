@@ -91,7 +91,7 @@ public class DeathManager implements Listener {
     protected ArrayList<DeathCause> fullDeathLog;
 
     protected HashSet<Player> pendingRespawns;
-    protected HashMap<Player, UUID> respawnImmunities;
+    protected HashMap<Player, UUID> damageImmunities;
 
     public DeathManager(GameHandler gameHandler) {
         this.gameHandler = gameHandler;
@@ -101,7 +101,7 @@ public class DeathManager implements Listener {
         this.fullDeathLog = new ArrayList<>();
 
         this.pendingRespawns = new HashSet<>();
-        this.respawnImmunities = new HashMap<>();
+        this.damageImmunities = new HashMap<>();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -126,7 +126,7 @@ public class DeathManager implements Listener {
             if (event.getEntity() instanceof Player) {
                 Player victim = (Player) event.getEntity();
 
-                if((respawnImmunities.containsKey(victim)) && (event.getEntity().getHealth() < 500)) {
+                if((damageImmunities.containsKey(victim)) && (event.getEntity().getHealth() < 500)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -216,12 +216,12 @@ public class DeathManager implements Listener {
                     switch (result.getDeathState()){
 
                         case INSTANT_RESPAWN:
-                            scheduleImmunity(deathCause.getVictim(), result.getRespawnImmunitySeconds());
+                            startDamageImmunity(deathCause.getVictim(), result.getRespawnImmunitySeconds());
                             executeRespawnInstantlyKillType(deathCause.getVictim(), team, finalPrevKit);
                             break;
 
                         case TIMED_RESPAWN:
-                            scheduleImmunity(deathCause.getVictim(), result.getRespawnImmunitySeconds());
+                            startDamageImmunity(deathCause.getVictim(), result.getRespawnImmunitySeconds());
                             executeRespawnTimedKillType(deathCause.getVictim(), team, finalPrevKit, result.getRespawnSeconds());
                             break;
 
@@ -236,20 +236,20 @@ public class DeathManager implements Listener {
         }
     }
 
-    protected void scheduleImmunity(Player victim, int immunity) {
+    public void startDamageImmunity(Player victim, int immunity) {
         if(immunity > 0) {
             // In order to not cancel immunity early (should be rare anyway)
             // this only cancels damage if the uuid hasn't been changed from when
             // the immunity started, else a newer immunity period is counting.
             UUID immuneClashUUID = UUID.randomUUID();
-            respawnImmunities.put(victim, immuneClashUUID);
+            damageImmunities.put(victim, immuneClashUUID);
 
             gameHandler.getGameScheduler().registerSelfCancellableGameTask(task -> {
 
-                if(respawnImmunities.containsKey(victim)) {
+                if(damageImmunities.containsKey(victim)) {
 
-                    if(respawnImmunities.get(victim) == immuneClashUUID) {
-                        respawnImmunities.remove(victim);
+                    if(damageImmunities.get(victim) == immuneClashUUID) {
+                        damageImmunities.remove(victim);
                     }
                 }
 

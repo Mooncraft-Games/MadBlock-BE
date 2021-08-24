@@ -27,6 +27,7 @@ public class GameProperties {
     private boolean isFallDamageEnabled;
 
     private CustomGamePVPSettings customPvpSettings;
+    private int spawnImmunitySeconds;
 
     private boolean isTourneyGamemode;
 
@@ -62,6 +63,7 @@ public class GameProperties {
         this.isFallDamageEnabled = false;
 
         this.customPvpSettings = new CustomGamePVPSettings();
+        this.spawnImmunitySeconds = 3;
 
         this.isTourneyGamemode = false;
 
@@ -105,6 +107,14 @@ public class GameProperties {
      */
     public CustomGamePVPSettings getCustomPvpSettings() {
         return this.customPvpSettings;
+    }
+
+    /**
+     * The amount of seconds of immunity given after a game starts.
+     * Does not apply to respawns.
+     */
+    public int getSpawnImmunitySeconds() {
+        return spawnImmunitySeconds;
     }
 
     public GameHandler.AutomaticWinPolicy getWinPolicy() { return winPolicy; }
@@ -278,6 +288,16 @@ public class GameProperties {
      */
     public GameProperties setCustomPvpSettings(CustomGamePVPSettings customPvpSettings) {
         this.customPvpSettings = customPvpSettings;
+        return this;
+    }
+
+    /**
+     * Sets the amount of immunity given (in seconds) after the initial game start.
+     * @param spawnImmunitySeconds time in seconds.
+     * @return self for chaining.
+     */
+    public GameProperties setSpawnImmunitySeconds(int spawnImmunitySeconds) {
+        this.spawnImmunitySeconds = spawnImmunitySeconds;
         return this;
     }
 

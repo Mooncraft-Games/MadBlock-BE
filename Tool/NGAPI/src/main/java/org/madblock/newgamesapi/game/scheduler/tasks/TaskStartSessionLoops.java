@@ -36,6 +36,7 @@ public class TaskStartSessionLoops extends Task {
         if(playerTeam.isPresent() && !(playerTeam.get() instanceof SpectatingTeam)) {
             player.setImmobile(false);
             player.sendMessage(handler.getPrimaryMapID().getMapInfoMessage());
+            handler.getDeathManager().startDamageImmunity(player, handler.getGameID().getGameProperties().getSpawnImmunitySeconds());
             return true;
         }
         return false;
