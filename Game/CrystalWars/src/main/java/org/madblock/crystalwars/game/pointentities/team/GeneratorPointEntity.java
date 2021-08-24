@@ -27,9 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * @author Nicholas
- */
 public class GeneratorPointEntity extends PointEntityType implements Listener {
     public static final String ID = "madblock_crystalwars_generator";
 

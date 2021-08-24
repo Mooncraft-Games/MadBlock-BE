@@ -3,9 +3,6 @@ package org.madblock.crystalwars.game.upgrades;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * @author Nicholas
- */
 @AllArgsConstructor @Getter
 public enum CrystalTeamUpgrade {
     SHARPNESS_ONE("Sharpness 1"),

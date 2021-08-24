@@ -14,9 +14,6 @@ import org.madblock.crystalwars.util.CrystalWarsUtility;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.team.Team;
 
-/**
- * @author Nicholas
- */
 public class DiamondShopPointEntity extends ShopPointEntity {
     public static final String ID = "madblock_crystalwars_diamondshop";
 

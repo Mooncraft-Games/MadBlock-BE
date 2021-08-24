@@ -13,9 +13,6 @@ import org.madblock.crystalwars.game.pointentities.shop.item.ShopItem;
 import org.madblock.crystalwars.util.CrystalWarsUtility;
 import org.madblock.newgamesapi.Utility;
 
-/**
- * @author Nicholas
- */
 public class GoldShopPointEntity extends ShopPointEntity {
     public static final String ID = "madblock_crystalwars_goldshop";
 

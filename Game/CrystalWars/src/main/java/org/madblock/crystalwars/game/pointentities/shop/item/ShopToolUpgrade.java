@@ -14,9 +14,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author Nicholas
- */
 public class ShopToolUpgrade extends ShopItem {
     protected final CrystalWarsGame gameBehavior;
 

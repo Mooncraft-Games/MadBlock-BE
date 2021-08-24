@@ -3,9 +3,6 @@ package org.madblock.crystalwars.game.kit;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSwordWood;
 
-/**
- * @author Nicholas
- */
 public class WarriorKit extends BaseKit {
     @Override
     public String getKitID() {

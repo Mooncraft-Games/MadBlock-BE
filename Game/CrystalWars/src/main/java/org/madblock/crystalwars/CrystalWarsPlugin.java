@@ -11,9 +11,6 @@ import org.madblock.newgamesapi.game.GameID;
 import org.madblock.newgamesapi.game.GameProperties;
 import org.madblock.newgamesapi.kits.KitGroup;
 
-/**
- * @author Nicholas
- */
 public class CrystalWarsPlugin extends PluginBase {
     @Getter private static Plugin instance;
 
@@ -36,7 +33,7 @@ public class CrystalWarsPlugin extends PluginBase {
 
         NewGamesAPI1.getGameRegistry().registerGame(new GameID(CrystalWarsConstants.BASE_GAME_ID, CrystalWarsConstants.BASE_GAME_SERVER_ID,
                 "Crystal Wars Regular", "Destroy the other crystals, but make sure to defend your own!",
-                "crystalwars", new String[] { "crystalwars_regular" }, 1, regularCrystalWarsProperties, CrystalWarsGame.class));
+                "crystalwars", new String[] { "crystalwars_regular" }, 2, regularCrystalWarsProperties, CrystalWarsGame.class));
 
         NewGamesAPI1.getKitRegistry().registerKitGroup(kitGroup);
     }

@@ -12,9 +12,6 @@ import org.madblock.newgamesapi.team.Team;
 
 import java.util.Optional;
 
-/**
- * @author Nicholas
- */
 public abstract class BaseKit extends Kit {
     @Override
     public Optional<Class<? extends ExtendedKit>> getExtendedKitFeatures() {

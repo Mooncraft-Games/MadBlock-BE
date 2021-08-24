@@ -31,9 +31,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * @author Nicholas
- */
 public abstract class ShopPointEntity extends PointEntityType implements Listener {
     public static final String SHOP_DIRECTION_PROPERTY = "direction";
     public static final String NBT_SHOP_ID = "crystalwars_shop_id";

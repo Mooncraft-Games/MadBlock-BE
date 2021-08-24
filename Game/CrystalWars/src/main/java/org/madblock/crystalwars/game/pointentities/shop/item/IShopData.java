@@ -2,9 +2,6 @@ package org.madblock.crystalwars.game.pointentities.shop.item;
 
 import cn.nukkit.Player;
 
-/**
- * @author Nicholas
- */
 public interface IShopData {
     /**
      * Called when a item is selected

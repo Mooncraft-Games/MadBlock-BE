@@ -16,9 +16,6 @@ import org.madblock.newgamesapi.team.Team;
 
 import java.util.Optional;
 
-/**
- * @author Nicholas
- */
 public class IronShopPointEntity extends ShopPointEntity {
     public static String ID = "madblock_crystalwars_ironshop";
 

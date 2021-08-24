@@ -6,9 +6,6 @@ import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.game.CrystalWarsGame;
 import org.madblock.newgamesapi.Utility;
 
-/**
- * @author Nicholas
- */
 public class ShopUniqueItem extends ShopItem {
     public ShopUniqueItem(Item item, Item cost, String imageLink, CrystalWarsGame base) {
         super(item, cost, null, imageLink, base);

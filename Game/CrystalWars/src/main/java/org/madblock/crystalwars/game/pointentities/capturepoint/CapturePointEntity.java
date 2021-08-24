@@ -24,9 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * @author Nicholas
- */
 public abstract class CapturePointEntity extends PointEntityType implements Listener {
     protected static final int CAPTURE_BLOCK_RANGE = 3;
 

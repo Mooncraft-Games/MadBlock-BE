@@ -13,9 +13,6 @@ import org.madblock.newgamesapi.team.Team;
 
 import java.util.Map;
 
-/**
- * @author Nicholas
- */
 public class ShopItem implements IShopData {
     protected final CrystalWarsGame gameBehavior;
     protected final Item[] givenItems;

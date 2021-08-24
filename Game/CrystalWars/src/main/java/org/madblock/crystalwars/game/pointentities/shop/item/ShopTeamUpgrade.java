@@ -12,9 +12,6 @@ import org.madblock.newgamesapi.team.Team;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-/**
- * @author Nicholas
- */
 public class ShopTeamUpgrade implements IShopData {
     protected CrystalWarsGame gameBehavior;
     protected CrystalTeamUpgrade upgrade;

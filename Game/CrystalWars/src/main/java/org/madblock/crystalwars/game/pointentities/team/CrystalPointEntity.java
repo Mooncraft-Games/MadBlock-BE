@@ -30,9 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * @author Nicholas
- */
 public class CrystalPointEntity extends PointEntityType implements Listener {
     public static final String ID = "madblock_crystalwars_crystal";
 

@@ -28,9 +28,6 @@ import org.madblock.newgamesapi.team.TeamPresets;
 
 import java.util.*;
 
-/**
- * @author Nicholas
- */
 public class CrystalWarsGame extends GameBehavior {
     protected Set<Vector3> placedBlocks = new HashSet<>();
     protected Map<Team, Set<CrystalTeamUpgrade>> upgrades = new HashMap<>();

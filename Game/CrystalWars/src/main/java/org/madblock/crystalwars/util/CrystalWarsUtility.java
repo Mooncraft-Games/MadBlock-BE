@@ -6,9 +6,6 @@ import cn.nukkit.utils.DyeColor;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.team.Team;
 
-/**
- * @author Nicholas
- */
 public class CrystalWarsUtility {
     public static Item makeUnbreakable(Item item) {
         CompoundTag tag = item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag();
