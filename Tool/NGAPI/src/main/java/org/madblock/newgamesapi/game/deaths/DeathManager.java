@@ -90,7 +90,8 @@ public class DeathManager implements Listener {
     protected ArrayList<Team> teamDeathOrder;
     protected ArrayList<DeathCause> fullDeathLog;
 
-    protected ArrayList<Player> pendingRespawns;
+    protected HashSet<Player> pendingRespawns;
+    protected HashMap<Player, UUID> respawnImmunities;
 
     public DeathManager(GameHandler gameHandler) {
         this.gameHandler = gameHandler;
@@ -99,7 +100,8 @@ public class DeathManager implements Listener {
         this.teamDeathOrder = new ArrayList<>();
         this.fullDeathLog = new ArrayList<>();
 
-        this.pendingRespawns = new ArrayList<>();
+        this.pendingRespawns = new HashSet<>();
+        this.respawnImmunities = new HashMap<>();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -121,52 +123,60 @@ public class DeathManager implements Listener {
         }
 
         if(!event.isCancelled()) {
-            if (event.getEntity() instanceof Player && ((event.getEntity().getHealth() - event.getFinalDamage()) < 1)) {
+            if (event.getEntity() instanceof Player) {
                 Player victim = (Player) event.getEntity();
 
-                if (gameHandler.getPlayers().contains(victim)) {
+                if((respawnImmunities.containsKey(victim)) && (event.getEntity().getHealth() < 500)) {
                     event.setCancelled(true);
-                    Optional<Team> victimTeam = gameHandler.getPlayerTeam(victim);
-
-                    DeathCategory category = DeathCategory.MISC;
-
-                    if (event instanceof EntityDamageByEntityEvent) {
-                        EntityDamageByEntityEvent e = ((EntityDamageByEntityEvent) event);
-
-                        if (e.getDamager() instanceof Player) {
-                            category = DeathCategory.KILLER_PLAYER;
-
-                        } else {
-                            category = DeathCategory.KILLER_ENTITY;
-                        }
-                    } else if (event instanceof EntityDamageByBlockEvent) {
-                        category = DeathCategory.KILLER_BLOCK;
-                    }
-
-                    DeathCause.DeathCauseBuilder builder = DeathCause.builder(
-                            victim,
-                            victimTeam.orElse(gameHandler.getTeams().get(TeamPresets.SPECTATOR_TEAM_ID)),
-                            category,
-                            DeathSubCategory.getCategoryFromDamageCause(event.getCause()),
-                            event.getFinalDamage()
-                    );
-
-                    builder.setRawEvent(event);
-                    switch (category) {
-                        case KILLER_PLAYER:
-                            Player killer = (Player) ((EntityDamageByEntityEvent) event).getDamager();
-                            gameHandler.addRewardChunk(killer, new RewardChunk("kill", "Player Kill", PLAYER_KILL_XP, PLAYER_KILL_COINS, PLAYER_KILL_TOURNEY_POINTS));
-                            builder.setKillerPlayer(killer);
-                            break;
-                        case KILLER_ENTITY:
-                            builder.setKillerEntity(((EntityDamageByEntityEvent) event).getDamager());
-                            break;
-                        case KILLER_BLOCK:
-                            builder.setKillerBlock(((EntityDamageByBlockEvent) event).getDamager());
-                            break;
-                    }
-                    killPlayer(builder.build(), true);
                     return;
+                }
+
+                if (gameHandler.getPlayers().contains(victim)) {
+
+                    if((event.getEntity().getHealth() - event.getFinalDamage()) < 1) {
+                        event.setCancelled(true);
+                        Optional<Team> victimTeam = gameHandler.getPlayerTeam(victim);
+
+                        DeathCategory category = DeathCategory.MISC;
+
+                        if (event instanceof EntityDamageByEntityEvent) {
+                            EntityDamageByEntityEvent e = ((EntityDamageByEntityEvent) event);
+
+                            if (e.getDamager() instanceof Player) {
+                                category = DeathCategory.KILLER_PLAYER;
+
+                            } else {
+                                category = DeathCategory.KILLER_ENTITY;
+                            }
+                        } else if (event instanceof EntityDamageByBlockEvent) {
+                            category = DeathCategory.KILLER_BLOCK;
+                        }
+
+                        DeathCause.DeathCauseBuilder builder = DeathCause.builder(
+                                victim,
+                                victimTeam.orElse(gameHandler.getTeams().get(TeamPresets.SPECTATOR_TEAM_ID)),
+                                category,
+                                DeathSubCategory.getCategoryFromDamageCause(event.getCause()),
+                                event.getFinalDamage()
+                        );
+
+                        builder.setRawEvent(event);
+                        switch (category) {
+                            case KILLER_PLAYER:
+                                Player killer = (Player) ((EntityDamageByEntityEvent) event).getDamager();
+                                gameHandler.addRewardChunk(killer, new RewardChunk("kill", "Player Kill", PLAYER_KILL_XP, PLAYER_KILL_COINS, PLAYER_KILL_TOURNEY_POINTS));
+                                builder.setKillerPlayer(killer);
+                                break;
+                            case KILLER_ENTITY:
+                                builder.setKillerEntity(((EntityDamageByEntityEvent) event).getDamager());
+                                break;
+                            case KILLER_BLOCK:
+                                builder.setKillerBlock(((EntityDamageByBlockEvent) event).getDamager());
+                                break;
+                        }
+                        killPlayer(builder.build(), true);
+                        return;
+                    }
                 }
 
                 if (gameHandler.getTourneyMasters().contains(victim)) {
@@ -188,31 +198,63 @@ public class DeathManager implements Listener {
 
     public void killPlayer(DeathCause deathCause, boolean showDeathMessage){
         Optional<Team> t = gameHandler.getPlayerTeam(deathCause.getVictim());
+
         if(t.isPresent()){
             Team team = t.get();
             Team dt = gameHandler.getTeams().get(TeamPresets.DEAD_TEAM_ID);
-            if(((!(team instanceof SpectatingTeam)) && dt instanceof DeadTeam) || (gameHandler.getGameState() != GameHandler.GameState.MAIN_LOOP)) {
+
+            if(  ( (!(team instanceof SpectatingTeam)) && dt instanceof DeadTeam )  || (gameHandler.getGameState() != GameHandler.GameState.MAIN_LOOP) ) {
                 GamePlayerDeathEvent result = sendGameBehaviorEvent(deathCause);
+
                 if (result.getDeathState() != GamePlayerDeathEvent.DeathState.CANCELLED) {
                     appendDeathlogs(deathCause);
                     if (showDeathMessage && result.shouldShowDeathMessage()) sendGameDeathMessage(deathCause);
+
                     Optional<Kit> prevkit = gameHandler.removePlayerKit(deathCause.getVictim(), true);
                     Kit finalPrevKit = prevkit.orElse(getPlayerKitPreference(deathCause.getVictim()));
+
                     switch (result.getDeathState()){
+
                         case INSTANT_RESPAWN:
+                            scheduleImmunity(deathCause.getVictim(), result.getRespawnImmunitySeconds());
                             executeRespawnInstantlyKillType(deathCause.getVictim(), team, finalPrevKit);
                             break;
+
                         case TIMED_RESPAWN:
+                            scheduleImmunity(deathCause.getVictim(), result.getRespawnImmunitySeconds());
                             executeRespawnTimedKillType(deathCause.getVictim(), team, finalPrevKit, result.getRespawnSeconds());
                             break;
+
                         case MOVE_TO_DEAD_SPECTATORS:
                             executePermanentKillType(deathCause.getVictim(), team);
                             break;
                     }
                 }
-            } else {
-                gameHandler.getSpawnManager().placePlayerInSpawnPosition(deathCause.getVictim(), team);
-            }
+
+            } else gameHandler.getSpawnManager().placePlayerInSpawnPosition(deathCause.getVictim(), team);
+
+        }
+    }
+
+    protected void scheduleImmunity(Player victim, int immunity) {
+        if(immunity > 0) {
+            // In order to not cancel immunity early (should be rare anyway)
+            // this only cancels damage if the uuid hasn't been changed from when
+            // the immunity started, else a newer immunity period is counting.
+            UUID immuneClashUUID = UUID.randomUUID();
+            respawnImmunities.put(victim, immuneClashUUID);
+
+            gameHandler.getGameScheduler().registerSelfCancellableGameTask(task -> {
+
+                if(respawnImmunities.containsKey(victim)) {
+
+                    if(respawnImmunities.get(victim) == immuneClashUUID) {
+                        respawnImmunities.remove(victim);
+                    }
+                }
+
+            }, 0, 20 * immunity);
+
         }
     }
 
@@ -372,5 +414,5 @@ public class DeathManager implements Listener {
     public ArrayList<Team> getTeamDeathOrder() { return teamDeathOrder; } // Does not contain any duplicates. Used for calculating winners.
     public ArrayList<DeathCause> getFullDeathLog() { return fullDeathLog; } // Can contain duplicates.
 
-    public ArrayList<Player> getPendingRespawns() { return pendingRespawns; }
+    public HashSet<Player> getPendingRespawns() { return pendingRespawns; }
 }

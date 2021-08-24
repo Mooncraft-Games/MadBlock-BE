@@ -155,8 +155,7 @@ public class CrystalWarsGame extends GameBehavior {
     protected void handleGameDeath(GamePlayerDeathEvent event) {
         if (crystalExistsForTeam(event.getDeathCause().getVictimTeam())) {
             event.setDeathState(GamePlayerDeathEvent.DeathState.TIMED_RESPAWN);
-            int respawnSeconds = 5;
-            event.setRespawnSeconds(respawnSeconds);
+            event.setRespawnSeconds(5);
         } else {
             checkWin();
         }
