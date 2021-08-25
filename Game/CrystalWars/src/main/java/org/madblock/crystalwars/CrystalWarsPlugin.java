@@ -1,9 +1,11 @@
 package org.madblock.crystalwars;
 
+import cn.nukkit.entity.Entity;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginBase;
 import lombok.Getter;
 import org.madblock.crystalwars.game.CrystalWarsGame;
+import org.madblock.crystalwars.game.entities.EntityHumanCrystal;
 import org.madblock.crystalwars.game.kit.WarriorKit;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.game.GameHandler;
@@ -36,5 +38,7 @@ public class CrystalWarsPlugin extends PluginBase {
                 "crystalwars", new String[] { "crystalwars_regular" }, 2, regularCrystalWarsProperties, CrystalWarsGame.class));
 
         NewGamesAPI1.getKitRegistry().registerKitGroup(kitGroup);
+
+        Entity.registerEntity("human_crystal", EntityHumanCrystal.class);
     }
 }
