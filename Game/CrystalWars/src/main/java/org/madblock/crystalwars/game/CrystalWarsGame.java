@@ -22,6 +22,7 @@ import org.madblock.crystalwars.game.pointentities.team.GeneratorPointEntity;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
+import org.madblock.newgamesapi.map.types.MapRegion;
 import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.team.Team;
 import org.madblock.newgamesapi.team.TeamPresets;
@@ -29,8 +30,31 @@ import org.madblock.newgamesapi.team.TeamPresets;
 import java.util.*;
 
 public class CrystalWarsGame extends GameBehavior {
+
     protected Set<Vector3> placedBlocks = new HashSet<>();
     protected Map<Team, Set<CrystalTeamUpgrade>> upgrades = new HashMap<>();
+
+    protected ArrayList<MapRegion> repairRegions = new ArrayList<>();
+    protected Random random;
+
+    protected int repairCrystal_startDelay;
+    protected int repairCrystal_minDelay;
+    protected int repairCrystal_maxDelay;
+
+    @Override
+    public int onGameBegin() {
+
+        // default: 80 ticks
+        this.repairCrystal_startDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_start", 20 * 80));
+
+        // default: 30 ticks
+        this.repairCrystal_minDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_min", 20 * 30));
+
+        //default: 60 ticks
+        this.repairCrystal_maxDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_max", 20 * 60));
+
+        return 5;
+    }
 
     @Override
     public void onInitialCountdownEnd() {
@@ -51,10 +75,27 @@ public class CrystalWarsGame extends GameBehavior {
             getSessionHandler().getScoreboardManager().setLine(player, 0, String.format("%s",
                     team.getFormattedDisplayName()));
         }
+
+        // I've given up with MapRegions as they're so utterly useless
+        // in their current state. Rewrite inbound!
+        // This just gathers all the current regions which spawn crystals so that a looping timer can spawn
+        // repair crystals.
+        for(MapRegion region: getSessionHandler().getPrimaryMapID().getRegions().values()) {
+            for(String str: region.getTags()) {
+                if(str.equalsIgnoreCase("repair_crystal_region")) {
+                    repairRegions.add(region);
+                    break;
+                }
+            }
+        }
+
+        this.random = new Random();
     }
 
     @Override
-    public void registerGameSchedulerTasks() {}
+    public void registerGameSchedulerTasks() {
+        getSessionHandler().getGameScheduler().registerGameTask(this::spawnRepairCrystal, repairCrystal_startDelay);
+    }
 
     @Override
     public void onPlayerLeaveGame(Player player) {
@@ -149,6 +190,34 @@ public class CrystalWarsGame extends GameBehavior {
     public void onRemoveArmor(InventoryMoveItemEvent event) {
         if (getSessionHandler().getPlayers().contains((Player)event.getSource()) && event.getItem().isArmor()) {
             event.setCancelled();
+        }
+    }
+
+    public void spawnRepairCrystal() {
+        if(repairRegions.size() > 0) {
+
+            // -- Spawn the crystal entity
+            int zoneIndex = repairRegions.size() == 1 ? 0 : random.nextInt(repairRegions.size());
+            MapRegion zone = repairRegions.get(zoneIndex);
+
+            // Randomise position: Snap to the lowest y.
+            int y = zone.getPosLesser().getY();
+            int dX = zone.getPosGreater().getX() - zone.getPosLesser().getX();
+            int dZ = zone.getPosGreater().getZ() - zone.getPosLesser().getZ();
+
+            int x = dX < 1 ? 0 : zone.getPosLesser().getX() + random.nextInt(dX + 1);
+            int z = dZ < 1 ? 0 : zone.getPosLesser().getZ() + random.nextInt(dZ + 1);
+
+            //TODO: Spawn entity.
+
+            // -- Start the next spawn cycle.
+            // check delay isn't the same or less than random bounds.
+            int delta = repairCrystal_maxDelay - repairCrystal_minDelay;
+            int delay = delta <= 0
+                    ? repairCrystal_minDelay
+                    : repairCrystal_minDelay + random.nextInt( delta + 1);
+            // schedule again in [delay] ticks time.
+            getSessionHandler().getGameScheduler().registerGameTask(this::spawnRepairCrystal, delay);
         }
     }
 
