@@ -114,7 +114,7 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
                     .putByteArray("AnimationData", skin.getAnimationData().getBytes(StandardCharsets.UTF_8))
                     .putBoolean("PremiumSkin", skin.isPremium())
                     .putBoolean("PersonaSkin", skin.isPersona())
-                    .putBoolean("CapeOnClassicSkin\uE200", skin.isCapeOnClassic());
+                    .putBoolean("CapeOnClassicSkin", skin.isCapeOnClassic());
             nbt.putCompound("Skin", skinDataTag);
             nbt.putBoolean("ishuman", true);
             // -- END snippet --
