@@ -31,6 +31,8 @@ public class RawTextBuilder {
         this.text = text;
         this.color = null;
 
+        this.extra = new ArrayList<>();
+
         this.bold = null;
         this.italic = null;
         this.underlined = null;
@@ -195,11 +197,11 @@ public class RawTextBuilder {
             }
         }
 
-        if(bold) worker.append(TextFormat.BOLD);
-        if(italic) worker.append(TextFormat.ITALIC);
-        if(underlined) worker.append(TextFormat.UNDERLINE);
-        if(strikethrough) worker.append(TextFormat.STRIKETHROUGH);
-        if(obfuscated) worker.append(TextFormat.OBFUSCATED);
+        if(bold != null && bold) worker.append(TextFormat.BOLD);
+        if(italic != null && italic) worker.append(TextFormat.ITALIC);
+        if(underlined != null && underlined) worker.append(TextFormat.UNDERLINE);
+        if(strikethrough != null && strikethrough) worker.append(TextFormat.STRIKETHROUGH);
+        if(obfuscated != null && obfuscated) worker.append(TextFormat.OBFUSCATED);
 
         return worker;
     }
@@ -208,9 +210,11 @@ public class RawTextBuilder {
     public String toString() {
         StringBuilder nukkitTextBuilder = addFormat(new StringBuilder());
 
-        for(RawTextBuilder raw: extra) {
-            nukkitTextBuilder = addFormat(nukkitTextBuilder);
-            nukkitTextBuilder.append(raw.toString());
+        if(extra != null) {
+            for(RawTextBuilder raw: extra) {
+                nukkitTextBuilder = addFormat(nukkitTextBuilder);
+                nukkitTextBuilder.append(raw.toString());
+            }
         }
 
         nukkitTextBuilder.append(TextFormat.RESET);
