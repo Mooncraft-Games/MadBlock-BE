@@ -185,27 +185,29 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
         if (team.getPlayers().size() > 1) return;
 
-        boolean deadTeamAnnounce = true;
-        for(PointEntity entity: entities) {
-            String id = entity.getId();
+        if(entities != null) {
+            boolean deadTeamAnnounce = true;
+            for (PointEntity entity : entities) {
+                String id = entity.getId();
 
-            if(crystals.get(id) != null) {
-                crystals.get(id).kill();
-                crystals.get(id).despawnFromAll();
-                crystals.remove(id);
-                crystalHealth.remove(id);
-                teamPointEntities.remove(team);
+                if (crystals.get(id) != null) {
+                    crystals.get(id).kill();
+                    crystals.get(id).despawnFromAll();
+                    crystals.remove(id);
+                    crystalHealth.remove(id);
+                    teamPointEntities.remove(team);
 
 
-            // A crystal doesn't exist for the team so it never existed anyway.
-            } else deadTeamAnnounce = false;
+                    // A crystal doesn't exist for the team so it never existed anyway.
+                } else deadTeamAnnounce = false;
 
-        }
+            }
 
-        if(deadTeamAnnounce) {
-            for (Player gamePlayer : gameHandler.getPlayers()) {
-                gamePlayer.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, String.format("%s's crystal has " +
-                        "been destroyed. All players of that team have left.", team.getFormattedDisplayName())));
+            if (deadTeamAnnounce) {
+                for (Player gamePlayer : gameHandler.getPlayers()) {
+                    gamePlayer.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, String.format("%s's crystal has " +
+                            "been destroyed. All players of that team have left.", team.getFormattedDisplayName())));
+                }
             }
         }
 
