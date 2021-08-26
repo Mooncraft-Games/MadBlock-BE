@@ -20,13 +20,16 @@ import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;
 import org.madblock.newgamesapi.map.pointentities.PointEntityType;
 import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.team.Team;
+import org.madblock.newgamesapi.util.HealthbarUtility;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class CrystalPointEntity extends PointEntityType implements Listener {
+
     public static final String ID = "madblock_crystalwars_crystal";
+    public static final int MAX_HEALTH = 50;
 
     public static final String TEAM_ID_PROPERTY = "team";
 
@@ -114,7 +117,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
         teamPointEntities.put(team, entity);
         crystals.put(position, endCrystal);
-        crystalHealth.put(position, 100);
+        crystalHealth.put(position, MAX_HEALTH);
     }
 
     @EventHandler
@@ -179,25 +182,34 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
         Vector3 position = new Vector3(location.getX(), location.getY(), location.getZ());
         if (crystals.containsKey(position)) {
+            EntityHumanCrystal entity = crystals.get(position);
             Integer health = crystalHealth.get(position);
             crystalHealth.put(position, health - 1);
             player.getLevel().addSound(player.getPosition(), Sound.HIT_CHAIN, 0.25f, 1);
             Team victimTeam = gameHandler.getTeams().get(targetCrystalPointEntity.getStringProperties().get(TEAM_ID_PROPERTY));
+
+            entity.setNameTag(
+                    HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, health, MAX_HEALTH)
+            );
+
             if (System.currentTimeMillis() - lastCrystalAttackNotification.getOrDefault(victimTeam, 0L) >= 10000L) {
                 lastCrystalAttackNotification.put(victimTeam, System.currentTimeMillis());
                 for (Player victimPlayer : victimTeam.getPlayers())
                     victimPlayer.sendTitle("", TextFormat.RED + "Your crystal is under attack!", 0, 80, 0);
             }
+
             if (health - 1 <= 0) {
-                crystals.get(position).kill();
-                crystals.get(position).despawnFromAll();
+                entity.kill();
+                entity.despawnFromAll();
                 crystals.remove(position);
                 crystalHealth.remove(position);
+
                 for (Player gamePlayer : gameHandler.getPlayers()) {
                     gamePlayer.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, String.format("%s's " +
                             "crystal was destroyed by " + playerTeam.get().getColour().getColourString() + player.getName() +
                             TextFormat.WHITE + "! They will no longer respawn!", victimTeam.getFormattedDisplayName())));
                 }
+
                 for (Player victimPlayer : victimTeam.getPlayers()) {
                     victimPlayer.sendTitle(TextFormat.RED + "CRYSTAL DESTROYED", TextFormat.RED +
                             "You will no longer respawn!", 20, 60, 20);

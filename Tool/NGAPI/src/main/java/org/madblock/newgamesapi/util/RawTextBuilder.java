@@ -45,12 +45,7 @@ public class RawTextBuilder {
      * @return this for chaining
      */
     public RawTextBuilder append(RawTextBuilder extraComponent) {
-
-        if(this.extra == null) {
-            this.extra = new ArrayList<>();
-
-        }
-
+        if(this.extra == null) this.extra = new ArrayList<>();
         this.extra.add(extraComponent);
         return this;
     }

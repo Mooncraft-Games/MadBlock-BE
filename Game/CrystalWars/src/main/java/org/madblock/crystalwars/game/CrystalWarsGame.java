@@ -11,7 +11,10 @@ import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.TextFormat;
+import org.madblock.crystalwars.game.entities.EntityHumanCrystal;
 import org.madblock.crystalwars.game.pointentities.capturepoint.GoldCapturePointEntity;
 import org.madblock.crystalwars.game.pointentities.capturepoint.MiddleCapturePointEntity;
 import org.madblock.crystalwars.game.pointentities.shop.types.IronShopPointEntity;
@@ -20,12 +23,14 @@ import org.madblock.crystalwars.game.pointentities.shop.types.DiamondShopPointEn
 import org.madblock.crystalwars.game.pointentities.team.CrystalPointEntity;
 import org.madblock.crystalwars.game.pointentities.team.GeneratorPointEntity;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
+import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
 import org.madblock.newgamesapi.map.types.MapRegion;
 import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.team.Team;
 import org.madblock.newgamesapi.team.TeamPresets;
+import org.madblock.newgamesapi.util.RawTextBuilder;
 
 import java.util.*;
 
@@ -208,7 +213,21 @@ public class CrystalWarsGame extends GameBehavior {
             int x = dX < 1 ? 0 : zone.getPosLesser().getX() + random.nextInt(dX + 1);
             int z = dZ < 1 ? 0 : zone.getPosLesser().getZ() + random.nextInt(dZ + 1);
 
-            //TODO: Spawn entity.
+            Location location = new Location(x, y, z, 0, 0, getSessionHandler().getPrimaryMap());
+            EntityHumanCrystal repair = EntityHumanCrystal.getNewCrystal(location, "green");
+            repair.setImmobile(true);
+            repair.setNameTagAlwaysVisible(true);
+            repair.setNameTagVisible(true);
+            repair.setNameTag(
+                    new RawTextBuilder("HEAL CRYSTAL | ")
+                            .setBold(true)
+                            .setColor(TextFormat.GREEN)
+                            .append(
+                                    new RawTextBuilder("+ 10 "+ Utility.ResourcePackCharacters.HEART_ABSORB_FULL)
+                                            .setColor(TextFormat.GOLD)
+                            )
+                            .toString()
+            );
 
             // -- Start the next spawn cycle.
             // check delay isn't the same or less than random bounds.
