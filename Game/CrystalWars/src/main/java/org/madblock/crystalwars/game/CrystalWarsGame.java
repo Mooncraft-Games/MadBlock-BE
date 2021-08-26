@@ -36,6 +36,14 @@ import java.util.*;
 
 public class CrystalWarsGame extends GameBehavior {
 
+    public static final String NBT_CRYSTAL_TYPE = "crystal_type";
+    public static final String NBT_CRYSTAL_ID = "crystal_id"; // type: team
+    public static final String NBT_HEAL_AMOUNT = "crystal_heal_amount"; // type: repair
+    public static final String NBT_HEAL_COUNTDOWN = "crystal_heal_countdown"; // type: repair
+
+    public static final String TYPE_TEAM = "team";
+    public static final String TYPE_REPAIR = "repair";
+
     protected Set<Vector3> placedBlocks = new HashSet<>();
     protected Map<Team, Set<CrystalTeamUpgrade>> upgrades = new HashMap<>();
 
@@ -49,8 +57,11 @@ public class CrystalWarsGame extends GameBehavior {
     protected int repairCrystal_minHeal;
     protected int repairCrystal_maxHeal;
 
+    protected int repairCrystal_hold_time;
+
     @Override
     public int onGameBegin() {
+        this.random = new Random();
 
         // default: 80 ticks
         this.repairCrystal_startDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_start", 20 * 80));
@@ -64,6 +75,9 @@ public class CrystalWarsGame extends GameBehavior {
         this.repairCrystal_minHeal = Math.max(2, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_heal_min", 7));
 
         this.repairCrystal_maxHeal = Math.max(2, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_heal_max", 25));
+
+        //default: 20 seconds
+        this.repairCrystal_hold_time = Math.max(0, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_hold_time", 20));
 
         return 5;
     }
@@ -100,8 +114,6 @@ public class CrystalWarsGame extends GameBehavior {
                 }
             }
         }
-
-        this.random = new Random();
     }
 
     @Override
@@ -225,7 +237,9 @@ public class CrystalWarsGame extends GameBehavior {
 
             Location location = new Location(x, y, z, 0, 0, getSessionHandler().getPrimaryMap());
             EntityHumanCrystal repair = EntityHumanCrystal.getNewCrystal(location, "green");
-            repair.namedTag.putInt("crystal_heal_amount", healAmount);
+            repair.namedTag.putString(NBT_CRYSTAL_TYPE, TYPE_REPAIR);
+            repair.namedTag.putInt(NBT_HEAL_AMOUNT, healAmount);
+            repair.namedTag.putInt(NBT_HEAL_COUNTDOWN, repairCrystal_hold_time);
             repair.setImmobile(true);
             repair.setNameTagAlwaysVisible(true);
             repair.setNameTagVisible(true);
