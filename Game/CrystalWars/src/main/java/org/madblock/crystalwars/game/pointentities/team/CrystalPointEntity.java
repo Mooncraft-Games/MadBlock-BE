@@ -135,6 +135,8 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
 
         EntityHumanCrystal endCrystal = EntityHumanCrystal.getNewCrystal(loc, "purple");
+        endCrystal.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_TEAM);
+        endCrystal.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_ID, id);
         endCrystal.setNameTagAlwaysVisible(true);
         endCrystal.setNameTagVisible(true);
         endCrystal.setNameTag(HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, MAX_HEALTH, MAX_HEALTH));
