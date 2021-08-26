@@ -209,6 +209,7 @@ public class RawTextBuilder {
     @Override
     public String toString() {
         StringBuilder nukkitTextBuilder = addFormat(new StringBuilder());
+        if(text != null) nukkitTextBuilder.append(text);
 
         if(extra != null) {
             for(RawTextBuilder raw: extra) {
@@ -218,7 +219,6 @@ public class RawTextBuilder {
         }
 
         nukkitTextBuilder.append(TextFormat.RESET);
-
         return nukkitTextBuilder.toString();
     }
 }
