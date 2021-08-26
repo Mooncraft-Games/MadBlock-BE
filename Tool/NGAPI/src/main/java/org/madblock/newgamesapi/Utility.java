@@ -19,65 +19,67 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+// TODO: Move to util package.
 public class Utility {
 
     public static final TextFormat DEFAULT_TEXT_COLOUR = TextFormat.GRAY;
-    public static final char[] UNIQUE_TOKEN_CHARACTERS = new char[]{'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9','$','&','*','^','%','(',')'};
+    public static final char[] UNIQUE_TOKEN_CHARACTERS = new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '$', '&', '*', '^', '%', '(', ')'};
 
-    public static String generateServerMessage(String topic, TextFormat topicColour, String text){
+    public static String generateServerMessage(String topic, TextFormat topicColour, String text) {
         return generateServerMessage(topic, topicColour, text, DEFAULT_TEXT_COLOUR);
     }
-    public static String generateServerMessage(String topic, TextFormat topicColour, String text, TextFormat defaultTextColour){
+
+    public static String generateServerMessage(String topic, TextFormat topicColour, String text, TextFormat defaultTextColour) {
         return String.format("%s%s%s %s%s>> %s%s%s", topicColour, TextFormat.BOLD, topic.toUpperCase(), TextFormat.DARK_GRAY, TextFormat.BOLD, TextFormat.RESET, defaultTextColour, text);
     }
 
-    public static String generateParagraph(String paragraphs[], TextFormat lineColour, TextFormat defaultTextColour, int charactersPerLine){
+    public static String generateParagraph(String paragraphs[], TextFormat lineColour, TextFormat defaultTextColour, int charactersPerLine) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(TextFormat.DARK_GRAY).append(TextFormat.BOLD).append(">>").append(TextFormat.RESET).append(lineColour);
-        for(int i = 0; i < charactersPerLine; i++){
+        for (int i = 0; i < charactersPerLine; i++) {
             stringBuilder.append("-");
         }
         stringBuilder.append(TextFormat.DARK_GRAY).append(TextFormat.BOLD).append("<<");
         String line = stringBuilder.toString();
 
-        String finalString = "\n\n"+line+"\n\n";
+        String finalString = "\n\n" + line + "\n\n";
 
-        for(String para: paragraphs) {
+        for (String para : paragraphs) {
             finalString = finalString.concat("" + TextFormat.RESET + defaultTextColour + para.replaceAll(String.format("(\\S(.{0,%s}\\w*))", charactersPerLine), "$1\n"));
         }
 
-        return finalString.concat("\n"+line+"\n");
+        return finalString.concat("\n" + line + "\n");
     }
 
-    public static String generateUnlimitedParagraph(String paragraphs[], TextFormat lineColour, TextFormat defaultTextColour, int lineLength){
+    public static String generateUnlimitedParagraph(String paragraphs[], TextFormat lineColour, TextFormat defaultTextColour, int lineLength) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(TextFormat.DARK_GRAY).append(TextFormat.BOLD).append(">>").append(TextFormat.RESET).append(lineColour);
-        for(int i = 0; i < lineLength; i++){
+        for (int i = 0; i < lineLength; i++) {
             stringBuilder.append("-");
         }
         stringBuilder.append(TextFormat.DARK_GRAY).append(TextFormat.BOLD).append("<<");
         String line = stringBuilder.toString();
 
-        String finalString = "\n\n"+line+"\n\n";
+        String finalString = "\n\n" + line + "\n\n";
 
-        for(String para: paragraphs) {
-            finalString = finalString.concat("" + TextFormat.RESET + defaultTextColour + para+"\n");
+        for (String para : paragraphs) {
+            finalString = finalString.concat("" + TextFormat.RESET + defaultTextColour + para + "\n");
         }
 
-        return finalString.concat("\n"+line+"\n");
+        return finalString.concat("\n" + line + "\n");
     }
 
-    public static String generateUniqueToken(int minlength, int variation){
+    public static String generateUniqueToken(int minlength, int variation) {
         int length = minlength + (variation > 0 ? new Random().nextInt(variation) : 0);
         String fstr = "";
-        for(int i = 0; i < length; i++){
+        for (int i = 0; i < length; i++) {
             Random r = new Random();
             fstr = fstr.concat(String.valueOf(UNIQUE_TOKEN_CHARACTERS[r.nextInt(UNIQUE_TOKEN_CHARACTERS.length)]));
         }
         return fstr;
     }
 
-    public static void executeExperimentalAdventureSettingsUpdate(Player player){
+    public static void executeExperimentalAdventureSettingsUpdate(Player player) {
         AdventureSettingsPacket pk = new AdventureSettingsPacket();
         for (AdventureSettings.Type t : AdventureSettings.Type.values()) {
             pk.setFlag(t.getId(), player.getAdventureSettings().get(t));
@@ -93,22 +95,22 @@ public class Utility {
         player.resetInAirTicks();
     }
 
-    public static String getLevelText(int level){
+    public static String getLevelText(int level) {
         if (level < 20) {
-            return  "" + TextFormat.GRAY + level + TextFormat.RESET;
+            return "" + TextFormat.GRAY + level + TextFormat.RESET;
         } else if (level < 40) {
-            return  "" + TextFormat.BLUE + level + TextFormat.RESET;
+            return "" + TextFormat.BLUE + level + TextFormat.RESET;
         } else if (level < 60) {
-            return  "" + TextFormat.GREEN + level + TextFormat.RESET;
+            return "" + TextFormat.GREEN + level + TextFormat.RESET;
         } else if (level < 80) {
-            return  "" + TextFormat.YELLOW + level + TextFormat.RESET;
+            return "" + TextFormat.YELLOW + level + TextFormat.RESET;
         } else {
-            return  "" + TextFormat.RED + level + TextFormat.RESET;
+            return "" + TextFormat.RED + level + TextFormat.RESET;
         }
 
     }
 
-    public static boolean setGamemodeWorkaround(Player player, int gamemode, boolean clientSide, AdventureSettings newSettings){
+    public static boolean setGamemodeWorkaround(Player player, int gamemode, boolean clientSide, AdventureSettings newSettings) {
         if (gamemode < 0 || gamemode > 3 || player.getGamemode() == gamemode) {
             return false;
         }
@@ -161,9 +163,8 @@ public class Utility {
     }
 
 
-
     public static Skin parseSkinFromNBT(CompoundTag tag) {
-        if(tag == null) throw new IllegalArgumentException("NBT cannot be null");
+        if (tag == null) throw new IllegalArgumentException("NBT cannot be null");
         Skin skin = new Skin();
 
         skin.setSkinId(tag.getString("ModelId"));
@@ -225,7 +226,7 @@ public class Utility {
     }
 
     public static CompoundTag parseNBTFromSkin(Skin skin) {
-        if(skin == null) throw new IllegalArgumentException("Skin cannot be null");
+        if (skin == null) throw new IllegalArgumentException("Skin cannot be null");
 
         ListTag<CompoundTag> pieceTintColors = new ListTag<>("PieceTintColors");
         for (PersonaPieceTint tint : skin.getTintColors()) {
@@ -246,11 +247,11 @@ public class Utility {
         for (PersonaPiece piece : skin.getPersonaPieces()) {
             personaPieces.add(
                     new CompoundTag()
-                        .putString("id", piece.id)
-                        .putString("type", piece.type)
-                        .putString("packId", piece.packId)
-                        .putBoolean("isDefault", piece.isDefault)
-                        .putString("productId", piece.productId)
+                            .putString("id", piece.id)
+                            .putString("type", piece.type)
+                            .putString("packId", piece.packId)
+                            .putBoolean("isDefault", piece.isDefault)
+                            .putString("productId", piece.productId)
             );
         }
 
@@ -260,10 +261,10 @@ public class Utility {
             image.putImage(animation.image);
             animationData.add(
                     new CompoundTag()
-                        .putByteArray("image", image.get())
-                        .putInt("type", animation.type)
-                        .putFloat("frames", animation.frames)
-                        .putInt("expression", animation.expression)
+                            .putByteArray("image", image.get())
+                            .putInt("type", animation.type)
+                            .putFloat("frames", animation.frames)
+                            .putInt("expression", animation.expression)
             );
         }
 
