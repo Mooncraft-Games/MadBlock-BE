@@ -113,6 +113,10 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         Location loc = new Location(entity.getX(), entity.getY(), entity.getZ(), entity.getYaw(), 0, gameHandler.getPrimaryMap());
 
         EntityHumanCrystal endCrystal = EntityHumanCrystal.getNewCrystal(loc, "purple");
+        endCrystal.setNameTagAlwaysVisible(true);
+        endCrystal.setNameTagVisible(true);
+        endCrystal.setNameTag(HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, MAX_HEALTH, MAX_HEALTH));
+        endCrystal.setScale(1.2f);
         endCrystal.spawnToAll();
 
         teamPointEntities.put(team, entity);
