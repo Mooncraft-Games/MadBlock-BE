@@ -3,16 +3,21 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.crystal.repair",
-				"texture_width": 64,
-				"texture_height": 64,
+				"identifier": "geometry.madblock.crystal",
+				"texture_width": 96,
+				"texture_height": 96,
 				"visible_bounds_width": 3,
-				"visible_bounds_height": 4,
-				"visible_bounds_offset": [0, 1, 0]
+				"visible_bounds_height": 3.5,
+				"visible_bounds_offset": [0, 1.25, 0]
 			},
 			"bones": [
 				{
+					"name": "Root",
+					"pivot": [0, 0, 0]
+				},
+				{
 					"name": "Crystal",
+					"parent": "Root",
 					"pivot": [0, 0, 0],
 					"cubes": [
 						{

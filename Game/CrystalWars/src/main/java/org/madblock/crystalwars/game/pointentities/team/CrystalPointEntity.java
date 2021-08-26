@@ -2,7 +2,6 @@ package org.madblock.crystalwars.game.pointentities.team;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityEndCrystal;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
@@ -10,14 +9,10 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Sound;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.CrystalWarsPlugin;
+import org.madblock.crystalwars.game.entities.EntityHumanCrystal;
 import org.madblock.crystalwars.util.CrystalWarsUtility;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
@@ -37,7 +32,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
     protected final Map<Team, PointEntity> teamPointEntities = new HashMap<>();
     protected final Map<Vector3, Integer> crystalHealth = new HashMap<>();
-    protected final Map<Vector3, EntityEndCrystal> crystals = new HashMap<>();
+    protected final Map<Vector3, EntityHumanCrystal> crystals = new HashMap<>();
 
     protected final Map<Team, Long> lastCrystalAttackNotification = new HashMap<>();
 
@@ -79,7 +74,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         }
         Entity theEntity = null;
         for (Entity worldEntity : gameHandler.getPrimaryMap().getEntities()) {
-            if (!(worldEntity instanceof EntityEndCrystal))
+            if (!(worldEntity instanceof EntityHumanCrystal))
                 continue;
             if (worldEntity.getLocation().x == entity.getX() && worldEntity.getLocation().y == entity.getY() &&
                     worldEntity.getLocation().z == entity.getZ()) {
@@ -112,21 +107,9 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         PointEntity entity = data.getPointEntity();
 
         Vector3 position = new Vector3(entity.getX(), entity.getY(), entity.getZ());
-        FullChunk chunk = data.getLevel().getChunk((int) Math.floor(position.getX() / 16), (int) Math.floor(position.getZ() / 16), true);
+        Location loc = new Location(entity.getX(), entity.getY(), entity.getZ(), entity.getYaw(), 0, gameHandler.getPrimaryMap());
 
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Pos")
-                        .add(new DoubleTag("", position.getX()))
-                        .add(new DoubleTag("", position.getY()))
-                        .add(new DoubleTag("", position.getZ())))
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", 0f))
-                        .add(new FloatTag("", 0f)));
-        EntityEndCrystal endCrystal = (EntityEndCrystal) Entity.createEntity("EndCrystal", chunk, nbt);
+        EntityHumanCrystal endCrystal = EntityHumanCrystal.getNewCrystal(loc, "purple");
         endCrystal.spawnToAll();
 
         teamPointEntities.put(team, entity);
@@ -137,7 +120,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
     @EventHandler
     private void onCrystalDamage(EntityDamageByEntityEvent event) {
         Entity victim = event.getEntity();
-        if (victim instanceof EntityEndCrystal) {
+        if (victim instanceof EntityHumanCrystal) {
             event.setCancelled();
             Entity damager = event.getDamager();
             if (damager instanceof Player)
@@ -226,7 +209,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
     protected void preventCrystalCamping() {
         for (Player player : gameHandler.getPlayers()) {
-            for (Map.Entry<Vector3, EntityEndCrystal> entry : crystals.entrySet()) {
+            for (Map.Entry<Vector3, EntityHumanCrystal> entry : crystals.entrySet()) {
                 if (player.distance(entry.getKey()) < 0.5) {
                     player.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, "Don't block the crystal!", TextFormat.RED));
                     player.attack(1f);

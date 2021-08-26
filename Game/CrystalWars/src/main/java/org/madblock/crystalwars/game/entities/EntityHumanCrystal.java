@@ -46,12 +46,12 @@ public class EntityHumanCrystal extends EntityHumanPlus {
         return super.entityBaseTick();
     }
 
-    public static EntityHumanCrystal getNewCrystal(Location location) {
+    public static EntityHumanCrystal getNewCrystal(Location location, String texture) {
         if(location == null) throw new IllegalArgumentException("Location must not be null.");
         if(location.getLevel() == null) throw new IllegalArgumentException("Location's level must not be null.");
 
         FullChunk chunk = location.getLevel().getChunk((int) Math.floor(location.getX()) >> 4, (int) Math.floor(location.getZ()) >> 4, true);
-        Skin skin = getCrystalSkin();
+        Skin skin = getCrystalSkin(texture);
 
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Pos")
@@ -89,7 +89,7 @@ public class EntityHumanCrystal extends EntityHumanPlus {
         }
 
         EntityHumanCrystal entityHumanCrystal = new EntityHumanCrystal(chunk, nbt);
-        entityHumanCrystal.setSkin(skin);
+        if(skin != null) entityHumanCrystal.setSkin(skin);
 
         return entityHumanCrystal;
     }
@@ -104,15 +104,16 @@ public class EntityHumanCrystal extends EntityHumanPlus {
     protected static boolean skinLoaded;
     protected static String geometryID = "geometry.steve";
     protected static String geometry = "";
-    protected static BufferedImage skinData = null;
+    protected static BufferedImage skinBaseData = null;
+    protected static BufferedImage skinGreenData = null;
 
-    public static Skin getCrystalSkin() {
+    public static Skin getCrystalSkin(String type) {
         Skin skin = new Skin();
 
         if(!skinLoaded) {
             skinLoaded = true;
 
-            InputStream gStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal_repair.geo.json");
+            InputStream gStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal.geo.json");
             try {
                 BufferedReader r = new BufferedReader(new InputStreamReader(gStr));
                 StringBuilder b = new StringBuilder();
@@ -124,32 +125,52 @@ public class EntityHumanCrystal extends EntityHumanPlus {
                 }
 
                 geometry = b.length() > 0 ? b.toString() : "";
-                geometryID = "geometry.crystal.repair";
+                geometryID = "geometry.madblock.crystal";
 
             } catch (Exception err) {
                 NewGamesAPI1.getPlgLogger().warning("Error loading custom skin model data for CrystalWars Repair Crystal skin.");
             }
 
-            InputStream sStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal_repair.png");
+            InputStream sStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal.png");
             try {
                 BufferedImage image = ImageIO.read(sStr);
-                skinData = image;
+                skinBaseData = image;
             } catch (Exception err) {
-                NewGamesAPI1.getPlgLogger().warning("Error loading custom skin data for NPCHuman skin.");
+                NewGamesAPI1.getPlgLogger().warning("Error loading custom skin data for CrystalWars Repair Crystal skin.");
+            }
+
+            InputStream sGreenStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal.green.png");
+            try {
+                BufferedImage image = ImageIO.read(sStr);
+                skinBaseData = image;
+            } catch (Exception err) {
+                NewGamesAPI1.getPlgLogger().warning("Error loading custom skin data for CrystalWars Repair Crystal skin.");
             }
         }
 
-        if(skinData == null || geometry.length() == 0) {
-            return null;
+        if(geometry.length() == 0) return null;
+        BufferedImage skinImg = null;
 
-        } else {
-            skin.setGeometryData(geometry);
-            skin.setGeometryName(geometryID);
-            skin.setSkinData(skinData);
-            skin.generateSkinId(geometryID);
-            skin.setTrusted(true);
-            return skin;
+        switch(type) {
+
+            case "green":
+                skinImg = skinGreenData;
+                break;
+
+            case "purple":
+            default:
+                skinImg = skinBaseData;
         }
+
+        if(skinImg == null) return null;
+
+        skin.setGeometryData(geometry);
+        skin.setGeometryName(geometryID);
+        skin.setSkinData(skinImg);
+        skin.generateSkinId(geometryID);
+        skin.setTrusted(true);
+        return skin;
+
     }
 
     protected static boolean isCrystalSkinLoaded() {
