@@ -46,6 +46,9 @@ public class CrystalWarsGame extends GameBehavior {
     protected int repairCrystal_minDelay;
     protected int repairCrystal_maxDelay;
 
+    protected int repairCrystal_minHeal;
+    protected int repairCrystal_maxHeal;
+
     @Override
     public int onGameBegin() {
 
@@ -57,6 +60,10 @@ public class CrystalWarsGame extends GameBehavior {
 
         //default: 60 ticks
         this.repairCrystal_maxDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_max", 20 * 60));
+
+        this.repairCrystal_minHeal = Math.max(2, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_heal_min", 7));
+
+        this.repairCrystal_maxHeal = Math.max(2, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_heal_max", 25));
 
         return 5;
     }
@@ -210,24 +217,30 @@ public class CrystalWarsGame extends GameBehavior {
             int dX = zone.getPosGreater().getX() - zone.getPosLesser().getX();
             int dZ = zone.getPosGreater().getZ() - zone.getPosLesser().getZ();
 
-            int x = dX < 1 ? 0 : zone.getPosLesser().getX() + random.nextInt(dX + 1);
-            int z = dZ < 1 ? 0 : zone.getPosLesser().getZ() + random.nextInt(dZ + 1);
+            int x = zone.getPosLesser().getX() + (dX < 1 ? 0 : random.nextInt(dX + 1));
+            int z = zone.getPosLesser().getZ() + (dZ < 1 ? 0 : random.nextInt(dZ + 1));
+
+            int dH = repairCrystal_maxHeal - repairCrystal_minHeal;
+            int healAmount = repairCrystal_minHeal + (dH < 1 ? 0 : random.nextInt(dH + 1));
 
             Location location = new Location(x, y, z, 0, 0, getSessionHandler().getPrimaryMap());
             EntityHumanCrystal repair = EntityHumanCrystal.getNewCrystal(location, "green");
+            repair.namedTag.putInt("crystal_heal_amount", healAmount);
             repair.setImmobile(true);
             repair.setNameTagAlwaysVisible(true);
             repair.setNameTagVisible(true);
             repair.setNameTag(
-                    new RawTextBuilder("HEAL CRYSTAL | ")
+                    new RawTextBuilder("HEAL TEAM CRYSTAL | ")
                             .setBold(true)
                             .setColor(TextFormat.GREEN)
                             .append(
-                                    new RawTextBuilder("+ 10 "+ Utility.ResourcePackCharacters.HEART_ABSORB_FULL)
+                                    new RawTextBuilder(String.format("+ %s %s", healAmount, Utility.ResourcePackCharacters.HEART_ABSORB_FULL))
                                             .setColor(TextFormat.GOLD)
                             )
                             .toString()
             );
+
+            //TODO: Oi, add the actual healing logic now.
 
             // -- Start the next spawn cycle.
             // check delay isn't the same or less than random bounds.
