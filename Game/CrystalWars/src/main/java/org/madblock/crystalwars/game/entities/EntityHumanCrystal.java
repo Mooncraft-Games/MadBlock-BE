@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 public class EntityHumanCrystal extends EntityHumanPlus {
 
+    protected static int ticker = 0;
     protected Random random;
 
     public EntityHumanCrystal(FullChunk chunk, CompoundTag nbt) {
@@ -52,6 +53,7 @@ public class EntityHumanCrystal extends EntityHumanPlus {
 
         FullChunk chunk = location.getLevel().getChunk((int) Math.floor(location.getX()) >> 4, (int) Math.floor(location.getZ()) >> 4, true);
         Skin skin = getCrystalSkin(texture);
+
 
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Pos")
@@ -175,8 +177,8 @@ public class EntityHumanCrystal extends EntityHumanPlus {
         skin.setGeometryData(geometry);
         skin.setGeometryName(geometryID);
         skin.setSkinData(skinImg);
-        skin.generateSkinId(geometryID);
         skin.setTrusted(true);
+        skin.generateSkinId(String.valueOf(ticker++));
         return skin;
 
     }
