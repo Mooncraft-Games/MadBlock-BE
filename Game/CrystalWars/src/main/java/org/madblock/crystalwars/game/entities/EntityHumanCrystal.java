@@ -86,10 +86,17 @@ public class EntityHumanCrystal extends EntityHumanPlus {
                     .putBoolean("PersonaSkin", skin.isPersona())
                     .putBoolean("CapeOnClassicSkin", skin.isCapeOnClassic());
             nbt.putCompound("Skin", skinDataTag);
+        } else {
+            CrystalWarsPlugin.getInstance().getLogger().warning("Missing skin for crystal wars.");
         }
 
         EntityHumanCrystal entityHumanCrystal = new EntityHumanCrystal(chunk, nbt);
-        if(skin != null) entityHumanCrystal.setSkin(skin);
+        entityHumanCrystal.setNameTag("Crystal");
+        if(skin != null) {
+            entityHumanCrystal.setSkin(skin);
+        } else {
+            CrystalWarsPlugin.getInstance().getLogger().warning("Missing skin for crystal wars.");
+        }
 
         return entityHumanCrystal;
     }
@@ -128,23 +135,21 @@ public class EntityHumanCrystal extends EntityHumanPlus {
                 geometryID = "geometry.madblock.crystal";
 
             } catch (Exception err) {
-                NewGamesAPI1.getPlgLogger().warning("Error loading custom skin model data for CrystalWars Repair Crystal skin.");
+                CrystalWarsPlugin.getInstance().getLogger().warning("Error loading custom skin model data for CrystalWars Repair Crystal skin.");
             }
 
             InputStream sStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal.png");
             try {
-                BufferedImage image = ImageIO.read(sStr);
-                skinBaseData = image;
+                skinBaseData = ImageIO.read(sStr);
             } catch (Exception err) {
-                NewGamesAPI1.getPlgLogger().warning("Error loading custom skin data for CrystalWars Repair Crystal skin.");
+                CrystalWarsPlugin.getInstance().getLogger().warning("Error loading custom skin data for CrystalWars Repair Crystal skin.");
             }
 
             InputStream sGreenStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal.green.png");
             try {
-                BufferedImage image = ImageIO.read(sStr);
-                skinBaseData = image;
+                skinGreenData = ImageIO.read(sGreenStr);
             } catch (Exception err) {
-                NewGamesAPI1.getPlgLogger().warning("Error loading custom skin data for CrystalWars Repair Crystal skin.");
+                CrystalWarsPlugin.getInstance().getLogger().warning("Error loading custom skin data for CrystalWars Repair Crystal skin.");
             }
         }
 
@@ -162,7 +167,10 @@ public class EntityHumanCrystal extends EntityHumanPlus {
                 skinImg = skinBaseData;
         }
 
-        if(skinImg == null) return null;
+        if(skinImg == null) {
+            CrystalWarsPlugin.getInstance().getLogger().warning("Unable to load a skin image.");
+            return null;
+        }
 
         skin.setGeometryData(geometry);
         skin.setGeometryName(geometryID);
