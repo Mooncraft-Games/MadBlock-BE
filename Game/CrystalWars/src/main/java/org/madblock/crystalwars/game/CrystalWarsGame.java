@@ -14,6 +14,7 @@ import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.level.Location;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.TextFormat;
+import org.madblock.crystalwars.CrystalWarsConstants;
 import org.madblock.crystalwars.game.entities.EntityHumanCrystal;
 import org.madblock.crystalwars.game.pointentities.capturepoint.GoldCapturePointEntity;
 import org.madblock.crystalwars.game.pointentities.capturepoint.MiddleCapturePointEntity;
@@ -35,14 +36,6 @@ import org.madblock.newgamesapi.util.RawTextBuilder;
 import java.util.*;
 
 public class CrystalWarsGame extends GameBehavior {
-
-    public static final String NBT_CRYSTAL_TYPE = "crystal_type";
-    public static final String NBT_CRYSTAL_ID = "crystal_id"; // type: team
-    public static final String NBT_HEAL_AMOUNT = "crystal_heal_amount"; // type: repair
-    public static final String NBT_HEAL_COUNTDOWN = "crystal_heal_countdown"; // type: repair
-
-    public static final String TYPE_TEAM = "team";
-    public static final String TYPE_REPAIR = "repair";
 
     protected Set<Vector3> placedBlocks = new HashSet<>();
     protected Map<Team, Set<CrystalTeamUpgrade>> upgrades = new HashMap<>();
@@ -237,9 +230,9 @@ public class CrystalWarsGame extends GameBehavior {
 
             Location location = new Location(x, y, z, 0, 0, getSessionHandler().getPrimaryMap());
             EntityHumanCrystal repair = EntityHumanCrystal.getNewCrystal(location, "green");
-            repair.namedTag.putString(NBT_CRYSTAL_TYPE, TYPE_REPAIR);
-            repair.namedTag.putInt(NBT_HEAL_AMOUNT, healAmount);
-            repair.namedTag.putInt(NBT_HEAL_COUNTDOWN, repairCrystal_hold_time);
+            repair.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_REPAIR);
+            repair.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_AMOUNT, healAmount);
+            repair.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN, repairCrystal_hold_time);
             repair.setImmobile(true);
             repair.setNameTagAlwaysVisible(true);
             repair.setNameTagVisible(true);
@@ -292,19 +285,12 @@ public class CrystalWarsGame extends GameBehavior {
     }
 
     protected boolean crystalExistsForTeam(Team team) {
-        Optional<PointEntity> crystalPointEntity = getSessionHandler()
-                .getPointEntityTypeManager()
-                .getTypeLookup()
-                .get(CrystalPointEntity.ID)
-                .stream()
-                .filter(entity -> entity.getStringProperties().getOrDefault(CrystalPointEntity.TEAM_ID_PROPERTY, "").equals(team.getId()))
-                .findAny();
-
-        return !crystalPointEntity.filter(entity -> ((CrystalPointEntity) getSessionHandler()
+        CrystalPointEntity e = (CrystalPointEntity) getSessionHandler()
                 .getPointEntityTypeManager()
                 .getRegisteredTypes()
-                .get(CrystalPointEntity.ID))
-                .isCrystalDestroyed(entity)).isPresent();
+                .get(CrystalPointEntity.ID);
+
+        return e.getTeamAliveCrystalCount(team) > 0;
     }
 
     @Override
