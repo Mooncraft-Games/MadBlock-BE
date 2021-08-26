@@ -32,7 +32,6 @@ import java.util.Optional;
 public class CrystalPointEntity extends PointEntityType implements Listener {
 
     public static final String ID = "madblock_crystalwars_crystal";
-    public static final int MAX_HEALTH = 50;
 
     public static final String TEAM_ID_PROPERTY = "team";
 
@@ -42,6 +41,8 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
     protected final Map<String, Vector3> crystalOrigins = new HashMap<>();
 
     protected final Map<Team, Long> lastCrystalAttackNotification = new HashMap<>();
+
+    protected int maxHealth;
 
 
     public CrystalPointEntity(GameHandler gameHandler) {
@@ -53,9 +54,12 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
     @Override
     public void onRegister() {
         addFunction("spawn_crystal", this::spawnCrystalFunction);
+
         CrystalWarsPlugin.getInstance().getServer().getPluginManager().registerEvents(this, CrystalWarsPlugin.getInstance());
         getGameHandler().getGameScheduler().registerGameTask(this::updateActionBar, 0, 20);
         getGameHandler().getGameScheduler().registerGameTask(this::preventCrystalCamping, 0, 20);
+
+        this.maxHealth = Math.max(1, getGameHandler().getPrimaryMapID().getIntegers().getOrDefault("crystal_health", 10));
     }
 
     @Override
@@ -139,7 +143,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         endCrystal.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_ID, id);
         endCrystal.setNameTagAlwaysVisible(true);
         endCrystal.setNameTagVisible(true);
-        endCrystal.setNameTag(HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, MAX_HEALTH, MAX_HEALTH));
+        endCrystal.setNameTag(HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, maxHealth, maxHealth));
         endCrystal.setScale(1.2f);
         endCrystal.spawnToAll();
 
@@ -149,7 +153,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
         teamPointEntities.get(team).add(entity);
         crystals.put(id, endCrystal);
-        crystalHealth.put(id, MAX_HEALTH);
+        crystalHealth.put(id, maxHealth);
         crystalOrigins.put(id, entity.positionToVector3());
     }
 
@@ -249,7 +253,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                 Team victimTeam = gameHandler.getTeams().get(targetCrystalPointEntity.getStringProperties().get(TEAM_ID_PROPERTY));
 
                 entity.setNameTag(
-                        HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, health, MAX_HEALTH)
+                        HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, health, maxHealth)
                 );
 
                 if (System.currentTimeMillis() - lastCrystalAttackNotification.getOrDefault(victimTeam, 0L) >= 10000L) {
