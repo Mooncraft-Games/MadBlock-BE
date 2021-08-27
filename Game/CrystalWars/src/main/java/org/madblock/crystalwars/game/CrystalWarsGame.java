@@ -245,6 +245,16 @@ public class CrystalWarsGame extends GameBehavior {
                     Player player = (Player) damager;
                     EntityHumanCrystal victimCrystal = (EntityHumanCrystal) victim;
 
+                    if(onCooldown.contains(player)) { return;
+                    } else {
+                        onCooldown.add(player);
+                        getSessionHandler().getGameScheduler().registerGameTask(() -> {
+                            onCooldown.remove(player);
+                        }, crystal_cooldownTicks);
+                    }
+
+
+
                     String crystalType = victimCrystal.namedTag.getString(CrystalWarsConstants.NBT_CRYSTAL_TYPE);
                     int crystalHealAmount = victimCrystal.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_AMOUNT);
                     int crystalHealCountdown = victimCrystal.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN);
