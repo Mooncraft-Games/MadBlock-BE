@@ -63,17 +63,17 @@ public class CrystalWarsGame extends GameBehavior {
         this.random = new Random();
 
         // default: 80 ticks
-        this.repairCrystal_startDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_start", 20 * 90));
+        this.repairCrystal_startDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_start", 20 * 150));
 
         // default: 30 ticks
-        this.repairCrystal_minDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_min", 20 * 45));
+        this.repairCrystal_minDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_min", 20 * 80));
 
         //default: 60 ticks
-        this.repairCrystal_maxDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_max", 20 * 75));
+        this.repairCrystal_maxDelay = Math.max(10, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_time_max", 20 * 120));
 
-        this.repairCrystal_minHeal = Math.max(2, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_heal_min", 7));
+        this.repairCrystal_minHeal = Math.max(2, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_heal_min", 5));
 
-        this.repairCrystal_maxHeal = Math.max(2, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_heal_max", 25));
+        this.repairCrystal_maxHeal = Math.max(2, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_heal_max", 18));
 
         //default: 20 seconds
         this.repairCrystal_hold_time = Math.max(0, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_hold_time", 30));

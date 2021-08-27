@@ -128,9 +128,9 @@ public abstract class CapturePointEntity extends PointEntityType implements List
                     progressByEntity.put(entity, newProgress);
                     updateCapturePointBlocks(entity, Optional.of(teamOnPoint));
 
-                    for(Player player: gameHandler.getPlayers()) {
-                        player.getLevel().addSound(entity.positionToVector3(), Sound.FIRE_IGNITE, 0.7f, 0.8f, player);
-                    }
+                    //for(Player player: gameHandler.getPlayers()) {
+                    //    player.getLevel().addSound(entity.positionToVector3(), Sound.FIRE_IGNITE, 0.7f, 0.8f, player);
+                    //}
 
 
                     if (newProgress >= 11) {
@@ -265,7 +265,7 @@ public abstract class CapturePointEntity extends PointEntityType implements List
         if (woolBlock.getId() == Block.WOOL) {
             woolBlock.setDamage(color.getWoolData());
             level.setBlock(position.add(0, -1, 0), woolBlock);
-            level.addParticle(new DestroyBlockParticle(position.add(0.5, -0.5, 0.5), woolBlock), gameHandler.getPlayers());
+            level.addParticle(new DestroyBlockParticle(position.add(0.5, 0.5, 0.5), woolBlock), gameHandler.getPlayers());
         }
     }
 }
