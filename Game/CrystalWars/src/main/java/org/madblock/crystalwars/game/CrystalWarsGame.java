@@ -115,6 +115,8 @@ public class CrystalWarsGame extends GameBehavior {
     @Override
     public void registerGameSchedulerTasks() {
         getSessionHandler().getGameScheduler().registerGameTask(this::spawnNewRepairCrystal, repairCrystal_startDelay);
+        getSessionHandler().getGameScheduler().registerGameTask(this::alignCrystals, 1, 1);
+        getSessionHandler().getGameScheduler().registerGameTask(this::countdownCrystals, 20, 20);
     }
 
     @Override
@@ -246,7 +248,8 @@ public class CrystalWarsGame extends GameBehavior {
                         healTeam(player, crystalHealAmount);
 
                     } else {
-
+                        //TODO: Announce the pickup.
+                        spawnCarryCrystal(player, crystalHealAmount, crystalHealCountdown);
                     }
                 }
             }
@@ -271,10 +274,7 @@ public class CrystalWarsGame extends GameBehavior {
                                 total
                         ),
                         TextFormat.WHITE);
-                for(Player p: getSessionHandler().getPlayers()) {
-                    p.sendMessage(message);
-                }
-
+                for(Player p: getSessionHandler().getPlayers()) p.sendMessage(message);
             }
         });
     }
@@ -386,6 +386,48 @@ public class CrystalWarsGame extends GameBehavior {
         }
         if (aliveTeam != null) {
             getSessionHandler().declareVictoryForTeam(aliveTeam);
+        }
+    }
+
+    protected void alignCrystals() {
+        for(Map.Entry<Player, EntityHumanCrystal> e: carriedCrystals.entrySet()) {
+            Player p = e.getKey();
+            EntityHumanCrystal c = e.getValue();
+
+            c.setPositionAndRotation(new Vector3(p.getX(), p.getY() + 2, p.getZ()), p.getYaw(), p.getPitch());
+            c.setMotion(p.getMotion());
+        }
+    }
+
+    protected void countdownCrystals() {
+        for(Map.Entry<Player, EntityHumanCrystal> e: new HashMap<>(carriedCrystals).entrySet()) {
+            Player p = e.getKey();
+            EntityHumanCrystal c = e.getValue();
+
+            int countdown = c.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN);
+            int healAmount = c.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_AMOUNT);
+
+            if(countdown == 0) {
+                if(healAmount > 0) healTeam(p, healAmount);
+
+                carriedCrystals.remove(p);
+                c.close();
+                continue;
+            }
+
+            c.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN, countdown - 1);
+            c.setNameTag(new RawTextBuilder("KILL THIS PLAYER")
+                    .setBold(true)
+                    .setColor(TextFormat.RED)
+                    .append(
+                            new RawTextBuilder(String.format(" | + %s %s", healAmount, Utility.ResourcePackCharacters.HEART_FULL))
+                                    .setColor(TextFormat.GOLD)
+                    )
+                    .append(
+                            new RawTextBuilder(String.format(" | %s %s", countdown - 1, Utility.ResourcePackCharacters.TIMER))
+                                    .setColor(TextFormat.WHITE)
+                    )
+                    .toString());
         }
     }
 
