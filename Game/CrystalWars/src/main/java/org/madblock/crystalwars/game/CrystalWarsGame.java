@@ -48,7 +48,12 @@ public class CrystalWarsGame extends GameBehavior {
 
     protected ArrayList<MapRegion> repairRegions = new ArrayList<>();
     protected HashMap<Player, EntityHumanCrystal> carriedCrystals = new HashMap<>();
+    protected ArrayList<Player> onCooldown = new ArrayList<>();
     protected Random random;
+
+
+    // Try not to modify the following during a game. They're only here to
+    // provide map-configurable data and aren't designed to accomodate for updates.
 
     protected int repairCrystal_startDelay;
     protected int repairCrystal_minDelay;
@@ -57,7 +62,9 @@ public class CrystalWarsGame extends GameBehavior {
     protected int repairCrystal_minHeal;
     protected int repairCrystal_maxHeal;
 
-    protected int repairCrystal_hold_time;
+    protected int repairCrystal_holdTime;
+
+    protected int crystal_cooldownTicks;
 
     @Override
     public int onGameBegin() {
@@ -77,7 +84,9 @@ public class CrystalWarsGame extends GameBehavior {
         this.repairCrystal_maxHeal = Math.max(2, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_heal_max", 18));
 
         //default: 20 seconds
-        this.repairCrystal_hold_time = Math.max(0, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_hold_time", 30));
+        this.repairCrystal_holdTime = Math.max(0, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_hold_time", 30));
+
+        this.crystal_cooldownTicks = Math.max(0, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_cooldown_ticks", 4));
 
         return 5;
     }
@@ -224,7 +233,7 @@ public class CrystalWarsGame extends GameBehavior {
     public void onDamageCrystal(EntityDamageEvent e) {
         Entity victim = e.getEntity();
 
-        if (victim instanceof EntityHumanCrystal) {
+        if (victim instanceof EntityHumanCrystal && (victim.getLevel() == getSessionHandler().getPrimaryMap())) {
             e.setCancelled(true);
 
             if(e instanceof EntityDamageByEntityEvent) {
@@ -328,7 +337,7 @@ public class CrystalWarsGame extends GameBehavior {
             int dH = repairCrystal_maxHeal - repairCrystal_minHeal;
             int healAmount = repairCrystal_minHeal + (dH < 1 ? 0 : random.nextInt(dH + 1));
 
-            spawnRepairCrystal(x, y, z, healAmount, repairCrystal_hold_time);
+            spawnRepairCrystal(x, y, z, healAmount, repairCrystal_holdTime);
 
             // -- Start the next spawn cycle.
             // check delay isn't the same or less than random bounds.
