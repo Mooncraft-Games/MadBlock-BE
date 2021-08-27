@@ -12,4 +12,5 @@ public class CrystalWarsConstants {
 
     public static final String TYPE_TEAM = "team";
     public static final String TYPE_REPAIR = "repair";
+    public static final String TYPE_HOLDING = "holding";
 }

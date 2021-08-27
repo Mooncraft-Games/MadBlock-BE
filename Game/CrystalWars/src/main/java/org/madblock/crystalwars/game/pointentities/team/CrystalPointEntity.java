@@ -144,7 +144,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         endCrystal.setNameTagAlwaysVisible(true);
         endCrystal.setNameTagVisible(true);
         endCrystal.setNameTag(HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, maxHealth, maxHealth));
-        endCrystal.setScale(1.2f);
+        endCrystal.setScale(0.9f);
         endCrystal.spawnToAll();
 
         if(!teamPointEntities.containsKey(team)) {
@@ -332,11 +332,11 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         }
     }
 
-    protected boolean doCrystalsExistForTeam(Team team) {
+    public boolean doCrystalsExistForTeam(Team team) {
         return getTeamAliveCrystalCount(team) > 0;
     }
 
-    protected int getTeamTotalHealth(Team team) {
+    public int getTeamTotalHealth(Team team) {
         ArrayList<PointEntity> entities = teamPointEntities.get(team);
         int health = 0;
 
@@ -348,5 +348,25 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         }
 
         return health;
+    }
+
+    public int healTeamCrystals(Team team, int health) {
+        int pool = health;
+
+        for(PointEntity entity: teamPointEntities.get(team)) {
+            String id = entity.getId();
+
+            if(crystalHealth.containsKey(id)) {
+                int cryH = crystalHealth.get(id);
+                int healDelta = Math.min(pool, maxHealth - cryH);
+
+                pool -= healDelta;
+                crystalHealth.put(id, cryH + healDelta);
+
+                if(pool == 0) break;
+            }
+        }
+
+        return pool;
     }
 }

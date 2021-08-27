@@ -9,6 +9,7 @@ import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.level.Location;
@@ -29,6 +30,7 @@ import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
 import org.madblock.newgamesapi.map.types.MapRegion;
 import org.madblock.newgamesapi.map.types.PointEntity;
+import org.madblock.newgamesapi.team.SpectatingTeam;
 import org.madblock.newgamesapi.team.Team;
 import org.madblock.newgamesapi.team.TeamPresets;
 import org.madblock.newgamesapi.util.RawTextBuilder;
@@ -41,6 +43,7 @@ public class CrystalWarsGame extends GameBehavior {
     protected Map<Team, Set<CrystalTeamUpgrade>> upgrades = new HashMap<>();
 
     protected ArrayList<MapRegion> repairRegions = new ArrayList<>();
+    protected HashMap<Player, EntityHumanCrystal> carriedCrystals = new HashMap<>();
     protected Random random;
 
     protected int repairCrystal_startDelay;
@@ -111,7 +114,7 @@ public class CrystalWarsGame extends GameBehavior {
 
     @Override
     public void registerGameSchedulerTasks() {
-        getSessionHandler().getGameScheduler().registerGameTask(this::spawnRepairCrystal, repairCrystal_startDelay);
+        getSessionHandler().getGameScheduler().registerGameTask(this::spawnNewRepairCrystal, repairCrystal_startDelay);
     }
 
     @Override
@@ -210,7 +213,74 @@ public class CrystalWarsGame extends GameBehavior {
         }
     }
 
-    public void spawnRepairCrystal() {
+    @EventHandler
+    public void onDamageCrystal(EntityDamageByEntityEvent event) {
+        Entity victim = event.getEntity();
+
+        if (victim instanceof EntityHumanCrystal) {
+            event.setCancelled();
+            Entity damager = event.getDamager();
+
+            if (damager instanceof Player) {
+                Player player = (Player) damager;
+                EntityHumanCrystal victimCrystal = (EntityHumanCrystal) victim;
+
+                String crystalType = victimCrystal.namedTag.getString(CrystalWarsConstants.NBT_CRYSTAL_TYPE);
+                int crystalHealAmount = victimCrystal.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_AMOUNT);
+                int crystalHealCountdown = victimCrystal.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN);
+
+                // Use the constant first in-case it's null. Just checking that the victim crystal is definitely working.
+                if(CrystalWarsConstants.TYPE_REPAIR.equalsIgnoreCase(crystalType) && (crystalHealAmount != 0)) {
+
+                    // If a player is already carrying a crystal, don't let them pick up another smh.
+                    if(carriedCrystals.containsKey(player)){
+                        //TODO: send message
+                        return;
+                    }
+
+                    victimCrystal.close();
+
+
+                    // Give it to the player's team instantly.
+                    if(crystalHealCountdown == 0) {
+                        healTeam(player, crystalHealAmount);
+
+                    } else {
+
+                    }
+                }
+            }
+        }
+    }
+
+    public void healTeam(Player player, int amount) {
+        getSessionHandler().getPlayerTeam(player).ifPresent(t -> {
+            if(t instanceof SpectatingTeam) {
+                player.sendMessage(Utility.generateServerMessage("Spec", TextFormat.BLUE, "Stawp it pls. <3"));
+            } else {
+                int leftover = getTeamPEType().healTeamCrystals(t, amount);
+                int total = amount - leftover;
+
+                String message = Utility.generateServerMessage("Heal",
+                        TextFormat.RED,
+                        String.format("Healed %s%s team by %s%s%sHP",
+                                t.getDisplayName(),
+                                TextFormat.RESET,
+                                TextFormat.RED,
+                                TextFormat.BOLD,
+                                total
+                        ),
+                        TextFormat.WHITE);
+                for(Player p: getSessionHandler().getPlayers()) {
+                    p.sendMessage(message);
+                }
+
+            }
+        });
+    }
+
+
+    public void spawnNewRepairCrystal() {
         if(repairRegions.size() > 0) {
 
             // -- Spawn the crystal entity
@@ -228,26 +298,7 @@ public class CrystalWarsGame extends GameBehavior {
             int dH = repairCrystal_maxHeal - repairCrystal_minHeal;
             int healAmount = repairCrystal_minHeal + (dH < 1 ? 0 : random.nextInt(dH + 1));
 
-            Location location = new Location(x, y, z, 0, 0, getSessionHandler().getPrimaryMap());
-            EntityHumanCrystal repair = EntityHumanCrystal.getNewCrystal(location, "green");
-            repair.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_REPAIR);
-            repair.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_AMOUNT, healAmount);
-            repair.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN, repairCrystal_hold_time);
-            repair.setImmobile(true);
-            repair.setNameTagAlwaysVisible(true);
-            repair.setNameTagVisible(true);
-            repair.setNameTag(
-                    new RawTextBuilder("HEAL TEAM CRYSTAL | ")
-                            .setBold(true)
-                            .setColor(TextFormat.GREEN)
-                            .append(
-                                    new RawTextBuilder(String.format("+ %s %s", healAmount, Utility.ResourcePackCharacters.HEART_ABSORB_FULL))
-                                            .setColor(TextFormat.GOLD)
-                            )
-                            .toString()
-            );
-
-            //TODO: Oi, add the actual healing logic now.
+            spawnRepairCrystal(x, y, z, healAmount, repairCrystal_hold_time);
 
             // -- Start the next spawn cycle.
             // check delay isn't the same or less than random bounds.
@@ -256,8 +307,62 @@ public class CrystalWarsGame extends GameBehavior {
                     ? repairCrystal_minDelay
                     : repairCrystal_minDelay + random.nextInt( delta + 1);
             // schedule again in [delay] ticks time.
-            getSessionHandler().getGameScheduler().registerGameTask(this::spawnRepairCrystal, delay);
+            getSessionHandler().getGameScheduler().registerGameTask(this::spawnNewRepairCrystal, delay);
         }
+    }
+
+    public void spawnRepairCrystal(int x, int y, int z, int healAmount, int timer) {
+        Location location = new Location(x, y, z, 0, 0, getSessionHandler().getPrimaryMap());
+        EntityHumanCrystal repair = EntityHumanCrystal.getNewCrystal(location, "green");
+        repair.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_REPAIR);
+        repair.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_AMOUNT, healAmount);
+        repair.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN, timer);
+        repair.setImmobile(true);
+        repair.setNameTagAlwaysVisible(true);
+        repair.setNameTagVisible(true);
+        repair.setNameTag(
+                new RawTextBuilder("HEAL TEAM CRYSTAL")
+                        .setBold(true)
+                        .setColor(TextFormat.GREEN)
+                        .append(
+                                new RawTextBuilder(String.format(" | + %s %s", healAmount, Utility.ResourcePackCharacters.HEART_ABSORB_FULL))
+                                        .setColor(TextFormat.GOLD)
+                        )
+                        .append(
+                                new RawTextBuilder(String.format(" | %s %s", timer, Utility.ResourcePackCharacters.TIMER))
+                                        .setColor(TextFormat.WHITE)
+                        )
+                        .toString()
+        );
+        repair.spawnToAll();
+    }
+
+    public void spawnCarryCrystal(Player player, int healAmount, int timer) {
+        Location location = new Location(player.x, player.y + 2, player.z, 0, 0, getSessionHandler().getPrimaryMap());
+        EntityHumanCrystal carry = EntityHumanCrystal.getNewCrystal(location, "green");
+        carry.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_HOLDING);
+        carry.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_AMOUNT, healAmount);
+        carry.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN, timer);
+        carry.setScale(0.6f);
+        carry.setMotion(player.getMotion());
+        carry.setNameTagAlwaysVisible(true);
+        carry.setNameTagVisible(true);
+        carry.setNameTag(
+                new RawTextBuilder("KILL THIS PLAYER")
+                        .setBold(true)
+                        .setColor(TextFormat.RED)
+                        .append(
+                                new RawTextBuilder(String.format(" | + %s %s", healAmount, Utility.ResourcePackCharacters.HEART_FULL))
+                                        .setColor(TextFormat.GOLD)
+                        )
+                        .append(
+                                new RawTextBuilder(String.format(" | %s %s", timer, Utility.ResourcePackCharacters.TIMER))
+                                        .setColor(TextFormat.WHITE)
+                        )
+                        .toString()
+        );
+        carriedCrystals.put(player, carry);
+        carry.spawnToAll();
     }
 
     protected void handleGameDeath(GamePlayerDeathEvent event) {
@@ -285,12 +390,14 @@ public class CrystalWarsGame extends GameBehavior {
     }
 
     protected boolean crystalExistsForTeam(Team team) {
-        CrystalPointEntity e = (CrystalPointEntity) getSessionHandler()
+        return getTeamPEType().getTeamAliveCrystalCount(team) > 0;
+    }
+
+    protected CrystalPointEntity getTeamPEType() {
+        return (CrystalPointEntity) getSessionHandler()
                 .getPointEntityTypeManager()
                 .getRegisteredTypes()
                 .get(CrystalPointEntity.ID);
-
-        return e.getTeamAliveCrystalCount(team) > 0;
     }
 
     @Override
