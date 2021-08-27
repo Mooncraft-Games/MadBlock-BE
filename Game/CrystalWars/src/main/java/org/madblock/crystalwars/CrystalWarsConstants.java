@@ -13,4 +13,7 @@ public class CrystalWarsConstants {
     public static final String TYPE_TEAM = "team";
     public static final String TYPE_REPAIR = "repair";
     public static final String TYPE_HOLDING = "holding";
+
+    public static final String ANIM_CRYSTAL_SPIN_ID = "animation.madblock.crystal.spin_quick";
+    public static final String ANIM_CRYSTAL_CONTROLLER = "controller.animation.humanoid.base_pose";
 }

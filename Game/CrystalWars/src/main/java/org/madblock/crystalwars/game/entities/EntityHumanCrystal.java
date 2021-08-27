@@ -10,6 +10,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import org.madblock.crystalwars.CrystalWarsConstants;
 import org.madblock.crystalwars.CrystalWarsPlugin;
 import org.madblock.crystalwars.game.pointentities.team.CrystalPointEntity;
 import org.madblock.newgamesapi.NewGamesAPI1;
@@ -93,10 +94,14 @@ public class EntityHumanCrystal extends EntityHumanPlus {
         }
 
         EntityHumanCrystal entityHumanCrystal = new EntityHumanCrystal(chunk, nbt);
-        entityHumanCrystal.setNameTag("Crystal");
-        if(skin != null) {
-            entityHumanCrystal.setSkin(skin);
-        } else {
+        entityHumanCrystal.setClientSpawnAnimation(
+                CrystalWarsConstants.ANIM_CRYSTAL_SPIN_ID,
+                CrystalWarsConstants.ANIM_CRYSTAL_CONTROLLER
+        );
+
+
+        if(skin != null) entityHumanCrystal.setSkin(skin);
+        else {
             CrystalWarsPlugin.getInstance().getLogger().warning("Missing skin for crystal wars.");
         }
 

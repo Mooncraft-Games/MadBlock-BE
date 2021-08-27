@@ -333,6 +333,7 @@ public class CrystalWarsGame extends GameBehavior {
         repair.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_REPAIR);
         repair.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_AMOUNT, healAmount);
         repair.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN, timer);
+        repair.setScale(1.5f);
         repair.setImmobile(true);
         repair.setNameTagAlwaysVisible(true);
         repair.setNameTagVisible(true);
