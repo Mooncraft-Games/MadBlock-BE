@@ -42,7 +42,9 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
 
     protected final Map<Team, Long> lastCrystalAttackNotification = new HashMap<>();
 
+    protected ArrayList<Player> onCooldown = new ArrayList<>();
     protected int maxHealth;
+    protected int crystal_cooldownTicks;
 
 
     public CrystalPointEntity(GameHandler gameHandler) {
@@ -60,6 +62,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         getGameHandler().getGameScheduler().registerGameTask(this::preventCrystalCamping, 0, 20);
 
         this.maxHealth = Math.max(1, getGameHandler().getPrimaryMapID().getIntegers().getOrDefault("crystal_health", 40));
+        this.crystal_cooldownTicks = Math.max(0, getGameHandler().getPrimaryMapID().getIntegers().getOrDefault("c_cooldown_ticks", 10));
     }
 
     @Override
@@ -168,6 +171,15 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
             if (damager instanceof Player) {
                 Player player = (Player) damager;
                 EntityHumanCrystal crystal = (EntityHumanCrystal) victim;
+
+                if(onCooldown.contains(player)) { return;
+                } else {
+                    onCooldown.add(player);
+                    getGameHandler().getGameScheduler().registerGameTask(() -> {
+                        onCooldown.remove(player);
+                    }, crystal_cooldownTicks);
+                }
+
                 updateCrystal(player, crystal);
             }
         }

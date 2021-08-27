@@ -64,8 +64,6 @@ public class CrystalWarsGame extends GameBehavior {
 
     protected int repairCrystal_holdTime;
 
-    protected int crystal_cooldownTicks;
-
     @Override
     public int onGameBegin() {
         this.random = new Random();
@@ -85,8 +83,6 @@ public class CrystalWarsGame extends GameBehavior {
 
         //default: 20 seconds
         this.repairCrystal_holdTime = Math.max(0, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_repair_hold_time", 30));
-
-        this.crystal_cooldownTicks = Math.max(0, getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("c_cooldown_ticks", 4));
 
         return 5;
     }
@@ -245,15 +241,9 @@ public class CrystalWarsGame extends GameBehavior {
                     Player player = (Player) damager;
                     EntityHumanCrystal victimCrystal = (EntityHumanCrystal) victim;
 
-                    if(onCooldown.contains(player)) { return;
-                    } else {
-                        onCooldown.add(player);
-                        getSessionHandler().getGameScheduler().registerGameTask(() -> {
-                            onCooldown.remove(player);
-                        }, crystal_cooldownTicks);
-                    }
+                    Optional<Team> t = getSessionHandler().getPlayerTeam(player);
 
-
+                    if((!t.isPresent()) || t.get() instanceof SpectatingTeam) return;
 
                     String crystalType = victimCrystal.namedTag.getString(CrystalWarsConstants.NBT_CRYSTAL_TYPE);
                     int crystalHealAmount = victimCrystal.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_AMOUNT);
@@ -305,6 +295,7 @@ public class CrystalWarsGame extends GameBehavior {
         getSessionHandler().getPlayerTeam(player).ifPresent(t -> {
             if(t instanceof SpectatingTeam) {
                 player.sendMessage(Utility.generateServerMessage("Spec", TextFormat.BLUE, "Stawp it pls. <3"));
+
             } else {
                 int leftover = getTeamPEType().healTeamCrystals(t, amount);
                 int total = amount - leftover;
