@@ -263,7 +263,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                 EntityHumanCrystal entity = crystals.get(crystalID);
                 Integer health = crystalHealth.get(crystalID);
                 crystalHealth.put(crystalID, health - 1);
-                player.getLevel().addSound(player.getPosition(), Sound.HIT_CHAIN, 0.25f, 1);
+                player.getLevel().addSound(player.getPosition(), Sound.HIT_CHAIN, 0.6f, 1);
                 Team victimTeam = gameHandler.getTeams().get(targetCrystalPointEntity.getStringProperties().get(TEAM_ID_PROPERTY));
 
                 entity.setNameTag(

@@ -1,6 +1,8 @@
 package org.madblock.crystalwars.game.entities;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.BlockEnchantingTable;
+import cn.nukkit.block.BlockEnderChest;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.ParticleEffect;
@@ -40,7 +42,7 @@ public class EntityHumanCrystal extends EntityHumanPlus {
             float pitch = 0.75f + (random.nextFloat() / 2);
 
             getLevel().addSound(getPosition(), Sound.CHIME_AMETHYST_BLOCK, 0.8f, pitch, getViewers().values());
-            getLevel().addParticleEffect(getPosition().add(0, 2, 0), ParticleEffect.END_CHEST, -1, getLevel().getDimension(), getViewers().values());
+            //getLevel().addParticleEffect(getPosition().add(0, 2, 0), new BlockEnderChest(), -1, getLevel().getDimension(), getViewers().values());
         }
 
         return super.entityBaseTick();

@@ -243,7 +243,10 @@ public class CrystalWarsGame extends GameBehavior {
 
                     Optional<Team> t = getSessionHandler().getPlayerTeam(player);
 
-                    if((!t.isPresent()) || t.get() instanceof SpectatingTeam) return;
+                    if((!t.isPresent()) || t.get() instanceof SpectatingTeam) {
+                        player.sendMessage(Utility.generateServerMessage("Spec", TextFormat.BLUE, "Stawp it pls. <3"));
+                        return;
+                    }
 
                     String crystalType = victimCrystal.namedTag.getString(CrystalWarsConstants.NBT_CRYSTAL_TYPE);
                     int crystalHealAmount = victimCrystal.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_AMOUNT);
@@ -313,7 +316,7 @@ public class CrystalWarsGame extends GameBehavior {
 
                 for(Player p: getSessionHandler().getPlayers()) {
                     p.sendMessage(message);
-                    p.getLevel().addSound(p, Sound.BLOCK_BELL_HIT, 0.6f, 1.2f, p);
+                    p.getLevel().addSound(p, Sound.NOTE_IRON_XYLOPHONE, 0.6f, 1.2f, p);
                 }
             }
         });
