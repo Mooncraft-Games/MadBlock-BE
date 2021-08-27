@@ -122,6 +122,7 @@ public class CrystalWarsGame extends GameBehavior {
     @Override
     public void onPlayerLeaveGame(Player player) {
         player.removeAllEffects();
+        handleCrystalDrop(player);
         checkWin();
     }
 
@@ -305,8 +306,8 @@ public class CrystalWarsGame extends GameBehavior {
             int dX = zone.getPosGreater().getX() - zone.getPosLesser().getX();
             int dZ = zone.getPosGreater().getZ() - zone.getPosLesser().getZ();
 
-            int x = zone.getPosLesser().getX() + (dX < 1 ? 0 : random.nextInt(dX + 1));
-            int z = zone.getPosLesser().getZ() + (dZ < 1 ? 0 : random.nextInt(dZ + 1));
+            float x = zone.getPosLesser().getX() + (dX < 1 ? 0 : random.nextInt(dX + 1)) + 0.5f;
+            float z = zone.getPosLesser().getZ() + (dZ < 1 ? 0 : random.nextInt(dZ + 1)) + 0.5f;
 
             int dH = repairCrystal_maxHeal - repairCrystal_minHeal;
             int healAmount = repairCrystal_minHeal + (dH < 1 ? 0 : random.nextInt(dH + 1));
@@ -324,7 +325,7 @@ public class CrystalWarsGame extends GameBehavior {
         }
     }
 
-    public void spawnRepairCrystal(int x, int y, int z, int healAmount, int timer) {
+    public void spawnRepairCrystal(double x, double y, double z, int healAmount, int timer) {
         Location location = new Location(x, y, z, 0, 0, getSessionHandler().getPrimaryMap());
         EntityHumanCrystal repair = EntityHumanCrystal.getNewCrystal(location, "green");
         repair.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_REPAIR);
@@ -350,7 +351,7 @@ public class CrystalWarsGame extends GameBehavior {
         repair.spawnToAll();
         String message = Utility.generateServerMessage("Game",
                 TextFormat.BLUE,
-                String.format("Spawned a crystal repair for %s%s%s Crystal HP.",
+                String.format("Dropped a crystal repair for %s%s%s Crystal HP.",
                         TextFormat.RED,
                         TextFormat.BOLD,
                         healAmount
@@ -387,11 +388,23 @@ public class CrystalWarsGame extends GameBehavior {
     }
 
     protected void handleGameDeath(GamePlayerDeathEvent event) {
+        handleCrystalDrop(event.getDeathCause().getVictim());
+
         if (crystalExistsForTeam(event.getDeathCause().getVictimTeam())) {
             event.setDeathState(GamePlayerDeathEvent.DeathState.TIMED_RESPAWN);
             event.setRespawnSeconds(5);
         } else {
             checkWin();
+        }
+    }
+
+    protected void handleCrystalDrop(Player player) {
+        if(carriedCrystals.containsKey(player)) {
+            EntityHumanCrystal c = carriedCrystals.remove(player);
+            int crystalHealAmount = c.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_AMOUNT);
+            int crystalHealCountdown = c.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN);
+
+            spawnRepairCrystal(player.getX(), player.getY(), player.getZ(), crystalHealAmount, crystalHealCountdown);
         }
     }
 
