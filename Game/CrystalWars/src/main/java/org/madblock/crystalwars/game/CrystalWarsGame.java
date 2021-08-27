@@ -434,7 +434,7 @@ public class CrystalWarsGame extends GameBehavior {
             Player p = e.getKey();
             EntityHumanCrystal c = e.getValue();
 
-            c.setPositionAndRotation(p.getNextPosition(), p.getYaw(), p.getPitch());
+            c.setPositionAndRotation(p.getNextPosition().add(0, 2, 0), p.getYaw(), p.getPitch());
             c.setMotion(p.getMotion());
         }
     }

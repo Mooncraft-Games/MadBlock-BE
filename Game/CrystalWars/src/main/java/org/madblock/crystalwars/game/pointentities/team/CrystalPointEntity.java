@@ -59,7 +59,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         getGameHandler().getGameScheduler().registerGameTask(this::updateActionBar, 0, 20);
         getGameHandler().getGameScheduler().registerGameTask(this::preventCrystalCamping, 0, 20);
 
-        this.maxHealth = Math.max(1, getGameHandler().getPrimaryMapID().getIntegers().getOrDefault("crystal_health", 10));
+        this.maxHealth = Math.max(1, getGameHandler().getPrimaryMapID().getIntegers().getOrDefault("crystal_health", 40));
     }
 
     @Override

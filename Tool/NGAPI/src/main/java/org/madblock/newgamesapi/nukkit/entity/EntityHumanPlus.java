@@ -50,7 +50,7 @@ public class EntityHumanPlus extends EntityHuman {
             fixEverythingPlsThankYou(player);
 
         } else {
-            Task fixTask = new Task() {
+            Task fix2Task = new Task() {
 
                 @Override
                 public void onRun(int currentTick) {
@@ -67,7 +67,32 @@ public class EntityHumanPlus extends EntityHuman {
 
             };
 
-            NewGamesAPI1.get().getServer().getScheduler().scheduleRepeatingTask(fixTask, 3);
+            Task fix1Task = new Task() {
+
+                @Override
+                public void onRun(int currentTick) {
+                    if(thiss().getViewers().containsKey(player.getLoaderId())) {
+                        if(player.locallyInitialized) {
+                            if(spawnAnimationID != null && spawnAnimationController != null) {
+                                AnimateEntityPacket dataPacket = new AnimateEntityPacket();
+                                dataPacket.eid = thiss().getId();
+                                dataPacket.animation = "animation.humanoid.base_pose";
+                                dataPacket.controller = spawnAnimationController;
+                                player.dataPacket(dataPacket);
+
+                                NewGamesAPI1.get().getServer().getScheduler().scheduleDelayedRepeatingTask(fix2Task, 3, 3);
+                            }
+                            this.cancel();
+                        }
+                        return;
+                    }
+
+                    this.cancel();
+                }
+
+            };
+
+            NewGamesAPI1.get().getServer().getScheduler().scheduleRepeatingTask(fix1Task, 3);
         }
 
     }

@@ -158,7 +158,7 @@ public class HealthbarUtility {
         barBuilder.append(new RawTextBuilder("[").setColor(TextFormat.DARK_GRAY));
 
         for(double i = 0; i < 1; i += 0.05d) { // Tbh this could be split into two RawText components rather than 10.
-            RawTextBuilder squareBuilder = new RawTextBuilder("\u00A6");
+            RawTextBuilder squareBuilder = new RawTextBuilder("|");
             if(healthFraction < i) squareBuilder.setColor(barEmptyColour); // Override base colour if true
             barBuilder.append(squareBuilder);
         }
