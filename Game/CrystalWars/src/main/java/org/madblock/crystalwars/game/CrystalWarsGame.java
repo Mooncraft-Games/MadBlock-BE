@@ -10,6 +10,7 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.level.Location;
@@ -220,56 +221,61 @@ public class CrystalWarsGame extends GameBehavior {
     }
 
     @EventHandler
-    public void onDamageCrystal(EntityDamageByEntityEvent event) {
-        Entity victim = event.getEntity();
+    public void onDamageCrystal(EntityDamageEvent e) {
+        Entity victim = e.getEntity();
 
         if (victim instanceof EntityHumanCrystal) {
-            event.setCancelled();
-            Entity damager = event.getDamager();
+            e.setCancelled(true);
 
-            if (damager instanceof Player) {
-                Player player = (Player) damager;
-                EntityHumanCrystal victimCrystal = (EntityHumanCrystal) victim;
+            if(e instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent event = (EntityDamageByEntityEvent) e;
 
-                String crystalType = victimCrystal.namedTag.getString(CrystalWarsConstants.NBT_CRYSTAL_TYPE);
-                int crystalHealAmount = victimCrystal.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_AMOUNT);
-                int crystalHealCountdown = victimCrystal.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN);
+                Entity damager = event.getDamager();
 
-                // Use the constant first in-case it's null. Just checking that the victim crystal is definitely working.
-                if(CrystalWarsConstants.TYPE_REPAIR.equalsIgnoreCase(crystalType) && (crystalHealAmount != 0)) {
+                if (damager instanceof Player) {
+                    Player player = (Player) damager;
+                    EntityHumanCrystal victimCrystal = (EntityHumanCrystal) victim;
 
-                    // If a player is already carrying a crystal, don't let them pick up another smh.
-                    if(carriedCrystals.containsKey(player)){
-                        player.sendMessage(Utility.generateServerMessage("Heal",
-                                TextFormat.RED,
-                                "You cannot pick this up!",
-                                TextFormat.WHITE));
-                        return;
-                    }
+                    String crystalType = victimCrystal.namedTag.getString(CrystalWarsConstants.NBT_CRYSTAL_TYPE);
+                    int crystalHealAmount = victimCrystal.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_AMOUNT);
+                    int crystalHealCountdown = victimCrystal.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN);
 
-                    victimCrystal.close();
+                    // Use the constant first in-case it's null. Just checking that the victim crystal is definitely working.
+                    if (CrystalWarsConstants.TYPE_REPAIR.equalsIgnoreCase(crystalType) && (crystalHealAmount != 0)) {
 
-
-                    // Give it to the player's team instantly.
-                    if(crystalHealCountdown == 0) {
-                        healTeam(player, crystalHealAmount);
-
-                    } else {
-                        String message = Utility.generateServerMessage("Heal",
-                                TextFormat.RED,
-                                String.format("%s%s has picked up a heal for %s%s%s Crystal HP.",
-                                        player.getDisplayName(),
-                                        TextFormat.RESET,
-                                        TextFormat.RED,
-                                        TextFormat.BOLD,
-                                        crystalHealAmount
-                                ),
-                                TextFormat.WHITE);
-                        for(Player p: getSessionHandler().getPlayers()) {
-                            p.getLevel().addSound(p, Sound.RANDOM_ANVIL_LAND, 0.6f, 1.3f, p);
-                            p.sendMessage(message);
+                        // If a player is already carrying a crystal, don't let them pick up another smh.
+                        if (carriedCrystals.containsKey(player)) {
+                            player.sendMessage(Utility.generateServerMessage("Heal",
+                                    TextFormat.RED,
+                                    "You cannot pick this up!",
+                                    TextFormat.WHITE));
+                            return;
                         }
-                        spawnCarryCrystal(player, crystalHealAmount, crystalHealCountdown);
+
+                        victimCrystal.close();
+
+
+                        // Give it to the player's team instantly.
+                        if (crystalHealCountdown == 0) {
+                            healTeam(player, crystalHealAmount);
+
+                        } else {
+                            String message = Utility.generateServerMessage("Heal",
+                                    TextFormat.RED,
+                                    String.format("%s%s has picked up a heal for %s%s%s Crystal HP.",
+                                            player.getDisplayName(),
+                                            TextFormat.RESET,
+                                            TextFormat.RED,
+                                            TextFormat.BOLD,
+                                            crystalHealAmount
+                                    ),
+                                    TextFormat.WHITE);
+                            for (Player p : getSessionHandler().getPlayers()) {
+                                p.getLevel().addSound(p, Sound.RANDOM_ANVIL_LAND, 0.6f, 1.3f, p);
+                                p.sendMessage(message);
+                            }
+                            spawnCarryCrystal(player, crystalHealAmount, crystalHealCountdown);
+                        }
                     }
                 }
             }
