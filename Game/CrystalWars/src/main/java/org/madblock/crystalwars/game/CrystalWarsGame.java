@@ -14,6 +14,8 @@ import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.level.Location;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.potion.Effect;
+import cn.nukkit.potion.Potion;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.CrystalWarsConstants;
 import org.madblock.crystalwars.game.entities.EntityHumanCrystal;
@@ -360,6 +362,7 @@ public class CrystalWarsGame extends GameBehavior {
     }
 
     public void spawnCarryCrystal(Player player, int healAmount, int timer) {
+        player.addEffect(Effect.getEffect(Effect.SLOWNESS).setAmbient(true).setDuration(100000));
         Location location = new Location(player.x, player.y + 2, player.z, 0, 0, getSessionHandler().getPrimaryMap());
         EntityHumanCrystal carry = EntityHumanCrystal.getNewCrystal(location, "green");
         carry.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_HOLDING);
@@ -403,6 +406,7 @@ public class CrystalWarsGame extends GameBehavior {
             EntityHumanCrystal c = carriedCrystals.remove(player);
             int crystalHealAmount = c.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_AMOUNT);
             int crystalHealCountdown = c.namedTag.getInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN);
+            player.removeEffect(Effect.SLOWNESS);
             c.close();
 
             spawnRepairCrystal(player.getX(), player.getY(), player.getZ(), crystalHealAmount, crystalHealCountdown);
@@ -429,7 +433,7 @@ public class CrystalWarsGame extends GameBehavior {
             Player p = e.getKey();
             EntityHumanCrystal c = e.getValue();
 
-            c.setPositionAndRotation(new Vector3(p.getX(), p.getY() + 2, p.getZ()), p.getYaw(), p.getPitch());
+            c.setPositionAndRotation(p.getNextPosition(), p.getYaw(), p.getPitch());
             c.setMotion(p.getMotion());
         }
     }
@@ -446,6 +450,7 @@ public class CrystalWarsGame extends GameBehavior {
                 if(healAmount > 0) healTeam(p, healAmount);
 
                 carriedCrystals.remove(p);
+                p.removeEffect(Effect.SLOWNESS);
                 c.close();
                 continue;
             }
