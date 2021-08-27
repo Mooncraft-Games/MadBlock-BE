@@ -367,6 +367,7 @@ public class Utility {
 
         public static final String COIN = "\uE1C6";
         public static final String TROPHY = "\uE1C7";
+        public static final String TIMER = "\uE1CD";
 
         public static final String LONELY_PERSON = "\uE1C8";
         public static final String MORE_PEOPLE = "\uE1C9";
