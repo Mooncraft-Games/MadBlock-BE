@@ -255,7 +255,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                 Team victimTeam = gameHandler.getTeams().get(targetCrystalPointEntity.getStringProperties().get(TEAM_ID_PROPERTY));
 
                 entity.setNameTag(
-                        HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, health, maxHealth)
+                        HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, health - 1, maxHealth)
                 );
 
                 if (System.currentTimeMillis() - lastCrystalAttackNotification.getOrDefault(victimTeam, 0L) >= 10000L) {
