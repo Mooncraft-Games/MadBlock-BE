@@ -13,6 +13,7 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.level.Location;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
@@ -264,7 +265,10 @@ public class CrystalWarsGame extends GameBehavior {
                                         crystalHealAmount
                                 ),
                                 TextFormat.WHITE);
-                        for(Player p: getSessionHandler().getPlayers()) p.sendMessage(message);
+                        for(Player p: getSessionHandler().getPlayers()) {
+                            p.getLevel().addSound(p, Sound.RANDOM_ANVIL_LAND, 0.6f, 1.3f, p);
+                            p.sendMessage(message);
+                        }
                         spawnCarryCrystal(player, crystalHealAmount, crystalHealCountdown);
                     }
                 }
@@ -290,7 +294,11 @@ public class CrystalWarsGame extends GameBehavior {
                                 total
                         ),
                         TextFormat.WHITE);
-                for(Player p: getSessionHandler().getPlayers()) p.sendMessage(message);
+
+                for(Player p: getSessionHandler().getPlayers()) {
+                    p.sendMessage(message);
+                    p.getLevel().addSound(p, Sound.BLOCK_BELL_HIT, 0.6f, 1.2f, p);
+                }
             }
         });
     }
@@ -359,7 +367,11 @@ public class CrystalWarsGame extends GameBehavior {
                         TextFormat.BOLD,
                         healAmount
                 ));
-        for(Player p: getSessionHandler().getPlayers()) p.sendMessage(message);
+
+        for(Player p: getSessionHandler().getPlayers()) {
+            p.sendMessage(message);
+            p.getLevel().addSound(p, Sound.RANDOM_ANVIL_LAND, 0.6f, 1.3f, p);
+        }
     }
 
     public void spawnCarryCrystal(Player player, int healAmount, int timer) {

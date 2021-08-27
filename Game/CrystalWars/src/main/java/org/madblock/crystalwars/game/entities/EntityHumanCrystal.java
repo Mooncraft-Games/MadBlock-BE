@@ -39,10 +39,8 @@ public class EntityHumanCrystal extends EntityHumanPlus {
         if(random.nextInt(25) == 1) {
             float pitch = 0.75f + (random.nextFloat() / 2);
 
-            Set<Player> nearby = getViewers().values().stream().filter(player -> distance(player) > 20).collect(Collectors.toSet());
-
-            getLevel().addSound(getPosition(), Sound.CHIME_AMETHYST_BLOCK, 0.5f, pitch, nearby);
-            getLevel().addParticleEffect(getPosition().add(0, 2, 0), ParticleEffect.CROP_GROWTH, -1, getLevel().getDimension(), getViewers().values());
+            getLevel().addSound(getPosition(), Sound.CHIME_AMETHYST_BLOCK, 0.8f, pitch, getViewers().values());
+            getLevel().addParticleEffect(getPosition().add(0, 2, 0), ParticleEffect.END_CHEST, -1, getLevel().getDimension(), getViewers().values());
         }
 
         return super.entityBaseTick();

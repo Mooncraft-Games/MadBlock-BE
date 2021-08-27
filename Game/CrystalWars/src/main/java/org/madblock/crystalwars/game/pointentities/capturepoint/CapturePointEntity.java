@@ -7,6 +7,10 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.ParticleEffect;
+import cn.nukkit.level.Sound;
+import cn.nukkit.level.particle.DestroyBlockParticle;
+import cn.nukkit.level.particle.Particle;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.TextFormat;
@@ -89,9 +93,11 @@ public abstract class CapturePointEntity extends PointEntityType implements List
             Team teamOnPoint = null;
             boolean teamExists = false;
             for (Player player : nearbyPlayers) {
+
                 if (teamOnPoint == null) {
                     teamOnPoint = gameHandler.getPlayerTeam(player).get();
                     teamExists = true;
+
                 } else if (!teamOnPoint.getId().equals(gameHandler.getPlayerTeam(player).get().getId())) {
                     teamOnPoint = null; // There isn't a clear team that's dominant.
                     break;
@@ -102,19 +108,17 @@ public abstract class CapturePointEntity extends PointEntityType implements List
 
                 // Nobody is contesting for this.
                 if (progressByEntity.containsKey(entity)) {
-
                     updateCapturePointBlocks(entity, Optional.empty());
+
                     int newProgress = progressByEntity.get(entity) - 1;
                     progressByEntity.put(entity, newProgress);
-                    if (newProgress <= -1) {
-                        progressByEntity.remove(entity);
-                    }
+
+                    if (newProgress <= -1) progressByEntity.remove(entity);
                 }
 
             } else if (teamOnPoint != null) {
 
                 // We should contest for this point.
-
                 // Who currently owns this capture point?
                 Optional<Team> currentTeam = ownershipByEntity.get(entity);
                 if (!currentTeam.isPresent() || !currentTeam.get().getId().equals(teamOnPoint.getId())) {
@@ -123,13 +127,24 @@ public abstract class CapturePointEntity extends PointEntityType implements List
                     int newProgress = progressByEntity.getOrDefault(entity, -1) + 1;
                     progressByEntity.put(entity, newProgress);
                     updateCapturePointBlocks(entity, Optional.of(teamOnPoint));
+
+                    for(Player player: gameHandler.getPlayers()) {
+                        player.getLevel().addSound(entity.positionToVector3(), Sound.FIRE_IGNITE, 0.7f, 0.8f, player);
+                    }
+
+
                     if (newProgress >= 11) {
                         progressByEntity.remove(entity);
+                        for(Player player: gameHandler.getPlayers()) {
+                            player.getLevel().addSound(player, Sound.BEACON_ACTIVATE, 0.6f, 1f, player);
+                        }
+
                         if (currentTeam.isPresent()) {
                             for (Player player : gameHandler.getPlayers()) {
                                 player.sendMessage(Utility.generateServerMessage("Game", TextFormat.BLUE, String.format("%s has lost %s Point!", currentTeam.get().getFormattedDisplayName(), getName())));
                             }
                             ownershipByEntity.put(entity, Optional.empty());
+
                         } else {
                             ownershipByEntity.put(entity, Optional.of(teamOnPoint));
                             for (Player player : gameHandler.getPlayers()) {
@@ -250,6 +265,7 @@ public abstract class CapturePointEntity extends PointEntityType implements List
         if (woolBlock.getId() == Block.WOOL) {
             woolBlock.setDamage(color.getWoolData());
             level.setBlock(position.add(0, -1, 0), woolBlock);
+            level.addParticle(new DestroyBlockParticle(position.add(0.5, -0.5, 0.5), woolBlock), gameHandler.getPlayers());
         }
     }
 }
