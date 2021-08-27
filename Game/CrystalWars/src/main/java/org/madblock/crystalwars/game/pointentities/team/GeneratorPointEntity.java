@@ -8,6 +8,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.item.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.NBTIO;
 import org.madblock.crystalwars.CrystalWarsPlugin;
@@ -112,10 +113,12 @@ public class GeneratorPointEntity extends PointEntityType implements Listener {
 
         if (closePlayers.size() > 0) {
             for (Player player : closePlayers) {
+                player.getLevel().addSound(player, Sound.ITEM_BONE_MEAL_USE, 0.6f, 1f, player);
                 player.getInventory().addItem(item);
                 player.getInventory().sendContents(player);
             }
         } else {
+            position.getLevel().addSound(position, Sound.ITEM_BONE_MEAL_USE, 0.6f, 1f);
             Optional<Entity> existingEntity = Arrays.stream(
                     position.getLevel().getNearbyEntities(
                             new SimpleAxisAlignedBB(

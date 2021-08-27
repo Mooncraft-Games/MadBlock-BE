@@ -15,6 +15,7 @@ import cn.nukkit.form.element.ElementButtonImageData;
 import cn.nukkit.form.response.FormResponseSimple;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.Sound;
 import cn.nukkit.utils.TextFormat;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -133,8 +134,11 @@ public abstract class ShopPointEntity extends PointEntityType implements Listene
                 if (chosenButton.onQuery(event.getPlayer())) {
                     chosenButton.onPurchase(event.getPlayer());
                     event.getPlayer().sendMessage(chosenButton.getPurchaseMessage(event.getPlayer()));
+                    event.getPlayer().getLevel().addSound(event.getPlayer(), Sound.RANDOM_LEVELUP, 0.6f, 1f, event.getPlayer());
+
                 } else {
                     event.getPlayer().sendMessage(chosenButton.getFailedToPurchaseMessage(event.getPlayer()));
+                    event.getPlayer().getLevel().addSound(event.getPlayer(), Sound.NOTE_BASS, 0.6f, 0.6f, event.getPlayer());
                 }
 
                 if (reopenOnQuery()) {
@@ -168,6 +172,8 @@ public abstract class ShopPointEntity extends PointEntityType implements Listene
                 form.addButton(new ElementButton(item.getLabel()));
             }
         }
+
+        player.getLevel().addSound(player, Sound.BLOCK_BEEHIVE_EXIT, 0.6f, 1f, player);
 
         int formId = player.showFormWindow(form);
         openPlayerGuis.add(formId);
