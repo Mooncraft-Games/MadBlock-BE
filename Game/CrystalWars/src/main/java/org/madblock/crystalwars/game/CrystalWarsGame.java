@@ -236,7 +236,10 @@ public class CrystalWarsGame extends GameBehavior {
 
                     // If a player is already carrying a crystal, don't let them pick up another smh.
                     if(carriedCrystals.containsKey(player)){
-                        //TODO: send message
+                        player.sendMessage(Utility.generateServerMessage("Heal",
+                                TextFormat.RED,
+                                "You cannot pick this up!",
+                                TextFormat.WHITE));
                         return;
                     }
 
@@ -248,7 +251,17 @@ public class CrystalWarsGame extends GameBehavior {
                         healTeam(player, crystalHealAmount);
 
                     } else {
-                        //TODO: Announce the pickup.
+                        String message = Utility.generateServerMessage("Heal",
+                                TextFormat.RED,
+                                String.format("%s%s has picked up a heal for %s%s%s Crystal HP.",
+                                        player.getDisplayName(),
+                                        TextFormat.RESET,
+                                        TextFormat.RED,
+                                        TextFormat.BOLD,
+                                        crystalHealAmount
+                                ),
+                                TextFormat.WHITE);
+                        for(Player p: getSessionHandler().getPlayers()) p.sendMessage(message);
                         spawnCarryCrystal(player, crystalHealAmount, crystalHealCountdown);
                     }
                 }
@@ -266,7 +279,7 @@ public class CrystalWarsGame extends GameBehavior {
 
                 String message = Utility.generateServerMessage("Heal",
                         TextFormat.RED,
-                        String.format("Healed %s%s team by %s%s%sHP",
+                        String.format("Healed team %s's%s crystal by %s%s%sHP",
                                 t.getDisplayName(),
                                 TextFormat.RESET,
                                 TextFormat.RED,
@@ -335,6 +348,14 @@ public class CrystalWarsGame extends GameBehavior {
                         .toString()
         );
         repair.spawnToAll();
+        String message = Utility.generateServerMessage("Game",
+                TextFormat.BLUE,
+                String.format("Spawned a crystal repair for %s%s%s Crystal HP.",
+                        TextFormat.RED,
+                        TextFormat.BOLD,
+                        healAmount
+                ));
+        for(Player p: getSessionHandler().getPlayers()) p.sendMessage(message);
     }
 
     public void spawnCarryCrystal(Player player, int healAmount, int timer) {
@@ -348,7 +369,7 @@ public class CrystalWarsGame extends GameBehavior {
         carry.setNameTagAlwaysVisible(true);
         carry.setNameTagVisible(true);
         carry.setNameTag(
-                new RawTextBuilder("KILL THIS PLAYER")
+                new RawTextBuilder("KILL TO STEAL")
                         .setBold(true)
                         .setColor(TextFormat.RED)
                         .append(
