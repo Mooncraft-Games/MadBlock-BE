@@ -23,11 +23,11 @@ public class DimensionWatchdog implements Listener {
     public static final int CHUNK_RADIUS = 4;
     private static DimensionWatchdog dimensionWatchdog;
 
-    protected HashMap<UUID, Location> dimensionAckXUIDs; // to-do: maybe we should make this it's own thing.
+    protected HashMap<UUID, Location> dimensionAckIDs; // to-do: maybe we should make this it's own thing.
     protected ArrayList<Long> freshPlayers;
 
     public DimensionWatchdog() {
-        this.dimensionAckXUIDs = new HashMap<>();
+        this.dimensionAckIDs = new HashMap<>();
         this.freshPlayers = new ArrayList<>();
     }
 
@@ -87,7 +87,7 @@ public class DimensionWatchdog implements Listener {
             }
 
             // Queue an ack check
-            dimensionAckXUIDs.put(player.getUniqueId(), new Location(pos.x, pos.y, pos.z, pos.yaw, pos.pitch, target));
+            dimensionAckIDs.put(player.getUniqueId(), new Location(pos.x, pos.y, pos.z, pos.yaw, pos.pitch, target));
 
         } else {
 
@@ -96,6 +96,9 @@ public class DimensionWatchdog implements Listener {
                     target.requestChunk(cX, cZ, player);
                 }
             }
+
+            player.switchLevel(pos.level);
+            player.teleport(pos);
 
             PlayStatusPacket statusPacket = new PlayStatusPacket();
             statusPacket.status = PlayStatusPacket.PLAYER_SPAWN;
@@ -115,9 +118,8 @@ public class DimensionWatchdog implements Listener {
             if (actionPacket.action == PlayerActionPacket.ACTION_DIMENSION_CHANGE_ACK) {
                 event.getPlayer().locallyInitialized = true;
 
-                if(dimensionAckXUIDs.containsKey(event.getPlayer().getUniqueId())) {
-                    Location pos = dimensionAckXUIDs.remove(event.getPlayer().getUniqueId());
-                    event.getPlayer().teleport(pos);
+                if(dimensionAckIDs.containsKey(event.getPlayer().getUniqueId())) {
+                    Location pos = dimensionAckIDs.remove(event.getPlayer().getUniqueId());
                     switchDimension(pos, event.getPlayer(), pos.level, false);
 
                     StopSoundPacket stopSoundPacket = new StopSoundPacket();
@@ -137,7 +139,7 @@ public class DimensionWatchdog implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        dimensionAckXUIDs.remove(event.getPlayer().getUniqueId());
+        dimensionAckIDs.remove(event.getPlayer().getUniqueId());
         freshPlayers.remove(event.getPlayer().getId());
     }
 
