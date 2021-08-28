@@ -14,6 +14,7 @@ import org.madblock.newgamesapi.game.GameID;
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
 import org.madblock.newgamesapi.game.GameProperties;
 import org.madblock.newgamesapi.kits.KitGroup;
+import org.madblock.newgamesapi.util.NGAPIConstants;
 
 public class BlockSwapPlugin extends PluginBase {
 
@@ -65,7 +66,7 @@ public class BlockSwapPlugin extends PluginBase {
 
         GameID tourney = new GameID(
                 "tourney_blockswap",
-                "bswap",
+                NGAPIConstants.EVENT_SERVER_ID,
                 "Block Swap Tourney",
                 "Quick! Stand on the block displayed or you lose! Points are awarded to the top 3 with a bonus for #1!",
                 blockSwapKits.getGroupID(),

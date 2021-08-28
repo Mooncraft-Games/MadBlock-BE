@@ -14,6 +14,7 @@ import org.madblock.newgamesapi.game.pvp.CustomGamePVPSettings;
 import org.madblock.newgamesapi.kits.KitGroup;
 import org.madblock.newgamesapi.registry.GameRegistry;
 import org.madblock.newgamesapi.registry.KitRegistry;
+import org.madblock.newgamesapi.util.NGAPIConstants;
 
 public class SumoX extends PluginBase {
 
@@ -64,8 +65,8 @@ public class SumoX extends PluginBase {
         GameID sumoBrawlID = new GameID("sumox_brawl", "sumobrawl", "Sumo X Brawl", "The all new Sumo! Slap up to 4 players off the platform till they run out of lives! The last standing wins each round!", "sumox", new String[]{"sumo", "sumox"}, 2, sumoBrawlProperties, GBehaveSumoBase.class);
         GameID sumoMegaID = new GameID("sumox_mega", "sumomega", "Sumo X Mega", "The all new Sumo! Slap up to 32 players off the platform till they run out of lives! The last standing wins each round!", "sumox", new String[]{"sumo", "sumox"}, 2, sumoMegaProperties, GBehaveSumoBase.class);
 
-        GameID tourneySumoBrawlID = new GameID("tourney_sumox_brawl", "sumobrawl", "Sumo X Mega Tourney", "The all new Sumo! Slap up to 4 players off the platform till they run out of lives! The last standing wins each round! Kills, Wins, and the top 3 positions are worth points!", "sumox", new String[]{"sumo", "sumox"}, 2, sumoBrawlTourneyProperties, GBehaveSumoBase.class);
-        GameID tourneySumoMegaID = new GameID("tourney_sumox_mega", "sumomega", "Sumo X Mega Tourney", "The all new Sumo! Slap up to 32 players off the platform till they run out of lives! The last standing wins each round! Kills, Wins, and the top 3 positions are worth points!", "sumox", new String[]{"sumo", "sumox"}, 2, sumoMegaTourneyProperties, GBehaveSumoBase.class);
+        GameID tourneySumoBrawlID = new GameID("tourney_sumox_brawl", NGAPIConstants.EVENT_SERVER_ID, "Sumo X Mega Tourney", "The all new Sumo! Slap up to 4 players off the platform till they run out of lives! The last standing wins each round! Kills, Wins, and the top 3 positions are worth points!", "sumox", new String[]{"sumo", "sumox"}, 2, sumoBrawlTourneyProperties, GBehaveSumoBase.class);
+        GameID tourneySumoMegaID = new GameID("tourney_sumox_mega", NGAPIConstants.EVENT_SERVER_ID, "Sumo X Mega Tourney", "The all new Sumo! Slap up to 32 players off the platform till they run out of lives! The last standing wins each round! Kills, Wins, and the top 3 positions are worth points!", "sumox", new String[]{"sumo", "sumox"}, 2, sumoMegaTourneyProperties, GBehaveSumoBase.class);
 
 
         GameRegistry.get()
