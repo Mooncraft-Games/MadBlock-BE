@@ -5,6 +5,8 @@ public class CrystalWarsConstants {
     public static final String BASE_GAME_ID = "crystalwars";
     public static final String BASE_GAME_SERVER_ID = "cw";
 
+    public static final String TOURNEY_GAME_ID = "tourney_crystalwars";
+
     public static final String NBT_CRYSTAL_TYPE = "crystal_type";
     public static final String NBT_CRYSTAL_ID = "crystal_id"; // type: team
     public static final String NBT_HEAL_AMOUNT = "crystal_heal_amount"; // type: repair

@@ -21,6 +21,7 @@ import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;
 import org.madblock.newgamesapi.map.pointentities.PointEntityType;
 import org.madblock.newgamesapi.map.types.PointEntity;
+import org.madblock.newgamesapi.rewards.RewardChunk;
 import org.madblock.newgamesapi.team.Team;
 import org.madblock.newgamesapi.util.HealthbarUtility;
 
@@ -283,6 +284,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                     entity.despawnFromAll();
                     crystals.remove(crystalID);
                     crystalHealth.remove(crystalID);
+                    getGameHandler().addRewardChunk(player, new RewardChunk("destroy_crystal", "Crystal Kill", 10, 4, 3));
 
                     if(getTeamAliveCrystalCount(victimTeam) > 0) {
                         for (Player gamePlayer : gameHandler.getPlayers()) {

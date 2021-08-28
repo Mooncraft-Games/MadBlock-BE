@@ -34,6 +34,7 @@ import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
 import org.madblock.newgamesapi.map.types.MapRegion;
 import org.madblock.newgamesapi.map.types.PointEntity;
+import org.madblock.newgamesapi.rewards.RewardChunk;
 import org.madblock.newgamesapi.team.SpectatingTeam;
 import org.madblock.newgamesapi.team.Team;
 import org.madblock.newgamesapi.team.TeamPresets;
@@ -298,6 +299,7 @@ public class CrystalWarsGame extends GameBehavior {
         getSessionHandler().getPlayerTeam(player).ifPresent(t -> {
             if(t instanceof SpectatingTeam) {
                 player.sendMessage(Utility.generateServerMessage("Spec", TextFormat.BLUE, "Stawp it pls. <3"));
+                getSessionHandler().addRewardChunk(player, new RewardChunk("heal_crystal", "Crystal Heal", 4, 2, 1));
 
             } else {
                 int leftover = getTeamPEType().healTeamCrystals(t, amount);
