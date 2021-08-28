@@ -373,7 +373,15 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
                 int healDelta = Math.min(pool, maxHealth - cryH);
 
                 pool -= healDelta;
-                crystalHealth.put(id, cryH + healDelta);
+                int newHealth = cryH + healDelta;
+                crystalHealth.put(id, newHealth);
+
+                EntityHumanCrystal c = crystals.get(id);
+                if(c != null) {
+                    c.setNameTag(
+                            HealthbarUtility.getHealthText(HealthbarUtility.HealthbarType.BAR_DUO, health - 1, maxHealth)
+                    );
+                }
 
                 if(pool == 0) break;
             }
