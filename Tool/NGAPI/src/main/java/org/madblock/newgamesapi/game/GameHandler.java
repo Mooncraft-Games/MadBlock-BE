@@ -894,10 +894,10 @@ public class GameHandler implements Listener {
                     .executeFunctionForAll(PointEntityTypeFirework.FUNC_SPAWN, new HashMap<>());
             //TODO: Give teams their own firework palettes and use them for #1 instead.
 
-            endGame(true);
             first.getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("first", "" + TextFormat.GOLD + TextFormat.BOLD + "First Place", 400, 100, TOURNEY_TOP3_POINTS + TOURNEY_WIN_POINTS)));
             if (second != null) second.getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("second", "" + TextFormat.GOLD + TextFormat.BOLD + "Second Place", 300, 75, TOURNEY_TOP3_POINTS)));
             if (third != null) third.getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("third", "" + TextFormat.DARK_RED + TextFormat.BOLD + "Third Place", 200, 50, TOURNEY_TOP3_POINTS)));
+            endGame(true); // THIS MOVES PLAYERS OUT OF THEIR TEAMS !!!
 
             String[] paragraphs = new String[3 + (second == null ? 0 : 1) + (third == null ? 0 : 1)];
             paragraphs[0] = "" + TextFormat.GOLD + TextFormat.BOLD + "Winners:";
