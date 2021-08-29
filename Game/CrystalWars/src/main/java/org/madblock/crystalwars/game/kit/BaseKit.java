@@ -46,6 +46,7 @@ public abstract class BaseKit extends Kit {
             }
 
             Item sword = new ItemSwordWood();
+            CrystalWarsUtility.makeUnbreakable(sword);
             if (base.doesTeamHaveUpgrade(playerTeam, CrystalTeamUpgrade.SHARPNESS_ONE)) {
                 if (base.doesTeamHaveUpgrade(playerTeam, CrystalTeamUpgrade.SHARPNESS_TWO)) {
                     sword.addEnchantment(Enchantment.get(Enchantment.ID_DAMAGE_ALL).setLevel(2));
