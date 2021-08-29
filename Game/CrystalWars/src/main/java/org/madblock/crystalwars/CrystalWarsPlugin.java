@@ -42,7 +42,7 @@ public class CrystalWarsPlugin extends PluginBase {
                 .setFallDamageEnabled(true)
                 .setGuidelinePlayers(2)
                 .setMaximumPlayers(4)
-                .setMinimumPlayers(2)
+                .setMinimumPlayers(1)
                 .setDefaultCountdownLength(15)
                 .setTourneyGamemode(true);
 

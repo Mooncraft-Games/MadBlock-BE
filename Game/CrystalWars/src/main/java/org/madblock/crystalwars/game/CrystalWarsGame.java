@@ -32,6 +32,7 @@ import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
+import org.madblock.newgamesapi.map.pointentities.PointEntityType;
 import org.madblock.newgamesapi.map.types.MapRegion;
 import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.rewards.RewardChunk;
@@ -506,7 +507,8 @@ public class CrystalWarsGame extends GameBehavior {
     }
 
     protected boolean crystalExistsForTeam(Team team) {
-        return getTeamPEType().getTeamAliveCrystalCount(team) > 0;
+        CrystalPointEntity type = getTeamPEType();
+        return type != null && type.getTeamAliveCrystalCount(team) > 0;
     }
 
     protected CrystalPointEntity getTeamPEType() {
