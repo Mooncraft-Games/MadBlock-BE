@@ -11,6 +11,7 @@ import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.game.GameManager;
+import org.madblock.newgamesapi.registry.GameRegistry;
 import org.madblock.ranks.api.RankManager;
 import org.madblock.ranks.api.RankProfile;
 
@@ -19,15 +20,18 @@ import java.util.Optional;
 
 public class CommandGame extends PluginCommand<NewGamesAPI1> {
 
+    protected static CommandGame commandGame;
+
     public CommandGame() {
         super("game", NewGamesAPI1.get());
+        commandGame = this;
         this.setDescription("Handles games");
         this.setUsage("/game start <String: gameid> \nOR /game sentto <String: sessionid> \nOR /game stop <String: sessionid>");
 
         this.commandParameters.clear();
         this.commandParameters.put("start", new CommandParameter[]{
                 CommandParameter.newEnum("start", new CommandEnum("StartGame","start")),
-                CommandParameter.newType("gameid", CommandParamType.STRING)
+                CommandParameter.newEnum("gameid", GameRegistry.get().getGames().toArray(new String[GameRegistry.get().getGames().size()]))
         });
         this.commandParameters.put("sendlobbytogame", new CommandParameter[]{
                 CommandParameter.newEnum("sendto", new CommandEnum("SendToGame","sendto")),
@@ -39,9 +43,15 @@ public class CommandGame extends PluginCommand<NewGamesAPI1> {
         });
     }
 
+    public static void refreshParameters() {
+        commandGame.commandParameters.put("start", new CommandParameter[]{
+                CommandParameter.newEnum("start", new CommandEnum("StartGame","start")),
+                CommandParameter.newEnum("gameid", GameRegistry.get().getGames().toArray(new String[GameRegistry.get().getGames().size()]))
+        });
+    }
+
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-
         if (sender.isPlayer()) {
             Optional<RankProfile> profile = RankManager.getInstance().getRankProfile((Player)sender);
             if (!profile.isPresent() || !profile.get().hasPermission("newgameapi.commands.game")) {

@@ -109,6 +109,17 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
 
         this.visitorSkinCache.setAsPrimaryManager();
 
+        this.getServer().getCommandMap().register("ngapi", new CommandGame());
+        this.getServer().getCommandMap().register("ngapi", new CommandKit());
+        this.getServer().getCommandMap().register("ngapi", new CommandServer());
+        this.getServer().getCommandMap().register("ngapi", new CommandHub());
+        this.getServer().getCommandMap().register("ngapi", new CommandMatchmake());
+        this.getServer().getCommandMap().register("ngapi", new CommandAddStat());
+        this.getServer().getCommandMap().register("ngapi", new CommandTourney());
+        this.getServer().getCommandMap().register("ngapi", new CommandSuper());
+        this.getServer().getCommandMap().register("ngapi", new CommandFirework());
+        this.getServer().getCommandMap().register("ngapi", new CommandLeaveQueue());
+
 
         //TODO: Check if anything uses the empty group and remove it.
         KitGroup emptyKitGroup = new KitGroup("empty", "Empty", false, new KitEmpty());
@@ -158,18 +169,6 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
                 //.registerHubGame("uhchub", "??? Hub","teaser_hub", new String[]{"uhc_hub"} )
                 //.registerHubGame("staffhub", "Staff Hub", "staff", new String[]{"hub", "lobby"} )
         ;
-
-        this.getServer().getCommandMap().register("ngapi", new CommandGame());
-        this.getServer().getCommandMap().register("ngapi", new CommandKit());
-        this.getServer().getCommandMap().register("ngapi", new CommandServer());
-        this.getServer().getCommandMap().register("ngapi", new CommandHub());
-        this.getServer().getCommandMap().register("ngapi", new CommandMatchmake());
-        this.getServer().getCommandMap().register("ngapi", new CommandAddStat());
-        this.getServer().getCommandMap().register("ngapi", new CommandTourney());
-        this.getServer().getCommandMap().register("ngapi", new CommandSuper());
-        this.getServer().getCommandMap().register("ngapi", new CommandFirework());
-        this.getServer().getCommandMap().register("ngapi", new CommandLeaveQueue());
-
 
         // -- Nukkit Overrides --
 

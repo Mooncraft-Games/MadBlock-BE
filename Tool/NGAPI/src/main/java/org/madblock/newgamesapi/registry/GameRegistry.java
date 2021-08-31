@@ -1,5 +1,6 @@
 package org.madblock.newgamesapi.registry;
 
+import org.madblock.newgamesapi.commands.CommandGame;
 import org.madblock.newgamesapi.game.GameID;
 
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class GameRegistry {
         String id = gameID.getGameIdentifier().toLowerCase();
         if(!games.containsKey(id)){
             games.put(id, gameID);
+            CommandGame.refreshParameters();
         }
         return this;
     }
