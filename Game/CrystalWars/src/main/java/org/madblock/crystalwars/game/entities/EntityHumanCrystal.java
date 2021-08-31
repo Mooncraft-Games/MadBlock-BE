@@ -12,6 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.CrystalWarsConstants;
 import org.madblock.crystalwars.CrystalWarsPlugin;
 import org.madblock.crystalwars.game.pointentities.team.CrystalPointEntity;
@@ -115,80 +116,49 @@ public class EntityHumanCrystal extends EntityHumanPlus {
     // Hardcoded for convenience. We'll forget to move over the skin some day.
     // Once I add a way of loading skins to Utility rather than a set point entity,
     // I'll move back to loading files.
-    protected static boolean skinLoaded;
     protected static String geometryID = "geometry.steve";
     protected static String geometry = "";
-    protected static BufferedImage skinBaseData = null;
-    protected static BufferedImage skinGreenData = null;
+    protected static Map<String, Skin> crystalSkins = new HashMap<>();
 
     public static Skin getCrystalSkin(String type) {
+        if(crystalSkins.containsKey(type)) return crystalSkins.get(type);
+
         Skin skin = new Skin();
+        InputStream gStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal.geo.json");
+        try {
+            BufferedReader r = new BufferedReader(new InputStreamReader(gStr));
+            StringBuilder b = new StringBuilder();
+            Iterator<String> lines = r.lines().iterator();
 
-        if(!skinLoaded) {
-            skinLoaded = true;
-
-            InputStream gStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal.geo.json");
-            try {
-                BufferedReader r = new BufferedReader(new InputStreamReader(gStr));
-                StringBuilder b = new StringBuilder();
-                Iterator<String> lines = r.lines().iterator();
-
-                while (lines.hasNext()) {
-                    b.append(lines.next());
-                    b.append("\n");
-                }
-
-                geometry = b.length() > 0 ? b.toString() : "";
-                geometryID = "geometry.madblock.crystal";
-
-            } catch (Exception err) {
-                CrystalWarsPlugin.getInstance().getLogger().warning("Error loading custom skin model data for CrystalWars Repair Crystal skin.");
+            while (lines.hasNext()) {
+                b.append(lines.next());
+                b.append("\n");
             }
 
-            InputStream sStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal.png");
-            try {
-                skinBaseData = ImageIO.read(sStr);
-            } catch (Exception err) {
-                CrystalWarsPlugin.getInstance().getLogger().warning("Error loading custom skin data for CrystalWars Repair Crystal skin.");
-            }
+            geometry = b.length() > 0 ? b.toString() : "";
+            geometryID = "geometry.madblock.crystal";
 
-            InputStream sGreenStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal.green.png");
-            try {
-                skinGreenData = ImageIO.read(sGreenStr);
-            } catch (Exception err) {
-                CrystalWarsPlugin.getInstance().getLogger().warning("Error loading custom skin data for CrystalWars Repair Crystal skin.");
-            }
+        } catch (Exception err) {
+            CrystalWarsPlugin.getInstance().getLogger().warning("Error loading custom skin model data for CrystalWars Repair Crystal skin.");
         }
 
-        if(geometry.length() == 0) return null;
-        BufferedImage skinImg = null;
-
-        switch(type) {
-
-            case "green":
-                skinImg = skinGreenData;
-                break;
-
-            case "purple":
-            default:
-                skinImg = skinBaseData;
-        }
-
-        if(skinImg == null) {
-            CrystalWarsPlugin.getInstance().getLogger().warning("Unable to load a skin image.");
+        BufferedImage skinBaseData;
+        InputStream sStr = CrystalWarsPlugin.getInstance().getResource("crystal/crystal."+type+".png");
+        try {
+            skinBaseData = ImageIO.read(sStr);
+        } catch (Exception err) {
+            CrystalWarsPlugin.getInstance().getLogger().warning("Error loading custom skin data for CrystalWars "+type+" Crystal skin.");
             return null;
         }
+        if(geometry.length() == 0) return null;
 
         skin.setGeometryData(geometry);
         skin.setGeometryName(geometryID);
-        skin.setSkinData(skinImg);
+        skin.setSkinData(skinBaseData);
         skin.setTrusted(true);
         skin.generateSkinId(String.valueOf(ticker++));
+        crystalSkins.put(type, skin);
+        CrystalWarsPlugin.getInstance().getLogger().info(TextFormat.GREEN + "Successfully created CW Crystal skin of type: " + type);
         return skin;
-
-    }
-
-    protected static boolean isCrystalSkinLoaded() {
-        return skinLoaded;
     }
 }

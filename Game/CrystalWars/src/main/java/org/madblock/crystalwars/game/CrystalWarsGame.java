@@ -359,7 +359,7 @@ public class CrystalWarsGame extends GameBehavior {
 
     public void spawnRepairCrystal(double x, double y, double z, int healAmount, int timer) {
         Location location = new Location(x, y, z, 0, 0, getSessionHandler().getPrimaryMap());
-        EntityHumanCrystal repair = EntityHumanCrystal.getNewCrystal(location, "green");
+        EntityHumanCrystal repair = EntityHumanCrystal.getNewCrystal(location, "purple");
         repair.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_REPAIR);
         repair.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_AMOUNT, healAmount);
         repair.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN, timer);
@@ -399,7 +399,7 @@ public class CrystalWarsGame extends GameBehavior {
     public void spawnCarryCrystal(Player player, int healAmount, int timer) {
         player.addEffect(Effect.getEffect(Effect.SLOWNESS).setAmbient(true).setDuration(100000));
         Location location = new Location(player.x, player.y + 2, player.z, 0, 0, getSessionHandler().getPrimaryMap());
-        EntityHumanCrystal carry = EntityHumanCrystal.getNewCrystal(location, "green");
+        EntityHumanCrystal carry = EntityHumanCrystal.getNewCrystal(location, "purple");
         carry.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_HOLDING);
         carry.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_AMOUNT, healAmount);
         carry.namedTag.putInt(CrystalWarsConstants.NBT_HEAL_COUNTDOWN, timer);

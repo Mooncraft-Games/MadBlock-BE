@@ -142,7 +142,7 @@ public class CrystalPointEntity extends PointEntityType implements Listener {
         Location loc = new Location(entity.getX(), entity.getY(), entity.getZ(), entity.getYaw(), 0, gameHandler.getPrimaryMap());
 
 
-        EntityHumanCrystal endCrystal = EntityHumanCrystal.getNewCrystal(loc, "purple");
+        EntityHumanCrystal endCrystal = EntityHumanCrystal.getNewCrystal(loc, team.getId());
         endCrystal.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_TEAM);
         endCrystal.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_ID, id);
         endCrystal.setNameTagAlwaysVisible(true);

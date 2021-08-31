@@ -57,6 +57,10 @@ public class CrystalWarsPlugin extends PluginBase {
         NewGamesAPI1.getKitRegistry().registerKitGroup(kitGroup);
 
         Entity.registerEntity("human_crystal", EntityHumanCrystal.class);
-        EntityHumanCrystal.getCrystalSkin("purple"); // Pre-load the skins.
+        EntityHumanCrystal.getCrystalSkin("yellow"); // Pre-load the default team skin.
+        EntityHumanCrystal.getCrystalSkin("red"); //    ^
+        EntityHumanCrystal.getCrystalSkin("blue"); //   ^
+        EntityHumanCrystal.getCrystalSkin("green"); //  ^
+        EntityHumanCrystal.getCrystalSkin("purple"); // Pre-load the repair skin.
     }
 }
