@@ -12,6 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.CrystalWarsConstants;
 import org.madblock.crystalwars.CrystalWarsPlugin;
 import org.madblock.crystalwars.game.pointentities.team.CrystalPointEntity;
@@ -157,6 +158,7 @@ public class EntityHumanCrystal extends EntityHumanPlus {
         skin.setTrusted(true);
         skin.generateSkinId(String.valueOf(ticker++));
         crystalSkins.put(type, skin);
+        CrystalWarsPlugin.getInstance().getLogger().info(TextFormat.GREEN + "Successfully created CW Crystal skin of type: " + type);
         return skin;
     }
 }
