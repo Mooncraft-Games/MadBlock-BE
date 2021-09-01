@@ -30,7 +30,7 @@ public class CrystalWarsPlugin extends PluginBase {
                 .setItemPickUpEnabled(true)
                 .setFallDamageEnabled(true)
                 .setGuidelinePlayers(2)
-                .setMaximumPlayers(4)
+                .setMaximumPlayers(16)
                 .setMinimumPlayers(2)
                 .setDefaultCountdownLength(15);
 

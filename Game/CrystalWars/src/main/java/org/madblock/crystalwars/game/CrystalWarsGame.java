@@ -103,7 +103,7 @@ public class CrystalWarsGame extends GameBehavior {
 
         for (Player player : getSessionHandler().getPlayers()) {
             if (!getSessionHandler().getPlayerTeam(player).isPresent())
-                return;
+                continue;
             Team team = getSessionHandler().getPlayerTeam(player).get();
             getSessionHandler().getScoreboardManager().setLine(player, 0, String.format("%s",
                     team.getFormattedDisplayName()));
@@ -452,7 +452,7 @@ public class CrystalWarsGame extends GameBehavior {
     protected void checkWin() {
         Team aliveTeam = null;
         for (Team team : getSessionHandler().getTeams().values()) {
-            if (team.isActiveGameTeam() && (team.getPlayers().size() > 0 || crystalExistsForTeam(team))) {
+            if ((team.isActiveGameTeam() || crystalExistsForTeam(team)) && team.getPlayers().size() > 0) {
                 if (aliveTeam != null)
                     return;
                 aliveTeam = team;
