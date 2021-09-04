@@ -292,6 +292,7 @@ public class GameHandler implements Listener {
                 Position spawn = NewGamesAPI1.get().getServer().getDefaultLevel().getSpawnLocation();
                 Location dest = spawn.getLocation();
                 dest.setLevel(NewGamesAPI1.get().getServer().getDefaultLevel());
+                player.switchLevel(dest.getLevel());
                 player.teleport(dest);
             }
             return true;
@@ -408,6 +409,7 @@ public class GameHandler implements Listener {
                 Position spawn = NewGamesAPI1.get().getServer().getDefaultLevel().getSpawnLocation();
                 Location dest = spawn.getLocation();
                 dest.setLevel(NewGamesAPI1.get().getServer().getDefaultLevel());
+                player.switchLevel(dest.getLevel());
                 player.teleport(dest);
             }
         }
