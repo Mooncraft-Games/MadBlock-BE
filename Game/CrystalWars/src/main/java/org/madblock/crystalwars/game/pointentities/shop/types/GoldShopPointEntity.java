@@ -55,7 +55,6 @@ public class GoldShopPointEntity extends ShopPointEntity {
                 new ShopItem(tntItem, new ItemIngotGold(0, 10), gameBehavior),
                 new ShopItem(blastProofGlass, new ItemIngotGold(0, 6), gameBehavior),
                 new ShopItem(trackingCompass, new ItemIngotGold(0, 1), gameBehavior),
-                new ShopItem(new ItemPotion(ItemPotion.INVISIBLE), new ItemIngotGold(0, 3), "Invisibility Potion", null, gameBehavior),
         };
     }
 
