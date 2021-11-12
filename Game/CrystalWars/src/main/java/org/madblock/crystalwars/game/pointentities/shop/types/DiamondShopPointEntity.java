@@ -32,7 +32,7 @@ public class DiamondShopPointEntity extends ShopPointEntity {
 
     @Override
     protected IShopData[] getShopItems(Player player) {
-        IShopData[] items = new IShopData[4];
+        IShopData[] items = new IShopData[5];
         Team team = gameHandler.getPlayerTeam(player).get();
 
         if (!base.doesTeamHaveUpgrade(team, CrystalTeamUpgrade.PROTECTION_ONE)) {
@@ -68,6 +68,9 @@ public class DiamondShopPointEntity extends ShopPointEntity {
                 CrystalWarsUtility.makeUnbreakable(new ItemLeggingsDiamond()),
                 CrystalWarsUtility.makeUnbreakable(new ItemBootsDiamond())
         }, new ItemDiamond(0, 32), "Full Diamond Armor", null, gameBehavior);
+
+        items[4] = new ShopItem(new ItemPotion(ItemPotion.INVISIBLE), new ItemDiamond(0, 2), "Invisibility Potion",
+                null, gameBehavior);
 
         return items;
     }

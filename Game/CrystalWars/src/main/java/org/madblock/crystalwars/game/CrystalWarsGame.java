@@ -17,24 +17,21 @@ import cn.nukkit.level.Location;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.potion.Potion;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.CrystalWarsConstants;
 import org.madblock.crystalwars.game.entities.EntityHumanCrystal;
 import org.madblock.crystalwars.game.pointentities.capturepoint.GoldCapturePointEntity;
 import org.madblock.crystalwars.game.pointentities.capturepoint.MiddleCapturePointEntity;
-import org.madblock.crystalwars.game.pointentities.shop.types.IronShopPointEntity;
-import org.madblock.crystalwars.game.pointentities.shop.types.GoldShopPointEntity;
 import org.madblock.crystalwars.game.pointentities.shop.types.DiamondShopPointEntity;
+import org.madblock.crystalwars.game.pointentities.shop.types.GoldShopPointEntity;
+import org.madblock.crystalwars.game.pointentities.shop.types.IronShopPointEntity;
 import org.madblock.crystalwars.game.pointentities.team.CrystalPointEntity;
 import org.madblock.crystalwars.game.pointentities.team.GeneratorPointEntity;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
-import org.madblock.newgamesapi.map.pointentities.PointEntityType;
 import org.madblock.newgamesapi.map.types.MapRegion;
-import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.rewards.RewardChunk;
 import org.madblock.newgamesapi.team.SpectatingTeam;
 import org.madblock.newgamesapi.team.Team;
@@ -50,12 +47,11 @@ public class CrystalWarsGame extends GameBehavior {
 
     protected ArrayList<MapRegion> repairRegions = new ArrayList<>();
     protected HashMap<Player, EntityHumanCrystal> carriedCrystals = new HashMap<>();
-    protected ArrayList<Player> onCooldown = new ArrayList<>();
     protected Random random;
 
 
     // Try not to modify the following during a game. They're only here to
-    // provide map-configurable data and aren't designed to accomodate for updates.
+    // provide map-configurable data and aren't designed to accommodate for updates.
 
     protected int repairCrystal_startDelay;
     protected int repairCrystal_minDelay;
@@ -65,6 +61,8 @@ public class CrystalWarsGame extends GameBehavior {
     protected int repairCrystal_maxHeal;
 
     protected int repairCrystal_holdTime;
+
+    protected boolean repairCrystalOnGround;
 
     @Override
     public int onGameBegin() {
@@ -272,11 +270,10 @@ public class CrystalWarsGame extends GameBehavior {
                         // Give it to the player's team instantly.
                         if (crystalHealCountdown == 0) {
                             healTeam(player, crystalHealAmount);
-
                         } else {
                             String message = Utility.generateServerMessage("Heal",
                                     TextFormat.RED,
-                                    String.format("%s%s has picked up a heal for %s%s%s Crystal HP.",
+                                    String.format("%s%s has picked up a heal crystal for %s%s%s Crystal HP!",
                                             player.getDisplayName(),
                                             TextFormat.RESET,
                                             TextFormat.RED,
@@ -289,6 +286,7 @@ public class CrystalWarsGame extends GameBehavior {
                                 p.sendMessage(message);
                             }
                             spawnCarryCrystal(player, crystalHealAmount, crystalHealCountdown);
+                            repairCrystalOnGround = false;
                         }
                     }
                 }
@@ -308,7 +306,7 @@ public class CrystalWarsGame extends GameBehavior {
 
                 String message = Utility.generateServerMessage("Heal",
                         TextFormat.RED,
-                        String.format("Healed team %s's%s crystal by %s%s%sHP",
+                        String.format("You healed %s Team's%s crystal for %s%s%sHP",
                                 t.getDisplayName(),
                                 TextFormat.RESET,
                                 TextFormat.RED,
@@ -328,7 +326,6 @@ public class CrystalWarsGame extends GameBehavior {
 
     public void spawnNewRepairCrystal() {
         if(repairRegions.size() > 0) {
-
             // -- Spawn the crystal entity
             int zoneIndex = repairRegions.size() == 1 ? 0 : random.nextInt(repairRegions.size());
             MapRegion zone = repairRegions.get(zoneIndex);
@@ -358,6 +355,8 @@ public class CrystalWarsGame extends GameBehavior {
     }
 
     public void spawnRepairCrystal(double x, double y, double z, int healAmount, int timer) {
+        if (repairCrystalOnGround)
+            return;
         Location location = new Location(x, y, z, 0, 0, getSessionHandler().getPrimaryMap());
         EntityHumanCrystal repair = EntityHumanCrystal.getNewCrystal(location, "purple");
         repair.namedTag.putString(CrystalWarsConstants.NBT_CRYSTAL_TYPE, CrystalWarsConstants.TYPE_REPAIR);
@@ -382,12 +381,13 @@ public class CrystalWarsGame extends GameBehavior {
                         .toString()
         );
         repair.spawnToAll();
-        String message = Utility.generateServerMessage("Game",
+        String message = Utility.generateServerMessage("Heal",
                 TextFormat.BLUE,
-                String.format("Dropped a crystal repair for %s%s%s Crystal HP.",
+                String.format("A heal crystal for %s%s%s Crystal HP %shas landed somewhere on the map!",
                         TextFormat.RED,
                         TextFormat.BOLD,
-                        healAmount
+                        healAmount,
+                        TextFormat.GRAY
                 ));
 
         for(Player p: getSessionHandler().getPlayers()) {
@@ -427,6 +427,7 @@ public class CrystalWarsGame extends GameBehavior {
 
     protected void handleGameDeath(GamePlayerDeathEvent event) {
         handleCrystalDrop(event.getDeathCause().getVictim());
+        event.getDeathCause().getVictim().removeAllEffects();
 
         if (crystalExistsForTeam(event.getDeathCause().getVictimTeam())) {
             event.setDeathState(GamePlayerDeathEvent.DeathState.TIMED_RESPAWN);
