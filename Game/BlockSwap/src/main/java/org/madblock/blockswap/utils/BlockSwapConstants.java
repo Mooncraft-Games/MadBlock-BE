@@ -31,6 +31,10 @@ public class BlockSwapConstants {
     public static final int SCOREBOARD_PLAYERS_INDEX = 2;
     public static final int SCOREBOARD_POWERUP_INDEX = 3;
 
+    public static final String[] GAME_MAP_CATEGORIES = new String[] {
+            "blockswap"
+    };
+
     public static final Map<DyeColor, TextFormat> POSSIBLE_COLORS;
 
     public static final List<Class<? extends PowerUp>> POSSIBLE_POWER_UPS;

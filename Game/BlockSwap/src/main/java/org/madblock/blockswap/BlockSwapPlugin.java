@@ -24,12 +24,7 @@ public class BlockSwapPlugin extends PluginBase {
     }
 
     public void onEnable () {
-
         instance = this;
-
-        String[] gameMapCategoryTypes = {
-            "blockswap"
-        };
 
         KitGroup blockSwapKits = new KitGroup("blockswap", "BlockSwap", true, new DefaultKit(), new LeaperKit(), new RunnerKit());
         NewGamesAPI1.getKitRegistry().registerKitGroup(blockSwapKits);
@@ -46,7 +41,7 @@ public class BlockSwapPlugin extends PluginBase {
                 AutomaticWinPolicy.OPPOSING_PLAYERS_DEAD
         )
                 .setGuidelinePlayers(BlockSwapConstants.MINIMUM_PLAYERS)
-                .setMinimumPlayers(BlockSwapConstants.MINIMUM_PLAYERS)
+                .setMinimumPlayers(1)
                 .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS)
                 .setCanWorldBeManipulated(false)
                 .setTourneyGamemode(true);
@@ -57,7 +52,7 @@ public class BlockSwapPlugin extends PluginBase {
                 "Block Swap",
                 "Quick! Stand on the block displayed or you lose!",
                 blockSwapKits.getGroupID(),
-                gameMapCategoryTypes,
+                BlockSwapConstants.GAME_MAP_CATEGORIES,
                 1,
                 gameProperties,
                 BlockSwapGameBehaviour.class
@@ -69,7 +64,7 @@ public class BlockSwapPlugin extends PluginBase {
                 "Block Swap Tourney",
                 "Quick! Stand on the block displayed or you lose! Points are awarded to the top 3 with a bonus for #1!",
                 blockSwapKits.getGroupID(),
-                gameMapCategoryTypes,
+                BlockSwapConstants.GAME_MAP_CATEGORIES,
                 1,
                 gameTourneyProperties,
                 BlockSwapGameBehaviour.class
