@@ -5,7 +5,6 @@ import cn.nukkit.plugin.PluginBase;
 import org.madblock.blockswap.kits.DefaultKit;
 import org.madblock.blockswap.kits.LeaperKit;
 import org.madblock.blockswap.kits.RunnerKit;
-import org.madblock.blockswap.listeners.GameEventListeners;
 import org.madblock.blockswap.utils.BlockSwapConstants;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.game.GameHandler.AutomaticWinPolicy;
@@ -77,8 +76,6 @@ public class BlockSwapPlugin extends PluginBase {
         );
 
         NewGamesAPI1.getGameRegistry().registerGame(game).registerGame(tourney);
-
-        this.getServer().getPluginManager().registerEvents(new GameEventListeners(), this);
     }
 
 

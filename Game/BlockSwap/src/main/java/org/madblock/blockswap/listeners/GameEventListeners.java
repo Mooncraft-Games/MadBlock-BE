@@ -33,76 +33,67 @@ import java.util.*;
 
 public class GameEventListeners implements Listener {
 
-    private List<UUID> cooldown = new ArrayList<>(); // Required bc win 10 is wack. Triggers interact event multiple times.
+    protected final BlockSwapGameBehaviour behaviour;
+    private final List<UUID> cooldown = new ArrayList<>(); // Required bc win 10 is wack. Triggers interact event multiple times.
+
+    public GameEventListeners(BlockSwapGameBehaviour behaviour) {
+        this.behaviour = behaviour;
+    }
 
     @EventHandler
-    public void onItemMovement (InventoryTransactionEvent event) {
+    public void onItemMovement(InventoryTransactionEvent event) {
         Player player = event.getTransaction().getSource();
-        if (isBlockSwapLevel(player.getLevel()) && player.getGamemode() != Player.CREATIVE) {
+        if (this.behaviour.getSessionHandler().getPlayers().contains(player) && player.getGamemode() != Player.CREATIVE) {
             event.setCancelled();
         }
     }
 
     @EventHandler
-    public void onAbilityUsage (PlayerInteractEvent event) {
-
+    public void onAbilityUsage(PlayerInteractEvent event) {
         Item item = event.getItem();
-        if (isBlockSwapLevel(event.getPlayer().getLevel()) && item.hasCompoundTag()) {
-
-            GameBehavior behaviour = getGameBehaviour(event.getPlayer().getLevel());
-
-            if (!behaviour.getSessionHandler().getGameState().equals(GameHandler.GameState.MAIN_LOOP)) {
+        if (this.behaviour.getSessionHandler().getPlayers().contains(event.getPlayer()) && item.hasCompoundTag()) {
+            if (!this.behaviour.getSessionHandler().getGameState().equals(GameHandler.GameState.MAIN_LOOP)) {
                 return;
             }
-
             if (this.cooldown.contains(event.getPlayer().getLoginChainData().getClientUUID())) {
                 return;
             }
-
             CompoundTag nbtTag = item.getNamedTag();
-
-            String tag = nbtTag.getString("ability");
-
-            if (tag.equals("leap")) {
-
+            String abilityTag = nbtTag.getString("ability");
+            if (abilityTag.equals("leap")) {
+                // Apply cooldown
                 this.cooldown.add(event.getPlayer().getLoginChainData().getClientUUID());
-
-                behaviour.getSessionHandler().getGameScheduler().registerGameTask(() -> {
+                this.behaviour.getSessionHandler().getGameScheduler().registerGameTask(() -> {
                     this.cooldown.remove(event.getPlayer().getLoginChainData().getClientUUID());
                 }, 10);
-
                 if (!nbtTag.exist("ench")) {
                     event.getPlayer().sendMessage(Utility.generateServerMessage("ABILITY", TextFormat.RED, "This ability is still on cooldown!"));
                     return;
                 }
 
-
-
+                // Apply leap motion
                 Vector3 directionVector = event.getPlayer().getDirectionVector();
                 event.getPlayer().setMotion(new Vector3(directionVector.getX(), Math.abs(directionVector.getY()) / 2, directionVector.getZ()).multiply(BlockSwapConstants.LEAP_STRENGTH));
 
-                int itemIndex = event.getPlayer().getInventory().getHeldItemIndex();
-                behaviour.getSessionHandler().getGameScheduler().registerGameTask(() -> {
+                // Remove ability usage
+                nbtTag.remove("ench");
+                item.setCompoundTag(nbtTag);
+                event.getPlayer().getInventory().setItemInHand(item);
+                event.getPlayer().getInventory().sendContents(event.getPlayer());
 
-                    if (!behaviour.getSessionHandler().getTeams().get(TeamPresets.DEAD_TEAM_ID).getPlayers().contains(event.getPlayer())) {
+                // Allow usage of the ability after 2s
+                int itemIndex = event.getPlayer().getInventory().getHeldItemIndex();
+                this.behaviour.getSessionHandler().getGameScheduler().registerGameTask(() -> {
+                    if (!this.behaviour.getSessionHandler().getTeams().get(TeamPresets.DEAD_TEAM_ID).getPlayers().contains(event.getPlayer())) {
                         nbtTag.putList(new ListTag<>("ench"));
                         item.setCompoundTag(nbtTag);
                         Inventory inventory = event.getPlayer().getInventory();
                         inventory.setItem(itemIndex, item);
                         inventory.sendContents(event.getPlayer());
                     }
-
                 }, 40);
-
-                nbtTag.remove("ench");
-                item.setCompoundTag(nbtTag);
-                event.getPlayer().getInventory().setItemInHand(item);
-                event.getPlayer().getInventory().sendContents(event.getPlayer());
-
-            } else if (tag.equals("power_up")) {
-
-                PowerUp powerUp = ((BlockSwapGameBehaviour)behaviour).getPowerUp(event.getPlayer());
-
+            } else if (abilityTag.equals("power_up")) {
+                PowerUp powerUp = this.behaviour.getPowerUp(event.getPlayer());
                 Inventory inventory = event.getPlayer().getInventory();
 
                 for (int i = 0; i < 9; i++) {
@@ -116,7 +107,6 @@ public class GameEventListeners implements Listener {
                         inventory.setItem(i, hotBarItem);
                     }
                 }
-
                 inventory.sendContents(event.getPlayer());
 
                 if (powerUp != null) {
@@ -124,38 +114,33 @@ public class GameEventListeners implements Listener {
                         p.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s used %s%s%s%s%s!", event.getPlayer().getDisplayName(), TextFormat.GRAY, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GRAY )));
                     }
                     powerUp.use();
-                    ((BlockSwapGameBehaviour) behaviour).setPowerUp(event.getPlayer(), null);
-                    behaviour.getSessionHandler().getScoreboardManager().setLine(event.getPlayer(), BlockSwapConstants.SCOREBOARD_POWERUP_INDEX, String.format("Power Up:%s None", TextFormat.GRAY));
+                    this.behaviour.setPowerUp(event.getPlayer(), null);
+                    this.behaviour.getSessionHandler().getScoreboardManager().setLine(event.getPlayer(), BlockSwapConstants.SCOREBOARD_POWERUP_INDEX, String.format("Power Up:%s None", TextFormat.GRAY));
                 }
-
-
             }
-
         }
-
     }
 
     @EventHandler
-    public void onPowerUpEntityAttacked (EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player && isBlockSwapLevel(event.getDamager().getLevel())) {
-            Player player = (Player)event.getDamager();
-            BlockSwapGameBehaviour behaviour = (BlockSwapGameBehaviour)getGameBehaviour(player.getLevel());
-            if (behaviour.isPowerUpEntity(event.getEntity()) && !behaviour.getSessionHandler().getTeams().get(TeamPresets.DEAD_TEAM_ID).getPlayers().contains(player)) {
-                Class<? extends  PowerUp> powerUpClass = BlockSwapUtility.getRandomPowerUp();
+    public void onPowerUpEntityAttacked(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player && this.behaviour.getSessionHandler().getPlayers().contains((Player) event.getDamager())) {
+            Player player = (Player) event.getDamager();
+
+            if (this.behaviour.isPowerUpEntity(event.getEntity()) && !this.behaviour.getSessionHandler().getTeams().get(TeamPresets.DEAD_TEAM_ID).getPlayers().contains(player)) {
+                Class<? extends PowerUp> powerUpClass = BlockSwapUtility.getRandomPowerUp();
                 PowerUp powerUp;
                 try {
-                    powerUp = powerUpClass.getConstructor(GameBehavior.class, Player.class).newInstance(behaviour, player);
+                    powerUp = powerUpClass.getConstructor(GameBehavior.class, Player.class).newInstance(this.behaviour, player);
                 } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
                     BlockSwapPlugin.getInstance().getLogger().error(String.format("[PowerUps] Could not create %s.\n%s", powerUpClass.getName(), exception.toString()));
                     return;
                 }
 
-                behaviour.removePowerUpEntity(event.getEntity());
+                this.behaviour.removePowerUpEntity(event.getEntity());
                 event.getEntity().despawnFromAll();
-
                 event.getDamager().getLevel().addSound(new Vector3(event.getDamager().getX(), event.getDamager().getY(), event.getDamager().getZ()), Sound.FIREWORK_SHOOT, 1, 1, player);
 
-                for (Player p : behaviour.getSessionHandler().getPlayers()) {
+                for (Player p : this.behaviour.getSessionHandler().getPlayers()) {
                     p.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s has received the %s%s%s%s%s power up!", ((Player)event.getDamager()).getDisplayName(), TextFormat.GRAY, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GRAY )));
                 }
                 player.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s", TextFormat.AQUA, powerUp.getDescription())));
@@ -163,10 +148,9 @@ public class GameEventListeners implements Listener {
                 if (powerUp.isInstantConsumable()) {
                     powerUp.use();
                 } else {
-                    behaviour.setPowerUp(player, powerUp);
+                    this.behaviour.setPowerUp(player, powerUp);
                     Inventory inventory = player.getInventory();
-
-                    behaviour.getSessionHandler().getScoreboardManager().setLine(player, BlockSwapConstants.SCOREBOARD_POWERUP_INDEX, String.format("Power Up:%s %s", TextFormat.YELLOW, powerUp.getName()));
+                    this.behaviour.getSessionHandler().getScoreboardManager().setLine(player, BlockSwapConstants.SCOREBOARD_POWERUP_INDEX, String.format("Power Up:%s %s", TextFormat.YELLOW, powerUp.getName()));
 
                     for (int i = 0; i < 9; i++) {
                         Item item = inventory.getItem(i);
@@ -187,8 +171,8 @@ public class GameEventListeners implements Listener {
     }
 
     @EventHandler
-    public void onDamage (EntityDamageEvent event) {
-        if (isBlockSwapLevel(event.getEntity().getLevel())) {
+    public void onDamage(EntityDamageEvent event) {
+        if (event.getEntity().getLevel().getId() == this.behaviour.getSessionHandler().getPrimaryMap().getId()) {
             if (event.getCause().equals(DamageCause.LIGHTNING) || event.getCause().equals(DamageCause.FALL)) {
                 event.setCancelled();
             } else if (event.getCause().equals(DamageCause.FIRE_TICK)) {
@@ -197,33 +181,5 @@ public class GameEventListeners implements Listener {
             }
         }
     }
-
-    private static GameBehavior getGameBehaviour (Level level) {
-        Optional<String[]> sessions = NewGamesAPI1.getGameManager().getSessionIDsForGame("blockswap");
-        if (sessions.isPresent()) {
-            for (String sessionID : sessions.get()) {
-                GameHandler handler = NewGamesAPI1.getGameManager().getSession(sessionID).get();
-                if (handler.getPrimaryMap().getId() == level.getId()) {
-                    return handler.getGameBehaviors();
-                }
-            }
-        }
-        return null;
-    }
-
-    private static boolean isBlockSwapLevel (Level level) {
-
-        Optional<String[]> sessions = NewGamesAPI1.getGameManager().getSessionIDsForGame("blockswap");
-        if (sessions.isPresent()) {
-            for (String sessionID : sessions.get()) {
-                Level minigameLevel = NewGamesAPI1.getGameManager().getSession(sessionID).get().getPrimaryMap();
-                if (level.getId() == minigameLevel.getId()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
 
 }

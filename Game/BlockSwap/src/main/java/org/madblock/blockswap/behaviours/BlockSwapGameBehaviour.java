@@ -1,10 +1,12 @@
 package org.madblock.blockswap.behaviours;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockWool;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -18,6 +20,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.TextFormat;
+import org.madblock.blockswap.BlockSwapPlugin;
+import org.madblock.blockswap.listeners.GameEventListeners;
 import org.madblock.blockswap.powerups.PowerUp;
 import org.madblock.blockswap.utils.BlockSwapConstants;
 import org.madblock.blockswap.utils.BlockSwapUtility;
@@ -54,6 +58,8 @@ public class BlockSwapGameBehaviour extends GameBehavior {
 
     protected Map<UUID, PowerUp> powerUps = new HashMap<>();
 
+    private final GameEventListeners listener = new GameEventListeners(this);
+
     @Override
     public Team.TeamBuilder[] getTeams() {
         Team.TeamBuilder[] teams = new Team.TeamBuilder[]{
@@ -63,7 +69,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
     }
 
     @Override
-    public void onInitialCountdownEnd () {
+    public void onInitialCountdownEnd() {
         this.setPowerUpSpawnDelay(this.getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault("powerup_spawn_seconds", BlockSwapConstants.POWERUP_SPAWN_TIMER_SECONDS) * 20);
         this.getSessionHandler().getPrimaryMap().getGameRules().setGameRule(GameRule.FALL_DAMAGE, false);
         this.setRoundTime(
@@ -73,13 +79,11 @@ public class BlockSwapGameBehaviour extends GameBehavior {
         for (Player player : this.getSessionHandler().getPlayers()) {
             this.getSessionHandler().getScoreboardManager().setLine(player, BlockSwapConstants.SCOREBOARD_POWERUP_INDEX, String.format("Power Up: %sNone", TextFormat.GRAY));
         }
-
-
+        Server.getInstance().getPluginManager().registerEvents(this.listener, BlockSwapPlugin.getInstance());
     }
 
     @Override
-    public void registerGameSchedulerTasks () {
-
+    public void registerGameSchedulerTasks() {
         this.getSessionHandler().getGameScheduler().registerGameTask(this::gameLoopTask);
         this.getSessionHandler().getGameScheduler().registerGameTask(this::updateXPBarTask, 0, 10);
         this.getSessionHandler().getGameScheduler().registerGameTask(this::spawnPowerUpTask, this.getPowerUpSpawnDelay());
@@ -87,10 +91,11 @@ public class BlockSwapGameBehaviour extends GameBehavior {
     }
 
     @Override
-    public void cleanUp () {
+    public void cleanUp() {
         for (Player player : this.getSessionHandler().getPlayers()) {
             player.setExperience(0, 0);
         }
+        HandlerList.unregisterAll(this.listener);
     }
 
     @Override
@@ -101,7 +106,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
     }
 
     @Override
-    public void onPlayerLeaveGame (Player player) {
+    public void onPlayerLeaveGame(Player player) {
         player.setExperience(0, 0);
         updatePlayersRemainingScoreboard();
     }
@@ -129,7 +134,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
     /**
      * Game task to prepare the next round.
      */
-    public void gameLoopTask () {
+    public void gameLoopTask() {
         this.setRoundTime(Math.max(40, getRoundTime() - 10));
 
         // Reregister all tasks.
@@ -148,7 +153,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
     /**
      * Game task to generate a new platform.
      */
-    public void generateNewPlatformTask () {
+    public void generateNewPlatformTask() {
 
         // Update the platform first.
 
@@ -210,7 +215,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
     /**
      * Game task to remove all wool block that are not the winning colour.
      */
-    public void removeFloorTask () {
+    public void removeFloorTask() {
         Level level = this.getSessionHandler().getPrimaryMap();
         MapRegion platformRegion = this.getSessionHandler().getPrimaryMapID().getRegions().get("platform");
 
@@ -272,7 +277,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
     /**
      * Game task to update the XP bar.
      */
-    public void updateXPBarTask () {
+    public void updateXPBarTask() {
         if (this.getRoundTimeLeft() > 0) {
             this.setRoundTimeLeft(getRoundTimeLeft() - 10);
             double countdown = this.getRoundTimeLeft() / 20d;
@@ -306,7 +311,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
         }
     }
 
-    public void spawnPowerUpTask () {
+    public void spawnPowerUpTask() {
 
         if (this.powerUpEntities.size() < BlockSwapConstants.MAXIMUM_POWERUPS_ON_MAP) {
             MapRegion platformRegion = this.getSessionHandler().getPrimaryMapID().getRegions().get("platform");
@@ -337,14 +342,14 @@ public class BlockSwapGameBehaviour extends GameBehavior {
 
     }
 
-    public void rotatePowerUpsTask () {
+    public void rotatePowerUpsTask() {
         for (Entity entity : this.getPowerUpEntities()) {
             double newYaw = entity.getYaw() + 10 >= 360 ? 0 : entity.getYaw() + 10;
             entity.setRotation(newYaw, entity.getPitch());
         }
     }
 
-    public Set<Entity> getPowerUpEntities () {
+    public Set<Entity> getPowerUpEntities() {
         return this.powerUpEntities;
     }
 
@@ -352,23 +357,23 @@ public class BlockSwapGameBehaviour extends GameBehavior {
         return this.powerUpEntities.contains(entity);
     }
 
-    public void addPowerUpEntity (Entity entity) {
+    public void addPowerUpEntity(Entity entity) {
         this.powerUpEntities.add(entity);
     }
 
-    public void removePowerUpEntity (Entity entity) {
+    public void removePowerUpEntity(Entity entity) {
         this.powerUpEntities.remove(entity);
     }
 
-    public boolean hasPowerUp (Player player) {
+    public boolean hasPowerUp(Player player) {
         return this.powerUps.containsKey(player.getUniqueId());
     }
 
-    public PowerUp getPowerUp (Player player) {
+    public PowerUp getPowerUp(Player player) {
         return this.powerUps.get(player.getUniqueId());
     }
 
-    public void setPowerUp (Player player, PowerUp powerUp) {
+    public void setPowerUp(Player player, PowerUp powerUp) {
         if (powerUp == null) {
             this.powerUps.remove(player.getUniqueId());
         } else {
@@ -380,7 +385,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Retrieve the amount of rounds that have been completed.
      * @return Rounds that have been completed.
      */
-    public int getCompletedRounds () {
+    public int getCompletedRounds() {
         return this.completedRounds;
     }
 
@@ -389,7 +394,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * The higher this is, the lower the winning color will be generated.
      * @param rounds
      */
-    public void setCompletedRounds (int rounds) {
+    public void setCompletedRounds(int rounds) {
         this.completedRounds = rounds;
     }
 
@@ -397,7 +402,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Retrieve all the colors that are used in platform generation.
      * @return All the colors that are used in the platform.
      */
-    public List<DyeColor> getColors () {
+    public List<DyeColor> getColors() {
         return this.colors;
     }
 
@@ -405,7 +410,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Set the colors that will be used for platform generation.
      * @param colors
      */
-    public void setColors (List<DyeColor> colors) {
+    public void setColors(List<DyeColor> colors) {
         this.colors = colors;
     }
 
@@ -421,7 +426,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Set the color that will not be destroyed.
      * @param color
      */
-    public void setWinningColor (DyeColor color) {
+    public void setWinningColor(DyeColor color) {
         this.winningColor = color;
         TextFormat textColor = BlockSwapConstants.POSSIBLE_COLORS.getOrDefault(this.getWinningColor(), TextFormat.WHITE);
         for (Player player : getSessionHandler().getPlayers()) {
@@ -441,7 +446,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Set the round time and time remaining in ticks.
      * @param ticks
      */
-    public void setRoundTime (int ticks) {
+    public void setRoundTime(int ticks) {
         this.roundTime = ticks;
         this.roundTimeLeft = ticks;
         updateTimeScoreboard();
@@ -451,7 +456,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Set the amount of time remaining for the round in ticks.
      * @param ticks
      */
-    public void setRoundTimeLeft (int ticks) {
+    public void setRoundTimeLeft(int ticks) {
         this.roundTimeLeft = ticks;
         updateTimeScoreboard();
     }
@@ -468,7 +473,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Set the amount of ticks in-between each power up spawning attempt.
      * @param ticks
      */
-    public void setPowerUpSpawnDelay (int ticks) {
+    public void setPowerUpSpawnDelay(int ticks) {
         this.powerUpSpawnDelay = ticks;
     }
 
@@ -476,7 +481,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Get the amount of ticks in-between each power up spawning attempt.
      * @return
      */
-    public int getPowerUpSpawnDelay () {
+    public int getPowerUpSpawnDelay() {
         return this.powerUpSpawnDelay;
     }
 
