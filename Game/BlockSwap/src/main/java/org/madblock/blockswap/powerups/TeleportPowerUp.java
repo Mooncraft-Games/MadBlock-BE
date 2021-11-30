@@ -1,6 +1,7 @@
 package org.madblock.blockswap.powerups;
 
 import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.TextFormat;
@@ -31,6 +32,11 @@ public class TeleportPowerUp extends PowerUp {
     @Override
     public boolean isInstantConsumable() {
         return false;
+    }
+
+    @Override
+    public int getDisplayItemID() {
+        return Item.ENDER_EYE;
     }
 
     @Override

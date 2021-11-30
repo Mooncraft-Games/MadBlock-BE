@@ -2,6 +2,9 @@ package org.madblock.blockswap;
 
 import cn.nukkit.plugin.PluginBase;
 
+import cn.nukkit.utils.Logger;
+import org.madblock.blockswap.generator.BSwapGeneratorManager;
+import org.madblock.blockswap.generator.builtin.BSGRandom;
 import org.madblock.blockswap.kits.DefaultKit;
 import org.madblock.blockswap.kits.LeaperKit;
 import org.madblock.blockswap.kits.RunnerKit;
@@ -13,21 +16,43 @@ import org.madblock.newgamesapi.game.GameID;
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
 import org.madblock.newgamesapi.game.GameProperties;
 import org.madblock.newgamesapi.kits.KitGroup;
-import org.madblock.newgamesapi.util.NGAPIConstants;
 
 public class BlockSwapPlugin extends PluginBase {
 
-    private static PluginBase instance;
+    private static BlockSwapPlugin instance;
 
-    public static PluginBase getInstance () {
-        return instance;
-    }
+    private BSwapGeneratorManager generatorManager;
 
-    public void onEnable () {
+    @Override
+    public void onEnable() {
         instance = this;
+
+        // -- Managers --
+
+        this.generatorManager = new BSwapGeneratorManager();
+        this.generatorManager.setAsPrimaryManager();
+
+        // -- Components --
+
+        //BSwapGeneratorManager.get().registerGenerator(new BSG2DNoise());
+        //BSwapGeneratorManager.get().registerGenerator(new BSGMaskedMultigen()); - Needs more generation options
+        //BSwapGeneratorManager.get().registerGenerator(new BSGNoiseStriped());
+        BSwapGeneratorManager.get().registerGenerator(new BSGRandom());
+        //BSwapGeneratorManager.get().registerGenerator(new BSGRandomStriped());
+
+
+        // -- Kits --
 
         KitGroup blockSwapKits = new KitGroup("blockswap", "BlockSwap", true, new DefaultKit(), new LeaperKit(), new RunnerKit());
         NewGamesAPI1.getKitRegistry().registerKitGroup(blockSwapKits);
+
+        // -- Generate game properties + meta --
+
+        String[] gameMapCategoryTypes = {
+                "blockswap",
+                "bswap",
+                "bswap2"
+        };
 
         GameProperties gameProperties = new GameProperties(
                 AutomaticWinPolicy.OPPOSING_PLAYERS_DEAD
@@ -37,10 +62,18 @@ public class BlockSwapPlugin extends PluginBase {
                 .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS)
                 .setCanWorldBeManipulated(false);
 
+        GameProperties gameDebugProperties = new GameProperties(
+                AutomaticWinPolicy.MANUAL_CALLS_ONLY
+        )
+                .setGuidelinePlayers(1)
+                .setMinimumPlayers(1)
+                .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS)
+                .setCanWorldBeManipulated(false);
+
         GameProperties gameTourneyProperties = new GameProperties(
                 AutomaticWinPolicy.OPPOSING_PLAYERS_DEAD
         )
-                .setGuidelinePlayers(BlockSwapConstants.MINIMUM_PLAYERS)
+                .setGuidelinePlayers(1)
                 .setMinimumPlayers(1)
                 .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS)
                 .setCanWorldBeManipulated(false)
@@ -52,26 +85,47 @@ public class BlockSwapPlugin extends PluginBase {
                 "Block Swap",
                 "Quick! Stand on the block displayed or you lose!",
                 blockSwapKits.getGroupID(),
-                BlockSwapConstants.GAME_MAP_CATEGORIES,
-                1,
+                gameMapCategoryTypes,
+                2,
                 gameProperties,
+                BlockSwapGameBehaviour.class
+        );
+
+        GameID debug = new GameID(
+                "debug_blockswap",
+                "bswap",
+                "Block Swap",
+                "Quick! Stand on the block displayed or you lose!",
+                blockSwapKits.getGroupID(),
+                gameMapCategoryTypes,
+                2,
+                gameDebugProperties,
                 BlockSwapGameBehaviour.class
         );
 
         GameID tourney = new GameID(
                 "tourney_blockswap",
-                NGAPIConstants.EVENT_SERVER_ID,
+                "bswap",
                 "Block Swap Tourney",
-                "Quick! Stand on the block displayed or you lose! Points are awarded to the top 3 with a bonus for #1!",
+                "Quick! Stand on the block displayed or you lose! Points are awarded for survival + winning!",
                 blockSwapKits.getGroupID(),
-                BlockSwapConstants.GAME_MAP_CATEGORIES,
-                1,
+                gameMapCategoryTypes,
+                2,
                 gameTourneyProperties,
                 BlockSwapGameBehaviour.class
         );
 
-        NewGamesAPI1.getGameRegistry().registerGame(game).registerGame(tourney);
+
+        // -- Register game types --
+
+        NewGamesAPI1.getGameRegistry()
+                .registerGame(game)
+                .registerGame(debug)
+                .registerGame(tourney);
     }
 
+    public static BlockSwapPlugin get() { return instance; }
+    public static BSwapGeneratorManager getGeneratorManager() { return get().generatorManager; }
+    public static Logger getLog() { return get().getLogger(); }
 
 }

@@ -1,6 +1,7 @@
 package org.madblock.blockswap.powerups;
 
 import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import org.madblock.blockswap.utils.BlockSwapConstants;
 import org.madblock.newgamesapi.game.GameBehavior;
@@ -13,17 +14,22 @@ public class LeapPowerUp extends PowerUp {
 
     @Override
     public String getName() {
-        return "Strength";
+        return "Leap";
     }
 
     @Override
     public String getDescription() {
-        return "Whoosh! You feel like you could jump higher!";
+        return "Leap in any direction!";
     }
 
     @Override
     public boolean isInstantConsumable() {
         return false;
+    }
+
+    @Override
+    public int getDisplayItemID() {
+        return Item.FEATHER;
     }
 
     @Override

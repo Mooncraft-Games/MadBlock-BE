@@ -3,6 +3,7 @@ package org.madblock.blockswap.powerups;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWool;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
@@ -12,6 +13,7 @@ import org.madblock.newgamesapi.map.types.MapRegion;
 public class ColorExchangePowerUp extends PowerUp {
 
     private static final int RADIUS = 2;
+
 
     public ColorExchangePowerUp(GameBehavior behaviour, Player player) {
         super(behaviour, player);
@@ -30,6 +32,11 @@ public class ColorExchangePowerUp extends PowerUp {
     @Override
     public boolean isInstantConsumable() {
         return false;
+    }
+
+    @Override
+    public int getDisplayItemID() {
+        return Item.DIAMOND;
     }
 
     @Override

@@ -8,8 +8,6 @@ import java.util.*;
 
 public class BlockSwapConstants {
 
-    public static final int COLORS_TO_BE_USED = 6;
-
     public static final int MINIMUM_PLAYERS = 2;
     public static final int MAXIMUM_PLAYERS = 16;
 
@@ -21,9 +19,6 @@ public class BlockSwapConstants {
 
     public static final int MAXIMUM_POWERUPS_ON_MAP = 8;
 
-    public static final int MINIMUM_COLOR_SCALE = 1;
-    public static final int MAXIMUM_COLOR_SCALE = 4;
-
     public static final float LEAP_STRENGTH = 1.7f;
 
     public static final int SCOREBOARD_COLOR_INDEX = 0;
@@ -31,46 +26,29 @@ public class BlockSwapConstants {
     public static final int SCOREBOARD_PLAYERS_INDEX = 2;
     public static final int SCOREBOARD_POWERUP_INDEX = 3;
 
-    public static final String[] GAME_MAP_CATEGORIES = new String[] {
-            "blockswap"
-    };
+    public static final Map<DyeColor, TextFormat> POSSIBLE_COLORS = Collections.unmodifiableMap(new HashMap<DyeColor, TextFormat>() {
+        {
+            this.put(DyeColor.RED, TextFormat.RED);
+            this.put(DyeColor.BLACK, TextFormat.BLACK);
+            this.put(DyeColor.BLUE, TextFormat.BLUE);
+            this.put(DyeColor.CYAN, TextFormat.DARK_AQUA);
+            this.put(DyeColor.GRAY, TextFormat.DARK_GRAY);
+            this.put(DyeColor.GREEN, TextFormat.DARK_GREEN);
+            this.put(DyeColor.LIGHT_BLUE, TextFormat.AQUA);
+            this.put(DyeColor.LIGHT_GRAY, TextFormat.GRAY);
+            this.put(DyeColor.LIME, TextFormat.GREEN);
+            this.put(DyeColor.MAGENTA, TextFormat.LIGHT_PURPLE);
+            this.put(DyeColor.ORANGE, TextFormat.GOLD);
+            this.put(DyeColor.WHITE, TextFormat.WHITE);
+            this.put(DyeColor.YELLOW, TextFormat.YELLOW);
+        }
+    });
 
-    public static final Map<DyeColor, TextFormat> POSSIBLE_COLORS;
-
-    public static final List<Class<? extends PowerUp>> POSSIBLE_POWER_UPS;
-
-
-    static {
-        HashMap<DyeColor, TextFormat> possibleColourPrepare = new HashMap<>();
-        possibleColourPrepare.put(DyeColor.RED, TextFormat.RED);
-        possibleColourPrepare.put(DyeColor.BLACK, TextFormat.BLACK);
-        possibleColourPrepare.put(DyeColor.BLUE, TextFormat.BLUE);
-        // possibleColourPrepare.put(DyeColor.BROWN, TextFormat.DARK_RED); //?!?!
-        possibleColourPrepare.put(DyeColor.CYAN, TextFormat.DARK_AQUA);
-        possibleColourPrepare.put(DyeColor.GRAY, TextFormat.DARK_GRAY);
-        possibleColourPrepare.put(DyeColor.GREEN, TextFormat.DARK_GREEN);
-        possibleColourPrepare.put(DyeColor.LIGHT_BLUE, TextFormat.AQUA);
-        possibleColourPrepare.put(DyeColor.LIGHT_GRAY, TextFormat.GRAY);
-        possibleColourPrepare.put(DyeColor.LIME, TextFormat.GREEN);
-        possibleColourPrepare.put(DyeColor.MAGENTA, TextFormat.LIGHT_PURPLE);
-        possibleColourPrepare.put(DyeColor.ORANGE, TextFormat.GOLD);
-        // possibleColourPrepare.put(DyeColor.PINK, TextFormat.RED);
-        possibleColourPrepare.put(DyeColor.WHITE, TextFormat.WHITE);
-        possibleColourPrepare.put(DyeColor.YELLOW, TextFormat.YELLOW);
-
-        POSSIBLE_COLORS = Collections.unmodifiableMap(possibleColourPrepare);
-
-        List<Class<? extends PowerUp>> possiblePowerUps = new ArrayList<>();
-
-        possiblePowerUps.add(LeapPowerUp.class);
-        possiblePowerUps.add(TeleportPowerUp.class);
-        possiblePowerUps.add(ColorExchangePowerUp.class);
-        possiblePowerUps.add(BlindnessPowerUp.class);
-        possiblePowerUps.add(SlownessPowerUp.class);
-        possiblePowerUps.add(ExplodePowerUp.class);
-        possiblePowerUps.add(AntidotePowerUp.class);
-
-        POSSIBLE_POWER_UPS = Collections.unmodifiableList(possiblePowerUps);
-    }
+    public static final List<Class<? extends PowerUp>> POSSIBLE_POWER_UPS = Collections.unmodifiableList(Arrays.asList(
+            LeapPowerUp.class,
+            TeleportPowerUp.class,
+            ColorExchangePowerUp.class,
+            BlindnessPowerUp.class,
+            ShufflePowerUp.class));
 
 }

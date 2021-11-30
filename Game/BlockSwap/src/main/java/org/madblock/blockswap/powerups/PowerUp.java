@@ -9,7 +9,7 @@ public abstract class PowerUp {
 
     protected Player player;
 
-    public PowerUp (GameBehavior behaviour, Player player) {
+    public PowerUp(GameBehavior behaviour, Player player) {
         this.behaviour = behaviour;
         this.player = player;
     }
@@ -17,21 +17,24 @@ public abstract class PowerUp {
     /**
      * @return Display name of the powerup.
      */
-    public abstract String getName ();
+    public abstract String getName();
 
     /**
      * @return Short description of the powerup's ability
      */
-    public abstract String getDescription ();
+    public abstract String getDescription();
 
     /**
      * @return If the powerup should be used immediately or when the player interacts with the environment when they receive it
      */
-    public abstract boolean isInstantConsumable ();
+    public abstract boolean isInstantConsumable();
+
+    /** @return the item id displayed in the inventory if this powerup is not an instant consumable. */
+    public abstract int getDisplayItemID();
 
     /**
      * Logic for the powerup.
      */
-    public abstract void use ();
+    public abstract void use();
 
 }

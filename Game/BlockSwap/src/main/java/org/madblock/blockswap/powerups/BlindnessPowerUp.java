@@ -1,6 +1,7 @@
 package org.madblock.blockswap.powerups;
 
 import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.TextFormat;
@@ -12,7 +13,8 @@ import org.madblock.newgamesapi.team.TeamPresets;
 
 public class BlindnessPowerUp extends PowerUp {
 
-    private static int RADIUS = 10;
+    private static final int RADIUS = 10;
+
 
     public BlindnessPowerUp(GameBehavior behaviour, Player player) {
         super(behaviour, player);
@@ -31,6 +33,11 @@ public class BlindnessPowerUp extends PowerUp {
     @Override
     public boolean isInstantConsumable() {
         return false;
+    }
+
+    @Override
+    public int getDisplayItemID() {
+        return Item.FERMENTED_SPIDER_EYE;
     }
 
     @Override
