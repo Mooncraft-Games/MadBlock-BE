@@ -1,48 +1,40 @@
 package org.madblock.blockswap.listeners;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.TextFormat;
-import org.madblock.blockswap.BlockSwapPlugin;
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
-import org.madblock.blockswap.powerups.PowerUp;
 import org.madblock.blockswap.utils.BlockSwapConstants;
-import org.madblock.blockswap.utils.BlockSwapUtility;
 import org.madblock.newgamesapi.Utility;
-import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.team.TeamPresets;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class BlockSwapListener implements Listener {
 
-    protected List<UUID> cooldown = new ArrayList<>(); // Required bc win 10 is wack. Triggers interact event multiple times.
-    protected BlockSwapGameBehaviour gameBehaviours;
-    protected GameHandler handler;
+    protected final List<UUID> cooldown = new ArrayList<>(); // Required bc win 10 is wack. Triggers interact event multiple times.
+    protected final BlockSwapGameBehaviour gameBehaviour;
+    protected final GameHandler handler;
 
     public BlockSwapListener(BlockSwapGameBehaviour behaviour) {
-        this.gameBehaviours = behaviour;
-        this.handler = gameBehaviours.getSessionHandler();
+        this.gameBehaviour = behaviour;
+        this.handler = gameBehaviour.getSessionHandler();
     }
 
 
     @EventHandler
-    public void onItemMovement (InventoryTransactionEvent event) {
+    public void onItemMovement(InventoryTransactionEvent event) {
         Player player = event.getTransaction().getSource();
 
         if (handler.getPlayers().contains(player) && (player.getGamemode() != Player.CREATIVE)) {
@@ -51,19 +43,17 @@ public class BlockSwapListener implements Listener {
     }
 
     @EventHandler
-    public void onAbilityUsage (PlayerInteractEvent event) {
+    public void onAbilityUsage(PlayerInteractEvent event) {
         Item item = event.getItem();
 
-        if (handler.getPlayers().contains(event.getPlayer()) && item.hasCompoundTag()) {
-
-            if (!handler.getGameState().equals(GameHandler.GameState.MAIN_LOOP)) return;
+        if (this.handler.getPlayers().contains(event.getPlayer()) && item.hasCompoundTag()) {
+            if (!this.handler.getGameState().equals(GameHandler.GameState.MAIN_LOOP)) return;
             if (this.cooldown.contains(event.getPlayer().getLoginChainData().getClientUUID())) return;
 
             CompoundTag nbtTag = item.getNamedTag();
             String tag = nbtTag.getString("ability");
 
             if (tag.equals("leap")) {
-
                 this.cooldown.add(event.getPlayer().getLoginChainData().getClientUUID());
                 handler.getGameScheduler().registerGameTask(() -> this.cooldown.remove(event.getPlayer().getLoginChainData().getClientUUID()), 10);
 
@@ -73,11 +63,11 @@ public class BlockSwapListener implements Listener {
                 }
 
                 Vector3 directionVector = event.getPlayer().getDirectionVector();
-                event.getPlayer().setMotion(new Vector3(directionVector.getX(), Math.abs(directionVector.getY()), directionVector.getZ()).multiply(BlockSwapConstants.LEAP_STRENGTH));
+                event.getPlayer().setMotion(new Vector3(directionVector.getX(), Math.abs(directionVector.getY() / 2), directionVector.getZ()).multiply(BlockSwapConstants.LEAP_STRENGTH));
                 int itemIndex = event.getPlayer().getInventory().getHeldItemIndex();
 
-                handler.getGameScheduler().registerGameTask(() -> {
-                    if (!handler.getTeams().get(TeamPresets.DEAD_TEAM_ID).getPlayers().contains(event.getPlayer())) {
+                this.handler.getGameScheduler().registerGameTask(() -> {
+                    if (!this.handler.getTeams().get(TeamPresets.DEAD_TEAM_ID).getPlayers().contains(event.getPlayer())) {
                         nbtTag.putList(new ListTag<>("ench"));
                         item.setCompoundTag(nbtTag);
                         Inventory inventory = event.getPlayer().getInventory();
@@ -90,89 +80,34 @@ public class BlockSwapListener implements Listener {
                 item.setCompoundTag(nbtTag);
                 event.getPlayer().getInventory().setItemInHand(item);
                 event.getPlayer().getInventory().sendContents(event.getPlayer());
-
             } else if (tag.equals("power_up")) {
-                PowerUp powerUp = gameBehaviours.getPowerUp(event.getPlayer());
-
-                if (powerUp != null) {
-
-                    for (Player p : handler.getPlayers()) {
-                        p.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s used %s%s%s%s%s!", event.getPlayer().getDisplayName(), TextFormat.GRAY, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GRAY )));
-                    }
-                    powerUp.use();
-                    gameBehaviours.setPowerUp(event.getPlayer(), null);
-                    handler.getScoreboardManager().setLine(event.getPlayer(), BlockSwapConstants.SCOREBOARD_POWERUP_INDEX, String.format("Power Up:%s None", TextFormat.GRAY));
-                    gameBehaviours.updatePlayerInventory(event.getPlayer());
-                }
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPowerUpEntityAttacked (EntityDamageByEntityEvent event) {
-
-        if (event.getDamager() instanceof Player) {
-            Player player = (Player) event.getDamager();
-
-            if(handler.getPlayers().contains(player)) {
-
-                if (gameBehaviours.isPowerUpEntity(event.getEntity()) && (!gameBehaviours.getSessionHandler().getTeams().get(TeamPresets.DEAD_TEAM_ID).getPlayers().contains(player))) {
-                    Class<? extends PowerUp> powerUpClass = BlockSwapUtility.getRandomPowerUp();
-                    PowerUp powerUp;
-
-                    try {
-                        powerUp = powerUpClass.getConstructor(GameBehavior.class, Player.class).newInstance(gameBehaviours, player);
-
-                    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
-                        BlockSwapPlugin.get().getLogger().error(String.format("[PowerUps] Could not create %s.\n%s", powerUpClass.getName(), exception.toString()));
+                int slot;
+                switch (event.getPlayer().getInventory().getHeldItemIndex()) {
+                    case 3:
+                        slot = 0;
+                        break;
+                    case 4:
+                        slot = 1;
+                        break;
+                    case 5:
+                        slot = 2;
+                        break;
+                    default:
+                        event.getPlayer().sendMessage(Utility.generateServerMessage("ERROR", TextFormat.DARK_RED, "Misconfigured power up slot.", TextFormat.RED));
                         return;
-                    }
-
-                    gameBehaviours.removePowerUpEntity(event.getEntity());
-                    event.getEntity().despawnFromAll();
-                    event.getDamager().getLevel().addSound(new Vector3(event.getDamager().getX(), event.getDamager().getY(), event.getDamager().getZ()), Sound.FIREWORK_SHOOT, 1, 1, player);
-
-                    for (Player p : handler.getPlayers()) {
-                        p.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s has received the %s%s%s%s%s power up!", ((Player) event.getDamager()).getDisplayName(), TextFormat.GRAY, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GRAY)));
-                    }
-                    player.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s", TextFormat.AQUA, powerUp.getDescription())));
-
-                    if (powerUp.isInstantConsumable()) {
-                        powerUp.use();
-
-                    } else {
-                        gameBehaviours.setPowerUp(player, powerUp);
-                        Inventory inventory = player.getInventory();
-                        gameBehaviours.getSessionHandler().getScoreboardManager().setLine(player, BlockSwapConstants.SCOREBOARD_POWERUP_INDEX, String.format("Power Up:%s %s", TextFormat.YELLOW, powerUp.getName()));
-
-                        for (int i = 0; i < 9; i++) {
-                            Item item = inventory.getItem(i);
-
-                            if (item.getId() == Block.WOOL) {
-                                item.setCustomName(BlockSwapUtility.getPowerUpItemName(powerUp));
-                                CompoundTag tag = item.getNamedTag();
-                                tag.putList(new ListTag<>("ench"));
-                                tag.putString("ability", "power_up");
-                                item.setNamedTag(tag);
-                                inventory.setItem(i, item);
-                            }
-                        }
-                        inventory.sendContents(player);
-                    }
+                }
+                if (this.gameBehaviour.getPowerUpManager().getPowerUp(event.getPlayer(), slot).isPresent()) {
+                    this.gameBehaviour.getPowerUpManager().usePowerUp(event.getPlayer(), slot);
                 }
             }
         }
     }
 
     @EventHandler
-    public void onDamage (EntityDamageEvent event) {
-
-        if (event.getEntity().getLevel() == handler.getPrimaryMap()) {
-
-            if (event.getCause().equals(DamageCause.LIGHTNING) || event.getCause().equals(DamageCause.FALL)) {
-                event.setCancelled();
-
-            } else if (event.getCause().equals(DamageCause.FIRE_TICK)) {
+    public void onDamage(EntityDamageEvent event) {
+        if (event.getEntity().getLevel().getId() == this.handler.getPrimaryMap().getId()) {
+            // In case the player catches on fire
+            if (event.getCause().equals(DamageCause.FIRE_TICK)) {
                 event.getEntity().extinguish();
                 event.setCancelled();
             }

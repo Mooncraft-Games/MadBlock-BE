@@ -1,6 +1,6 @@
 package org.madblock.blockswap.generator;
 
-import net.mooncraftgames.blockswap.utils.BlockSwapConstants;
+import org.madblock.blockswap.utils.BlockSwapConstants;
 import org.madblock.newgamesapi.data.Settings;
 
 public abstract class BSwapGenerator {

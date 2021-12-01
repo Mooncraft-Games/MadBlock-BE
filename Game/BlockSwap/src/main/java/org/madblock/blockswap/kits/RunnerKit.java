@@ -45,7 +45,7 @@ public class RunnerKit extends Kit {
                         .setVisible(false)
                         .setAmplifier(1)
         );
-        if(player.isSprinting()){
+        if(player.isSprinting()) {
             player.setMovementSpeed((VANILLA_BASE_SPEED * VANILLA_BASE_SPRINT_MULTIPLIER) * SPEED_MULTIPLIER); //Vanilla is a 30% increase
         } else {
             player.setMovementSpeed(VANILLA_BASE_SPEED * SPEED_MULTIPLIER);
@@ -54,7 +54,7 @@ public class RunnerKit extends Kit {
     }
 
     @Override
-    public void onKitUnequip (Player player) {
+    public void onKitUnequip(Player player) {
         player.removeEffect(Effect.SPEED);
         player.setMovementSpeed(0.1f);
     }
@@ -75,8 +75,8 @@ public class RunnerKit extends Kit {
     public static class ExtendedRunnerKit extends ExtendedKit {
 
         @EventHandler
-        public void onSprintChange (PlayerToggleSprintEvent event) {
-            if(this.checkEventIsForTargetPlayer(event.getPlayer()) && !event.getPlayer().hasEffect(Effect.SLOWNESS)){
+        public void onSprintChange(PlayerToggleSprintEvent event) {
+            if (this.checkEventIsForTargetPlayer(event.getPlayer()) && !event.getPlayer().hasEffect(Effect.SLOWNESS)){
                 if(event.isSprinting()){
                     event.getPlayer().setMovementSpeed((VANILLA_BASE_SPEED * VANILLA_BASE_SPRINT_MULTIPLIER) * SPEED_MULTIPLIER); //Vanilla is a 30% increase
                 } else {

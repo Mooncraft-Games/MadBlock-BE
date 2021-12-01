@@ -1,8 +1,9 @@
-package org.madblock.blockswap.powerups;
+package org.madblock.blockswap.powerups.impl;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
+import org.madblock.blockswap.powerups.PowerUp;
 import org.madblock.blockswap.utils.BlockSwapConstants;
 import org.madblock.newgamesapi.game.GameBehavior;
 
@@ -34,7 +35,7 @@ public class LeapPowerUp extends PowerUp {
 
     @Override
     public void use() {
-        Vector3 directionVector = player.getDirectionVector();
-        player.setMotion(new Vector3(directionVector.getX(), Math.abs(directionVector.getY()), directionVector.getZ()).multiply(BlockSwapConstants.LEAP_STRENGTH));
+        Vector3 directionVector = this.player.getDirectionVector();
+        this.player.setMotion(new Vector3(directionVector.getX(), Math.abs(directionVector.getY() / 2), directionVector.getZ()).multiply(BlockSwapConstants.LEAP_STRENGTH));
     }
 }

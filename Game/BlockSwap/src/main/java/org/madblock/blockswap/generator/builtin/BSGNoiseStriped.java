@@ -9,7 +9,7 @@ import org.madblock.newgamesapi.data.Settings;
 /** Generates a random selection of blocks using Random#nextInt(int). */
 public class BSGNoiseStriped extends BSwapGenerator {
 
-    private OpenSimplex2F simplexGen;
+    private final OpenSimplex2F simplexGen;
 
     private Axis axis;
 

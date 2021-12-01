@@ -60,7 +60,8 @@ public class BlockSwapPlugin extends PluginBase {
                 .setGuidelinePlayers(BlockSwapConstants.MINIMUM_PLAYERS)
                 .setMinimumPlayers(BlockSwapConstants.MINIMUM_PLAYERS)
                 .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS)
-                .setCanWorldBeManipulated(false);
+                .setCanWorldBeManipulated(false)
+                .setDefaultCountdownLength(5);
 
         GameProperties gameDebugProperties = new GameProperties(
                 AutomaticWinPolicy.MANUAL_CALLS_ONLY
@@ -68,7 +69,8 @@ public class BlockSwapPlugin extends PluginBase {
                 .setGuidelinePlayers(1)
                 .setMinimumPlayers(1)
                 .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS)
-                .setCanWorldBeManipulated(false);
+                .setCanWorldBeManipulated(false)
+                .setDefaultCountdownLength(3);
 
         GameProperties gameTourneyProperties = new GameProperties(
                 AutomaticWinPolicy.OPPOSING_PLAYERS_DEAD
@@ -77,7 +79,8 @@ public class BlockSwapPlugin extends PluginBase {
                 .setMinimumPlayers(1)
                 .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS)
                 .setCanWorldBeManipulated(false)
-                .setTourneyGamemode(true);
+                .setTourneyGamemode(true)
+                .setDefaultCountdownLength(5);
 
         GameID game = new GameID(
                 "blockswap",

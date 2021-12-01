@@ -1,10 +1,11 @@
-package org.madblock.blockswap.powerups;
+package org.madblock.blockswap.powerups.impl;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.TextFormat;
+import org.madblock.blockswap.powerups.PowerUp;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.team.TeamPresets;

@@ -24,8 +24,6 @@ public class ScoreboardManager {
         this.scoreboards = new HashMap<>();
         this.scoreboardEntries = new HashMap<>();
         this.scoreboardChanges = new HashMap<>();
-
-        gameHandler.getGameScheduler().registerGameTask(this::updateScoreboards, 0, 10);
     }
 
     /**
@@ -48,6 +46,8 @@ public class ScoreboardManager {
             this.scoreboardChanges.get(player).put(line, info);
 
         }
+
+        this.updateScoreboards();
     }
 
     /**

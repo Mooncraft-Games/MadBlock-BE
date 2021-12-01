@@ -3,6 +3,7 @@ package org.madblock.blockswap.utils;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.blockswap.powerups.*;
+import org.madblock.blockswap.powerups.impl.*;
 
 import java.util.*;
 
@@ -11,7 +12,7 @@ public class BlockSwapConstants {
     public static final int MINIMUM_PLAYERS = 2;
     public static final int MAXIMUM_PLAYERS = 16;
 
-    public static final int ROUND_SECONDS = 8;
+    public static final int ROUND_SECONDS = 6;
 
     public static final int POWERUP_SPAWN_TIMER_SECONDS = 20;
     public static final int MINIMUM_POWERUP_SPAWN_TIMER_SECONDS = 5;
@@ -24,7 +25,9 @@ public class BlockSwapConstants {
     public static final int SCOREBOARD_COLOR_INDEX = 0;
     public static final int SCOREBOARD_TIME_INDEX = 1;
     public static final int SCOREBOARD_PLAYERS_INDEX = 2;
-    public static final int SCOREBOARD_POWERUP_INDEX = 3;
+
+    public static final String FUNCTION_TAG_GENERATE_PLATFORM = "platform_gen";
+    public static final String FUNCTION_TAG_CLEAR_PLATFORM = "platform_clear";
 
     public static final Map<DyeColor, TextFormat> POSSIBLE_COLORS = Collections.unmodifiableMap(new HashMap<DyeColor, TextFormat>() {
         {
@@ -32,10 +35,8 @@ public class BlockSwapConstants {
             this.put(DyeColor.BLACK, TextFormat.BLACK);
             this.put(DyeColor.BLUE, TextFormat.BLUE);
             this.put(DyeColor.CYAN, TextFormat.DARK_AQUA);
-            this.put(DyeColor.GRAY, TextFormat.DARK_GRAY);
             this.put(DyeColor.GREEN, TextFormat.DARK_GREEN);
             this.put(DyeColor.LIGHT_BLUE, TextFormat.AQUA);
-            this.put(DyeColor.LIGHT_GRAY, TextFormat.GRAY);
             this.put(DyeColor.LIME, TextFormat.GREEN);
             this.put(DyeColor.MAGENTA, TextFormat.LIGHT_PURPLE);
             this.put(DyeColor.ORANGE, TextFormat.GOLD);

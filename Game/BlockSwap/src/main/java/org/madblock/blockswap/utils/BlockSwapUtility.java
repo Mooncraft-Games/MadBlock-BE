@@ -22,34 +22,34 @@ public class BlockSwapUtility {
         }
 
         while (colors.size() != requiredColors) {
-            colors.remove((int)Math.floor(Math.random() * colors.size()));
+            colors.remove((int) Math.floor(Math.random() * colors.size()));
         }
 
         return colors;
     }
 
-    /**
-     * Return a random platform color to use.
-     * The "winning" color has a lower chance of being chosen the further the game is.
-     * @param possibleColors Possible colors to choose from i
-     * @param winningColor Winning color.
-     * @param completedRounds Amount of rounds that were completed.
-     */
-    public static DyeColor getRandomColor(List<DyeColor> possibleColors, DyeColor winningColor, int completedRounds) {
-        DyeColor randomColor = possibleColors.get((int)Math.floor(Math.random() * possibleColors.size()));
-        if (randomColor.getWoolData() == winningColor.getWoolData() && Math.random() > Math.max((1.0 - (completedRounds * 0.05)), 0.1)) {
-            // Limit it depending on the round.
-            return getRandomColor(possibleColors, winningColor, completedRounds);
-        }
-        return randomColor;
-    }
-
     public static Class<? extends PowerUp> getRandomPowerUp() {
-        return BlockSwapConstants.POSSIBLE_POWER_UPS.get((int)Math.floor(Math.random() * BlockSwapConstants.POSSIBLE_POWER_UPS.size()));
+        return BlockSwapConstants.POSSIBLE_POWER_UPS.get((int) Math.floor(Math.random() * BlockSwapConstants.POSSIBLE_POWER_UPS.size()));
     }
 
-    public static String getPowerUpItemName(PowerUp powerUp) {
-        return String.format("%sTap to use your %s%s%s%s%s power up!", TextFormat.GREEN, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GREEN);
+    public static String getPowerUpItemName(DyeColor color, PowerUp powerUp) {
+        return new StringBuilder()
+                .append(getBlockItemName(color))
+                .append('\n')
+                .append(TextFormat.RESET)
+                .append(TextFormat.GREEN)
+                .append("Tap to use ")
+                .append(TextFormat.BOLD)
+                .append(TextFormat.YELLOW)
+                .append(powerUp.getName())
+                .append(TextFormat.RESET)
+                .append(TextFormat.GREEN)
+                .append("!")
+                .toString();
+    }
+
+    public static String getBlockItemName(DyeColor color) {
+        return "" + BlockSwapConstants.POSSIBLE_COLORS.getOrDefault(color, TextFormat.WHITE) + TextFormat.BOLD + color.getName();
     }
 
 }
