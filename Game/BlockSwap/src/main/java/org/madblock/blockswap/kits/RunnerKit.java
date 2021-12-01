@@ -13,10 +13,6 @@ import java.util.Optional;
 
 public class RunnerKit extends Kit {
 
-    public static final float VANILLA_BASE_SPEED = 0.1f;
-    public static final float VANILLA_BASE_SPRINT_MULTIPLIER = 1.2f;
-    public static final float SPEED_MULTIPLIER = 2f;
-
     @Override
     public String getKitID() {
         return "runner";
@@ -39,18 +35,10 @@ public class RunnerKit extends Kit {
 
     @Override
     public void onKitEquip (Player player) {
-        player.addEffect(
-                Effect.getEffect(Effect.SPEED)
+        player.addEffect(Effect.getEffect(Effect.SPEED)
                         .setDuration(99999)
                         .setVisible(false)
-                        .setAmplifier(1)
-        );
-        if(player.isSprinting()) {
-            player.setMovementSpeed((VANILLA_BASE_SPEED * VANILLA_BASE_SPRINT_MULTIPLIER) * SPEED_MULTIPLIER); //Vanilla is a 30% increase
-        } else {
-            player.setMovementSpeed(VANILLA_BASE_SPEED * SPEED_MULTIPLIER);
-        }
-
+                        .setAmplifier(1));
     }
 
     @Override
@@ -63,29 +51,6 @@ public class RunnerKit extends Kit {
     @Override
     public Item[] getKitItems() {
         return new Item[0];
-    }
-
-
-    @Override
-    public Optional<Class<? extends ExtendedKit>> getExtendedKitFeatures() {
-        return Optional.of(ExtendedRunnerKit.class);
-    }
-
-    // Essentially the same as the hub kit's extended class.
-    public static class ExtendedRunnerKit extends ExtendedKit {
-
-        @EventHandler
-        public void onSprintChange(PlayerToggleSprintEvent event) {
-            if (this.checkEventIsForTargetPlayer(event.getPlayer()) && !event.getPlayer().hasEffect(Effect.SLOWNESS)){
-                if(event.isSprinting()){
-                    event.getPlayer().setMovementSpeed((VANILLA_BASE_SPEED * VANILLA_BASE_SPRINT_MULTIPLIER) * SPEED_MULTIPLIER); //Vanilla is a 30% increase
-                } else {
-                    event.getPlayer().setMovementSpeed(VANILLA_BASE_SPEED * SPEED_MULTIPLIER);
-                }
-            }
-
-        }
-
     }
 
 }
