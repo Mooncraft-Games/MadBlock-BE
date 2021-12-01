@@ -13,17 +13,13 @@ import java.util.*;
 
 public class ScoreboardManager {
 
-    protected GameHandler gameHandler;
+    protected final GameHandler gameHandler;
 
-    protected Map<Player, ScoreboardDisplay> scoreboards;                     // Stores scoreboards
-    protected Map<Player, Map<Integer, DisplayEntry>> scoreboardEntries; // Stores entries for a player's scoreboard
-    protected Map<Player, Map<Integer, String>> scoreboardChanges;            // Stores changes that need to be made for a client
+    protected final Map<Player, ScoreboardDisplay> scoreboards = new HashMap<>();                     // Stores scoreboards
+    protected final Map<Player, Map<Integer, DisplayEntry>> scoreboardEntries = new HashMap<>();      // Stores entries for a player's scoreboard
 
     public ScoreboardManager(GameHandler handler) {
         this.gameHandler = handler;
-        this.scoreboards = new HashMap<>();
-        this.scoreboardEntries = new HashMap<>();
-        this.scoreboardChanges = new HashMap<>();
     }
 
     /**
@@ -33,21 +29,35 @@ public class ScoreboardManager {
      * @param info If null, it will delete the line
      */
     public void setLine(Player player, int line, String info) {
+        if (this.scoreboardEntries.containsKey(player) && this.scoreboardEntries.get(player).containsKey(line) && info == null) {
+            // We are removing a line
+            this.scoreboardEntries.get(player).remove(line);
+            this.scoreboards.get(player).removeEntry(this.scoreboardEntries.get(player).get(line));
 
-        this.scoreboardChanges.putIfAbsent(player, new HashMap<>());
-        if (info == null) {
+            // Check if we can garbage cleanup
+            if (this.scoreboards.get(player).getLineEntry().size() == 0) {
+                ScoreboardAPI.removeScorebaord(player, this.scoreboards.get(player).getScoreboard());
+                this.scoreboards.remove(player);
+            }
+        } else if (info != null) {
+            // We are adding a line
+            // Create the scoreboard if it doesn't exist
+            if (!this.scoreboards.containsKey(player)) {
+                Scoreboard scoreboard = ScoreboardAPI.createScoreboard();
+                ScoreboardDisplay display = scoreboard.addDisplay(DisplaySlot.SIDEBAR,  String.format("scoreboard_%s_%s", gameHandler.getGameID().getGameIdentifier(), Utility.generateUniqueToken(6, 4)), String.format("%s%sMooncraft %s%sGames", TextFormat.BLUE, TextFormat.BOLD, TextFormat.DARK_AQUA, TextFormat.BOLD));
+                ScoreboardAPI.setScoreboard(player, scoreboard);
 
-            // Schedule this line for deletion
-            this.scoreboardChanges.get(player).put(line, null);
+                this.scoreboards.put(player, display);
+                this.scoreboardEntries.put(player, new HashMap<>());
+            }
 
-        } else {
-
-            // Schedule this line to be added
-            this.scoreboardChanges.get(player).put(line, info);
+            // Delete the existing line if any exists and then add the new line
+            if (this.scoreboardEntries.get(player).containsKey(line)) {
+                this.scoreboards.get(player).removeEntry(this.scoreboardEntries.get(player).get(line));
+            }
+            this.scoreboardEntries.get(player).put(line, scoreboards.get(player).addLine(info, line));
 
         }
-
-        this.updateScoreboards();
     }
 
     /**
@@ -58,23 +68,14 @@ public class ScoreboardManager {
      */
     public Optional<String> getLine(Player player, int line) {
         if (this.scoreboards.containsKey(player)) {
-
-            // Use the most recent line change
-            if (this.scoreboardChanges.containsKey(player) && this.scoreboardChanges.get(player).containsKey(line)) {
-                return Optional.ofNullable(this.scoreboardChanges.get(player).get(line));
-            } else {
-                return Optional.of(this.scoreboards.get(player).getLine(line));
-            }
-
+            return Optional.of(this.scoreboards.get(player).getLine(line));
         } else {
             return Optional.empty();
         }
     }
 
     public void cleanUp(Player player) {
-        this.scoreboardChanges.remove(player);
         if (this.scoreboards.containsKey(player)) {
-
             for (DisplayEntry entry : this.scoreboardEntries.get(player).values()) {
                 this.scoreboards.get(player).removeEntry(entry);
             }
@@ -83,52 +84,6 @@ public class ScoreboardManager {
             this.scoreboards.remove(player);
 
         }
-    }
-
-    protected void updateScoreboards() {
-        for (Player player : scoreboardChanges.keySet()) {
-
-            Map<Integer, String> changes = scoreboardChanges.get(player);
-
-            for (int line : changes.keySet()) {
-
-                if (changes.get(line) == null && this.scoreboardEntries.get(player).containsKey(line)) {
-
-                    // We are removing a line
-                    this.scoreboards.get(player).removeEntry(this.scoreboardEntries.get(player).get(line));
-                    this.scoreboardEntries.get(player).remove(line);
-
-                } else if (changes.get(line) != null) {
-
-                    // We are adding a line
-
-                    // Create the scoreboard if it doesn't exist
-                    if (!this.scoreboards.containsKey(player)) {
-                        Scoreboard scoreboard = ScoreboardAPI.createScoreboard();
-                        ScoreboardDisplay display = scoreboard.addDisplay(DisplaySlot.SIDEBAR,  String.format("scoreboard_%s_%s", gameHandler.getGameID().getGameIdentifier(), Utility.generateUniqueToken(6, 4)), String.format("%s%sMooncraft %s%sGames", TextFormat.BLUE, TextFormat.BOLD, TextFormat.DARK_AQUA, TextFormat.BOLD));
-                        scoreboards.put(player, display);
-                        scoreboardEntries.put(player, new HashMap<>());
-                        ScoreboardAPI.setScoreboard(player, scoreboard);
-                    }
-
-                    if (scoreboardEntries.get(player).containsKey(line)) {
-                        scoreboards.get(player).removeEntry(scoreboardEntries.get(player).get(line));
-                    }
-
-                    scoreboardEntries.get(player).put(line, scoreboards.get(player).addLine(changes.get(line), line));
-
-                }
-
-            }
-
-            // Do we need to remove the scoreboard now?
-            if (this.scoreboards.get(player).getLineEntry().size() == 0) {
-                ScoreboardAPI.removeScorebaord(player, this.scoreboards.get(player).getScoreboard());
-                this.scoreboards.remove(player);
-            }
-
-        }
-        scoreboardChanges.clear();
     }
 
 }
