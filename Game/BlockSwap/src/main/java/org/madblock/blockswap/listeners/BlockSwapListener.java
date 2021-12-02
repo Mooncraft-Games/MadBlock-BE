@@ -4,16 +4,13 @@ import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
-import cn.nukkit.event.player.PlayerToggleSprintEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
 import org.madblock.blockswap.utils.BlockSwapConstants;
@@ -109,30 +106,9 @@ public class BlockSwapListener implements Listener {
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity().getLevel().getId() == this.handler.getPrimaryMap().getId()) {
-            // In case the player catches on fire
-            if (event.getCause().equals(DamageCause.FIRE_TICK)) {
-                event.getEntity().extinguish();
-                event.setCancelled();
-            }
+            event.getEntity().extinguish();
+            event.setCancelled();
         }
-    }
-
-    @EventHandler
-    public void onSprintChange(PlayerToggleSprintEvent event) {
-        if (this.gameBehaviour.getSessionHandler().getPlayers().contains(event.getPlayer())) {
-            boolean hasSpeedEffect = event.getPlayer().hasEffect(Effect.SPEED);
-
-            if (hasSpeedEffect) {
-                if(event.isSprinting()) {
-                    event.getPlayer().setMovementSpeed((BlockSwapConstants.VANILLA_BASE_SPEED * BlockSwapConstants.VANILLA_BASE_SPRINT_MULTIPLIER) * BlockSwapConstants.SPEED_MULTIPLIER); //Vanilla is a 30% increase
-                } else {
-                    event.getPlayer().setMovementSpeed(BlockSwapConstants.VANILLA_BASE_SPEED * BlockSwapConstants.SPEED_MULTIPLIER);
-                }
-            } else {
-                event.getPlayer().setMovementSpeed(BlockSwapConstants.VANILLA_BASE_SPEED * (event.isSprinting() ? BlockSwapConstants.VANILLA_BASE_SPRINT_MULTIPLIER : 1));
-            }
-        }
-
     }
 
 }

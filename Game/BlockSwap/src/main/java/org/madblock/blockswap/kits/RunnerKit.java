@@ -44,7 +44,6 @@ public class RunnerKit extends Kit {
     @Override
     public void onKitUnequip(Player player) {
         player.removeEffect(Effect.SPEED);
-        player.setMovementSpeed(0.1f);
     }
 
 

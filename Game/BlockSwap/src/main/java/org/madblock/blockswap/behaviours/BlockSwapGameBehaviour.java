@@ -145,7 +145,10 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Game task to prepare the next round.
      */
     public void gameLoopTask() {
-        this.setRoundTime(Math.max(40, getRoundTime() - 10));
+        if (this.getCompletedRounds() % 2 == 0) {
+            this.setRoundTime(Math.max(40, this.getRoundTime() - 10));
+        }
+        this.setRoundTimeLeft(this.getRoundTime());
 
         // Reregister all tasks.
         this.getSessionHandler().getGameScheduler().registerGameTask(this::generateNewPlatformTask);

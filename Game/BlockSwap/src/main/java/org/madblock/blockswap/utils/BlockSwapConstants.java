@@ -9,10 +9,6 @@ import java.util.*;
 
 public class BlockSwapConstants {
 
-    public static final float VANILLA_BASE_SPEED = 0.1f;
-    public static final float VANILLA_BASE_SPRINT_MULTIPLIER = 1.2f;
-    public static final float SPEED_MULTIPLIER = 2f;
-
     public static final int MINIMUM_PLAYERS = 2;
     public static final int MAXIMUM_PLAYERS = 16;
 

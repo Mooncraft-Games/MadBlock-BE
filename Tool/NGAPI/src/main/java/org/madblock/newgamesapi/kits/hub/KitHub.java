@@ -5,10 +5,8 @@ import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockChest;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.entity.EntityArmorChangeEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
-import cn.nukkit.event.player.PlayerToggleSprintEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.*;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -34,10 +32,6 @@ import org.madblock.newgamesapi.registry.LibraryRegistry;
 import java.util.Optional;
 
 public class KitHub extends Kit {
-
-    public static final float VANILLA_BASE_SPEED = 0.1f;
-    public static final float VANILLA_BASE_SPRINT_MULTIPLIER = 1.3f;
-    public static final float SPEED_MULTIPLIER = 2f;
 
     @Override public String getKitID() {
         return "hub_default";
@@ -115,16 +109,14 @@ public class KitHub extends Kit {
     @Override
     public void onKitEquip(Player player) {
         // player.addEffect(Effect.getEffect(Effect.JUMP).setAmplifier(2).setDuration(100000).setVisible(false)); no more jump boost!
-        if(player.isSprinting()){
-            player.setMovementSpeed((VANILLA_BASE_SPEED * VANILLA_BASE_SPRINT_MULTIPLIER) * SPEED_MULTIPLIER); //Vanilla is a 30% increase
-        } else {
-            player.setMovementSpeed(VANILLA_BASE_SPEED * SPEED_MULTIPLIER);
-        }
+        player.addEffect(Effect.getEffect(Effect.SPEED)
+                .setDuration(Integer.MAX_VALUE)
+                .setAmplifier(5)
+                .setVisible(false));
     }
 
     @Override
     public void onKitUnequip(Player player) {
-        player.setMovementSpeed(0.1f);
         player.removeAllEffects();
     }
 
@@ -167,17 +159,6 @@ public class KitHub extends Kit {
                     });
                 }
             }, 1, 1);
-        }
-
-        @EventHandler
-        public void onSprintChange(PlayerToggleSprintEvent event){
-            if(checkEventIsForTargetPlayer(event.getPlayer())){
-                if(event.isSprinting()){
-                    event.getPlayer().setMovementSpeed((VANILLA_BASE_SPEED * VANILLA_BASE_SPRINT_MULTIPLIER) * SPEED_MULTIPLIER); //Vanilla is a 30% increase
-                } else {
-                    event.getPlayer().setMovementSpeed(VANILLA_BASE_SPEED * SPEED_MULTIPLIER);
-                }
-            }
         }
 
         @EventHandler
