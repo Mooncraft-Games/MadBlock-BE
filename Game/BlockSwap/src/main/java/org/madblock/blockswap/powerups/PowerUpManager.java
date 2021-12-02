@@ -2,15 +2,21 @@ package org.madblock.blockswap.powerups;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.TextFormat;
+import org.madblock.blockswap.BlockSwapPlugin;
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
 import org.madblock.blockswap.utils.BlockSwapUtility;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
+import org.madblock.newgamesapi.util.SkinUtils;
 
+import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PowerUpManager {
@@ -92,7 +98,10 @@ public class PowerUpManager {
         Entity lightning = Entity.createEntity("Lightning", position);
         lightning.spawnToAll();
 
-        Entity powerUpEntity = new EntityBlockSwapPowerUp(this.behaviour, position.getChunk(), Entity.getDefaultNBT(position));
+        CompoundTag tag = Entity.getDefaultNBT(position);
+        tag.putCompound("Skin", getPowerUpSkinTag());
+
+        Entity powerUpEntity = new EntityBlockSwapPowerUp(this.behaviour, position.getChunk(), tag);
         powerUpEntity.spawnToAll();
 
         this.powerUpEntities.add(powerUpEntity);
@@ -128,6 +137,41 @@ public class PowerUpManager {
         }
 
         this.powerUpEntities.remove(powerUpEntity);
+    }
+
+    private static CompoundTag getPowerUpSkinTag() {
+        Optional<String> modelJSON = SkinUtils.getModelFile("prop/lucky/prop_lucky_block.json");
+        Optional<BufferedImage> skinData = SkinUtils.getSkinFile("prop/lucky/prop.lucky_block.png");
+
+        if (!(modelJSON.isPresent() && skinData.isPresent())) {
+            BlockSwapPlugin.getLog().error("Unable to find powerup skin");
+            return new CompoundTag();
+        }
+
+        Skin skin = new Skin();
+        skin.setGeometryName("geometry.prop.lucky_block");
+        skin.setGeometryData(modelJSON.get());
+        skin.setSkinData(skinData.get());
+        skin.setTrusted(true);
+
+
+        CompoundTag skinDataTag = new CompoundTag()
+                .putByteArray("Data", skin.getSkinData().data)
+                .putInt("SkinImageWidth", skin.getSkinData().width)
+                .putInt("SkinImageHeight", skin.getSkinData().height)
+                .putString("ModelId", skin.getSkinId())
+                .putString("CapeId", skin.getCapeId())
+                .putByteArray("CapeData", skin.getCapeData().data)
+                .putInt("CapeImageWidth", skin.getCapeData().width)
+                .putInt("CapeImageHeight", skin.getCapeData().height)
+                .putByteArray("SkinResourcePatch", skin.getSkinResourcePatch().getBytes(StandardCharsets.UTF_8))
+                .putByteArray("GeometryData", skin.getGeometryData().getBytes(StandardCharsets.UTF_8))
+                .putByteArray("AnimationData", skin.getAnimationData().getBytes(StandardCharsets.UTF_8))
+                .putBoolean("PremiumSkin", skin.isPremium())
+                .putBoolean("PersonaSkin", skin.isPersona())
+                .putBoolean("CapeOnClassicSkin", skin.isCapeOnClassic());
+
+        return skinDataTag;
     }
 
 }

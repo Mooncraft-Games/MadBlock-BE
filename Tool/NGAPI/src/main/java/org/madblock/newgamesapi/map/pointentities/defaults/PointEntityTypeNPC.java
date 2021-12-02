@@ -23,6 +23,7 @@ import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.map.pointentities.PointEntityType;
 import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.nukkit.entity.EntityHumanPlus;
+import org.madblock.newgamesapi.util.SkinUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -46,7 +47,7 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
         lastInstances = new HashMap<>();
     }
 
-    public abstract String getPersistentUuidNbtLocation ();
+    public abstract String getPersistentUuidNbtLocation();
 
     @Override
     public void onRegister() {
@@ -142,8 +143,8 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
     // - skin.setGeometryName() must be your skin's complete name within the model file (including the "geometry" at the start)
     protected Optional<Skin> getSkin(PointEntity entity) {
         Skin skin = new Skin();
-        Optional<BufferedImage> skinImage = loadSkinFile(entity.getStringProperties().get("skin_file"));
-        Optional<String> modelData = loadModelFile(entity.getStringProperties().get("model_file"));
+        Optional<BufferedImage> skinImage = SkinUtils.getSkinFile(entity.getStringProperties().get("skin_file"));
+        Optional<String> modelData = SkinUtils.getModelFile(entity.getStringProperties().get("model_file"));
         if(skinImage.isPresent()) {
             skin.setSkinData(skinImage.get());
             skin.setTrusted(true);
@@ -159,50 +160,6 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
         } else {
             return Optional.empty();
         }
-    }
-
-    protected Optional<BufferedImage> loadSkinFile(String path) {
-        if (path != null) {
-            File skinfile = new File(NewGamesAPI1.get().getServer().getDataPath()+"/skins/"+path);
-            try {
-                BufferedImage image = ImageIO.read(skinfile);
-                return Optional.of(image);
-            } catch (Exception err) {
-                NewGamesAPI1.getPlgLogger().warning("Error loading custom skin data for NPCHuman skin.");
-            }
-        }
-        File fallback = new File(NewGamesAPI1.get().getServer().getDataPath()+"/skins/default.png");
-        try {
-            BufferedImage image = ImageIO.read(fallback);
-            return Optional.of(image);
-        } catch (Exception err) {
-            NewGamesAPI1.getPlgLogger().warning("Error loading fallback skin data for NPCHuman skin.");
-        }
-        return Optional.empty();
-    }
-
-    protected Optional<String> loadModelFile(String path) {
-
-        if (path != null) {
-            File skinfile = new File(NewGamesAPI1.get().getServer().getDataPath()+"/skins/"+path);
-
-            try {
-                BufferedReader r = new BufferedReader(new FileReader(skinfile));
-                StringBuilder b = new StringBuilder();
-                Iterator<String> lines = r.lines().iterator();
-
-                while (lines.hasNext()) {
-                    b.append(lines.next());
-                    b.append("\n");
-                }
-
-                return Optional.of(b.toString());
-
-            } catch (Exception err) {
-                NewGamesAPI1.getPlgLogger().warning("Error loading custom skin model data for NPCHuman skin.");
-            }
-        }
-        return Optional.empty();
     }
 
     protected String getDisplayName(PointEntity entity) {

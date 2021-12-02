@@ -1,21 +1,22 @@
 package org.madblock.blockswap.powerups;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.passive.EntityChicken;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
 import org.madblock.newgamesapi.team.TeamPresets;
 
-public class EntityBlockSwapPowerUp extends EntityChicken {
+public class EntityBlockSwapPowerUp extends EntityHuman {
 
-    private static final int TARGET_SCALE_SIZE = 3;
-    private static final int ROTATION_SPEED = 10;
+    private static final int TARGET_SCALE_SIZE = 2;
+    private static final int ROTATION_SPEED = 3;
 
     protected final BlockSwapGameBehaviour behaviour;
-
 
     public EntityBlockSwapPowerUp(BlockSwapGameBehaviour behaviour, FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
