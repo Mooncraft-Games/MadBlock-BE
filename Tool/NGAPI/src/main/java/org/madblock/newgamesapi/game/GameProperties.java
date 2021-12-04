@@ -31,6 +31,8 @@ public class GameProperties {
 
     private boolean isTourneyGamemode;
 
+    private boolean isInternalRewardsEnabled;
+
     private GameHandler.AutomaticWinPolicy winPolicy;
 
     private int minimumPlayers;
@@ -67,6 +69,8 @@ public class GameProperties {
 
         this.isTourneyGamemode = false;
 
+        this.isInternalRewardsEnabled = true;
+
         this.winPolicy = winPolicy;
 
         this.minimumPlayers = 2;
@@ -99,6 +103,15 @@ public class GameProperties {
     public boolean isFallDamageEnabled() { return isFallDamageEnabled; }
 
     public boolean isTourneyGamemode() { return isTourneyGamemode; }
+
+    /**
+     * See if players should get additional rewards on the game ending.
+     * (e.g. first place or kills)
+     * @return if players should get additional rewards
+     */
+    public boolean isInternalRewardsEnabled() {
+        return isInternalRewardsEnabled;
+    }
 
     /**
      * The contents of the settings should not be modified.
@@ -278,6 +291,16 @@ public class GameProperties {
 
     public GameProperties setTourneyGamemode(boolean tourneyGamemode) {
         isTourneyGamemode = tourneyGamemode;
+        return this;
+    }
+
+    /**
+     * Change if players should get additional rewards on the game ending.
+     * (e.g. first place or kills)
+     * @return self for chaining
+     */
+    public GameProperties setInternalRewardsEnabled(boolean internalRewardsEnabled) {
+        isInternalRewardsEnabled = internalRewardsEnabled;
         return this;
     }
 

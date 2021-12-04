@@ -20,8 +20,6 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.TextFormat;
-import org.madblock.lib.stattrack.StatTrackAPI;
-import org.madblock.lib.stattrack.statistic.FinalEntityID;
 import org.madblock.lib.stattrack.statistic.StatisticCollection;
 import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
 import org.madblock.newgamesapi.NewGamesAPI1;
@@ -808,7 +806,9 @@ public class GameHandler implements Listener {
             pointEntityTypeManager.getRegisteredTypes().get(PointEntityTypeFirework.ID)
                     .executeFunctionForAll(PointEntityTypeFirework.FUNC_SPAWN, params);
 
-            getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("loser", "" + TextFormat.BLUE + TextFormat.BOLD + "Pity Points :(", 40, 10)));
+            if (getGameID().getGameProperties().isInternalRewardsEnabled()) {
+                getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("loser", "" + TextFormat.BLUE + TextFormat.BOLD + "Pity Points :(", 40, 10)));
+            }
 
             String[] paragraphs = new String[]{
                     TextFormat.DARK_AQUA + "Better luck next time!",
@@ -835,7 +835,9 @@ public class GameHandler implements Listener {
             pointEntityTypeManager.getRegisteredTypes().get(PointEntityTypeFirework.ID)
                     .executeFunctionForAll(PointEntityTypeFirework.FUNC_SPAWN, new HashMap<>());
 
-            getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("tie", "" + TextFormat.GOLD + TextFormat.BOLD + "'You Tried and Tied'", 150, 45)));
+            if (getGameID().getGameProperties().isInternalRewardsEnabled()) {
+                getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("tie", "" + TextFormat.GOLD + TextFormat.BOLD + "'You Tried and Tied'", 150, 45)));
+            }
 
             String[] paragraphs = new String[]{
                     "" + TextFormat.GOLD + TextFormat.BOLD + "Winners:",
@@ -861,7 +863,9 @@ public class GameHandler implements Listener {
             pointEntityTypeManager.getRegisteredTypes().get(PointEntityTypeFirework.ID)
                     .executeFunctionForAll(PointEntityTypeFirework.FUNC_SPAWN, new HashMap<>());
 
-            getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("winner", "" + TextFormat.GOLD + TextFormat.BOLD + "Victory!", 300, 90, TOURNEY_TOP3_POINTS)));
+            if (getGameID().getGameProperties().isInternalRewardsEnabled()) {
+                getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("winner", "" + TextFormat.GOLD + TextFormat.BOLD + "Victory!", 300, 90, TOURNEY_TOP3_POINTS)));
+            }
 
             String[] paragraphs = new String[]{
                     "" + TextFormat.GOLD + TextFormat.BOLD + "Winners:",
@@ -896,9 +900,11 @@ public class GameHandler implements Listener {
                     .executeFunctionForAll(PointEntityTypeFirework.FUNC_SPAWN, new HashMap<>());
             //TODO: Give teams their own firework palettes and use them for #1 instead.
 
-            first.getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("first", "" + TextFormat.GOLD + TextFormat.BOLD + "First Place", 400, 100, TOURNEY_TOP3_POINTS + TOURNEY_WIN_POINTS)));
-            if (second != null) second.getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("second", "" + TextFormat.GOLD + TextFormat.BOLD + "Second Place", 300, 75, TOURNEY_TOP3_POINTS)));
-            if (third != null) third.getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("third", "" + TextFormat.DARK_RED + TextFormat.BOLD + "Third Place", 200, 50, TOURNEY_TOP3_POINTS)));
+            if (getGameID().getGameProperties().isInternalRewardsEnabled()) {
+                first.getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("first", "" + TextFormat.GOLD + TextFormat.BOLD + "First Place", 400, 100, TOURNEY_TOP3_POINTS + TOURNEY_WIN_POINTS)));
+                if (second != null) second.getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("second", "" + TextFormat.GOLD + TextFormat.BOLD + "Second Place", 300, 75, TOURNEY_TOP3_POINTS)));
+                if (third != null) third.getPlayers().forEach(player -> addBypassRewardChunk(player, new RewardChunk("third", "" + TextFormat.DARK_RED + TextFormat.BOLD + "Third Place", 200, 50, TOURNEY_TOP3_POINTS)));
+            }
             endGame(true); // THIS MOVES PLAYERS OUT OF THEIR TEAMS !!!
 
             String[] paragraphs = new String[3 + (second == null ? 0 : 1) + (third == null ? 0 : 1)];
@@ -937,9 +943,11 @@ public class GameHandler implements Listener {
 
             endGame(true);
 
-            addBypassRewardChunk(first, new RewardChunk("first", "" + TextFormat.GOLD + TextFormat.BOLD + "First Place", 400, 100, TOURNEY_TOP3_POINTS + TOURNEY_WIN_POINTS));
-            if (second != null) addBypassRewardChunk(second, new RewardChunk("second", "" + TextFormat.GOLD + TextFormat.BOLD + "Second Place", 300, 75, TOURNEY_TOP3_POINTS));
-            if (third != null) addBypassRewardChunk(third, new RewardChunk("third", "" + TextFormat.DARK_RED + TextFormat.BOLD + "Third Place", 200, 50, TOURNEY_TOP3_POINTS));
+            if (getGameID().getGameProperties().isInternalRewardsEnabled()) {
+                addBypassRewardChunk(first, new RewardChunk("first", "" + TextFormat.GOLD + TextFormat.BOLD + "First Place", 400, 100, TOURNEY_TOP3_POINTS + TOURNEY_WIN_POINTS));
+                if (second != null) addBypassRewardChunk(second, new RewardChunk("second", "" + TextFormat.GOLD + TextFormat.BOLD + "Second Place", 300, 75, TOURNEY_TOP3_POINTS));
+                if (third != null) addBypassRewardChunk(third, new RewardChunk("third", "" + TextFormat.DARK_RED + TextFormat.BOLD + "Third Place", 200, 50, TOURNEY_TOP3_POINTS));
+            }
 
             String[] paragraphs = new String[3 + (second == null ? 0 : 1) + (third == null ? 0 : 1)];
             paragraphs[0] = "" + TextFormat.GOLD + TextFormat.BOLD + "Winners:";
@@ -1129,7 +1137,9 @@ public class GameHandler implements Listener {
         Team spectatorTeam = teams.get(TeamPresets.DEAD_TEAM_ID);
 
         for(Player player: players){
-            addBypassRewardChunk(player, new RewardChunk("participation", "Participation", 60, 4));
+            if (getGameID().getGameProperties().isInternalRewardsEnabled()) {
+                addBypassRewardChunk(player, new RewardChunk("participation", "Participation", 60, 4));
+            }
             KitRegistry.get().getKitGroup("core").ifPresent(k -> {
                 equipPlayerKit(player, k.getGroupKits().getOrDefault("spectate", k.getDefaultKit()), true);
             });

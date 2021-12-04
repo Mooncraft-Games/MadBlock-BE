@@ -41,7 +41,9 @@ public class EntityBlockSwapPowerUp extends EntityHuman {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-        if (source instanceof EntityDamageByEntityEvent && ((EntityDamageByEntityEvent) source).getDamager() instanceof Player) {
+        if (source instanceof EntityDamageByEntityEvent
+                && ((EntityDamageByEntityEvent) source).getDamager() instanceof Player
+                && !this.isClosed()) {
             Player player = (Player) ((EntityDamageByEntityEvent) source).getDamager();
             boolean canPlayerInteract = this.behaviour.getSessionHandler().getPlayers().contains(player)
                     && !this.behaviour.getSessionHandler().getTeams().get(TeamPresets.DEAD_TEAM_ID).getPlayers().contains(player);

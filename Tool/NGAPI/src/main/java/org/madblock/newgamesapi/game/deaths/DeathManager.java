@@ -11,7 +11,6 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.TextFormat;
-import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
@@ -164,7 +163,9 @@ public class DeathManager implements Listener {
                         switch (category) {
                             case KILLER_PLAYER:
                                 Player killer = (Player) ((EntityDamageByEntityEvent) event).getDamager();
-                                gameHandler.addRewardChunk(killer, new RewardChunk("kill", "Player Kill", PLAYER_KILL_XP, PLAYER_KILL_COINS, PLAYER_KILL_TOURNEY_POINTS));
+                                if (gameHandler.getGameID().getGameProperties().isInternalRewardsEnabled()) {
+                                    gameHandler.addRewardChunk(killer, new RewardChunk("kill", "Player Kill", PLAYER_KILL_XP, PLAYER_KILL_COINS, PLAYER_KILL_TOURNEY_POINTS));
+                                }
                                 builder.setKillerPlayer(killer);
                                 break;
                             case KILLER_ENTITY:

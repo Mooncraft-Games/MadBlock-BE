@@ -128,7 +128,7 @@ public class PowerUpManager {
         player.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s", TextFormat.AQUA, powerUp.getDescription())));
 
         powerUpEntity.getLevel().addSound(powerUpEntity.getLocation(), Sound.FIREWORK_SHOOT, 1, 1, player);
-        powerUpEntity.despawnFromAll();
+        powerUpEntity.close();
 
         this.setPowerUp(player, powerUp, powerUpSlot);
 
@@ -154,8 +154,7 @@ public class PowerUpManager {
         skin.setSkinData(skinData.get());
         skin.setTrusted(true);
 
-
-        CompoundTag skinDataTag = new CompoundTag()
+        return new CompoundTag()
                 .putByteArray("Data", skin.getSkinData().data)
                 .putInt("SkinImageWidth", skin.getSkinData().width)
                 .putInt("SkinImageHeight", skin.getSkinData().height)
@@ -170,8 +169,6 @@ public class PowerUpManager {
                 .putBoolean("PremiumSkin", skin.isPremium())
                 .putBoolean("PersonaSkin", skin.isPersona())
                 .putBoolean("CapeOnClassicSkin", skin.isCapeOnClassic());
-
-        return skinDataTag;
     }
 
 }

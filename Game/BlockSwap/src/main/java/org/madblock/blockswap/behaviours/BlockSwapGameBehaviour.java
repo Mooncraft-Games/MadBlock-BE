@@ -153,14 +153,16 @@ public class BlockSwapGameBehaviour extends GameBehavior {
         // Reregister all tasks.
         this.getSessionHandler().getGameScheduler().registerGameTask(this::generateNewPlatformTask);
         this.getSessionHandler().getGameScheduler().registerGameTask(this::removeFloorTask, getRoundTime());
-        this.getSessionHandler().getGameScheduler().registerGameTask(this::gameLoopTask, getRoundTime() + 60);
+        this.getSessionHandler().getGameScheduler().registerGameTask(() -> {
+            this.setCompletedRounds(this.getCompletedRounds() + 1);
+            this.gameLoopTask();
+        }, getRoundTime() + 60);
         this.getSessionHandler().getGameScheduler().registerSelfCancellableGameTask(task -> {
             this.updateXPBarTask();
             if (this.getRoundTimeLeft() == 0) {
                 task.cancel();
             }
         }, 10, 10);
-        this.setCompletedRounds(this.getCompletedRounds() + 1);
 
         // Send level complete sound effect
         for (Player player : getSessionHandler().getPlayers()) {

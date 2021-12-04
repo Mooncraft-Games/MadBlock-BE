@@ -3,6 +3,7 @@ package org.madblock.blockswap;
 import cn.nukkit.plugin.PluginBase;
 
 import cn.nukkit.utils.Logger;
+import org.madblock.blockswap.behaviours.PracticeBlockSwapGameBehaviour;
 import org.madblock.blockswap.generator.BSwapGeneratorManager;
 import org.madblock.blockswap.generator.builtin.BSGRandom;
 import org.madblock.blockswap.kits.DefaultKit;
@@ -82,6 +83,15 @@ public class BlockSwapPlugin extends PluginBase {
                 .setTourneyGamemode(true)
                 .setDefaultCountdownLength(10);
 
+        GameProperties practiceProperties = new GameProperties(
+                AutomaticWinPolicy.MANUAL_CALLS_ONLY
+        )
+                .setGuidelinePlayers(1)
+                .setMinimumPlayers(1)
+                .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS)
+                .setCanWorldBeManipulated(false)
+                .setDefaultCountdownLength(10);
+
         GameID game = new GameID(
                 "blockswap",
                 "bswap",
@@ -118,13 +128,26 @@ public class BlockSwapPlugin extends PluginBase {
                 BlockSwapGameBehaviour.class
         );
 
+        GameID practice = new GameID(
+                "practice_blockswap",
+                "bswap",
+                "Block Swap Practice",
+                "Quick! Stand on the block displayed or you lose!",
+                blockSwapKits.getGroupID(),
+                gameMapCategoryTypes,
+                2,
+                practiceProperties,
+                PracticeBlockSwapGameBehaviour.class
+        );
+
 
         // -- Register game types --
 
         NewGamesAPI1.getGameRegistry()
                 .registerGame(game)
                 .registerGame(debug)
-                .registerGame(tourney);
+                .registerGame(tourney)
+                .registerGame(practice);
     }
 
     public static BlockSwapPlugin get() { return instance; }
