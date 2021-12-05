@@ -145,7 +145,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Game task to prepare the next round.
      */
     public void gameLoopTask() {
-        if (this.getCompletedRounds() % 2 == 0) {
+        if (this.getCompletedRounds() % 4 == 0 && this.getCompletedRounds() > 0) {
             this.setRoundTime(Math.max(40, this.getRoundTime() - 10));
         }
         this.setRoundTimeLeft(this.getRoundTime());
@@ -281,13 +281,13 @@ public class BlockSwapGameBehaviour extends GameBehavior {
 
             float x = (int)Math.floor(Math.random() * (platformRegion.getPosGreater().getX() - platformRegion.getPosLesser().getX() + 1)) + platformRegion.getPosLesser().getX() + 0.5f;
             float z = (int)Math.floor(Math.random() * (platformRegion.getPosGreater().getZ() - platformRegion.getPosLesser().getZ() + 1)) + platformRegion.getPosLesser().getZ() + 0.5f;
-            int y = platformRegion.getPosGreater().getY() + 3;
+            int y = platformRegion.getPosGreater().getY() + 2;
 
             Position powerUpPosition = new Position(x, y, z, this.getSessionHandler().getPrimaryMap());
             this.powerUpManager.spawnAt(powerUpPosition);
 
             for (Player player : this.getSessionHandler().getPlayers()) {
-                player.sendMessage(Utility.generateServerMessage("GAME", TextFormat.DARK_AQUA, "A power up has spawned!"));
+                player.sendActionBar("A power up has spawned!");
             }
         }
 

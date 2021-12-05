@@ -19,7 +19,7 @@ public class SpeedPowerUp extends PowerUp {
 
     @Override
     public String getDescription() {
-        return "Get Speed II for 15 seconds!";
+        return "Get Speed IV for 15 seconds!";
     }
 
     @Override
@@ -36,11 +36,22 @@ public class SpeedPowerUp extends PowerUp {
     public void use() {
         boolean isUsingRunnerKit = this.behaviour.getSessionHandler().getPlayerKit(this.player).filter(kit -> kit.getKitID().equals("runner")).isPresent();
 
-        if (!isUsingRunnerKit) {
-            this.player.addEffect(Effect.getEffect(Effect.SPEED)
-                    .setDuration(15 * 20)
-                    .setVisible(false)
-                    .setAmplifier(1));
+        if (isUsingRunnerKit) {
+            this.player.removeEffect(Effect.SPEED);
+        }
+
+        this.player.addEffect(Effect.getEffect(Effect.SPEED)
+                .setDuration(15 * 20)
+                .setVisible(false)
+                .setAmplifier(3));
+
+        if (isUsingRunnerKit) {
+            this.behaviour.getSessionHandler().getGameScheduler().registerGameTask(() -> {
+                this.player.addEffect(Effect.getEffect(Effect.SPEED)
+                        .setDuration(Integer.MAX_VALUE)
+                        .setVisible(false)
+                        .setAmplifier(1));
+            }, 15 * 20 + 1);
         }
     }
 

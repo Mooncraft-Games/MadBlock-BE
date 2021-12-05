@@ -85,7 +85,7 @@ public class PowerUpManager {
             this.behaviour.updatePlayerInventory(player);
 
             for (Player p : this.behaviour.getSessionHandler().getPlayers()) {
-                p.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s used %s%s%s%s%s!", player.getDisplayName(), TextFormat.GRAY, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GRAY )));
+                p.sendActionBar(String.format("%s%s used %s%s%s%s%s!", player.getDisplayName(), TextFormat.GRAY, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GRAY ));
             }
         }
     }
@@ -116,14 +116,14 @@ public class PowerUpManager {
         // Verify the player can hold onto another power up
         int powerUpSlot = this.getAvailablePowerUpSlot(player);
         if (powerUpSlot == -1) {
-            player.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s", TextFormat.RED, "You must use a power up before you can get another!")));
+            player.sendActionBar(String.format("%s%s", TextFormat.RED, "You must use a power up before you can get another!"));
             return;
         }
 
         PowerUp powerUp = this.giveRandomPowerUp(player, powerUpSlot);
 
         for (Player p : this.behaviour.getSessionHandler().getPlayers()) {
-            p.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s has received the %s%s%s%s%s power up!", player.getDisplayName(), TextFormat.GRAY, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GRAY)));
+            p.sendActionBar(String.format("%s%s has received the %s%s%s%s%s power up!", player.getDisplayName(), TextFormat.GRAY, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GRAY));
         }
         player.sendMessage(Utility.generateServerMessage("POWERUP", TextFormat.YELLOW, String.format("%s%s", TextFormat.AQUA, powerUp.getDescription())));
 

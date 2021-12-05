@@ -90,7 +90,8 @@ public class BlockSwapPlugin extends PluginBase {
                 .setMinimumPlayers(1)
                 .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS)
                 .setCanWorldBeManipulated(false)
-                .setDefaultCountdownLength(10);
+                .setDefaultCountdownLength(10)
+                .setInternalRewardsEnabled(false);
 
         GameID game = new GameID(
                 "blockswap",
