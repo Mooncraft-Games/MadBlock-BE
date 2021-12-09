@@ -2,7 +2,6 @@ package org.madblock.blockswap.behaviours;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockConcrete;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.event.HandlerList;
@@ -145,7 +144,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      * Game task to prepare the next round.
      */
     public void gameLoopTask() {
-        if (this.getCompletedRounds() % 4 == 0 && this.getCompletedRounds() > 0) {
+        if (this.getCompletedRounds() % 2 == 0 && this.getCompletedRounds() > 0) {
             this.setRoundTime(Math.max(40, this.getRoundTime() - 10));
         }
         this.setRoundTimeLeft(this.getRoundTime());
@@ -158,7 +157,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
             this.gameLoopTask();
         }, getRoundTime() + 60);
         this.getSessionHandler().getGameScheduler().registerSelfCancellableGameTask(task -> {
-            this.updateXPBarTask();
+            this.decreaseTimeTask();
             if (this.getRoundTimeLeft() == 0) {
                 task.cancel();
             }
@@ -245,24 +244,15 @@ public class BlockSwapGameBehaviour extends GameBehavior {
     }
 
     /**
-     * Game task to update the XP bar.
+     * Game task to decrease the time every half second.
      */
-    public void updateXPBarTask() {
+    public void decreaseTimeTask() {
         if (this.getRoundTimeLeft() > 0) {
             this.setRoundTimeLeft(this.getRoundTimeLeft() - 10);
-            double countdown = this.getRoundTimeLeft() / 20d;
 
-            for (Player player : this.getSessionHandler().getPlayers()) {
-                if (countdown == 0) {
-                    player.setExperience(0, 0);
-                } else if (countdown % 1 != 0 && this.roundTime < 40) {
-                    player.setExperience(Player.calculateRequireExperience((int) Math.floor(countdown + 0.5)) / 2, (int) Math.floor(countdown + 1));
-                } else {
-                    player.setExperience(Player.calculateRequireExperience((int) Math.floor(countdown + 0.5)), (int) Math.floor(countdown + 0.5));
-                }
-
-                if (this.getRoundTimeLeft() % 10 == 0 && this.getRoundTimeLeft() > 0) {
-                    // Send tick noise
+            boolean sendTickNoise = this.getRoundTimeLeft() % 10 == 0 && this.getRoundTimeLeft() > 0;
+            if (sendTickNoise) {
+                for (Player player : this.getSessionHandler().getPlayers()) {
                     this.getSessionHandler().getPrimaryMap().addSound(new Vector3(player.getX(), player.getY(), player.getZ()), Sound.RANDOM_CLICK, 1, 1, player);
                 }
             }
@@ -287,7 +277,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
             this.powerUpManager.spawnAt(powerUpPosition);
 
             for (Player player : this.getSessionHandler().getPlayers()) {
-                player.sendActionBar("A power up has spawned!");
+                player.sendTip("A power up has spawned!");
             }
         }
 
@@ -297,11 +287,11 @@ public class BlockSwapGameBehaviour extends GameBehavior {
 
     // -- General Methods -----------------------
 
-    protected void updateTimeScoreboard() {
+    protected void updateTimeDisplay() {
         double time = this.roundTimeLeft / 20d;
 
         for (Player player : this.getSessionHandler().getPlayers()) {
-            this.getSessionHandler().getScoreboardManager().setLine(player, BlockSwapConstants.SCOREBOARD_TIME_INDEX, String.format("%s %ss", Utility.ResourcePackCharacters.TIME, time));
+            player.sendActionBar(String.format("%s %ss", Utility.ResourcePackCharacters.TIME, time));
         }
     }
 
@@ -357,7 +347,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
             PowerUp powerUp = this.getPowerUpManager().getPowerUp(player, slot).get();
 
             Item powerUpItem = Item.get(powerUp.getDisplayItemID());
-            powerUpItem.setCustomName(BlockSwapUtility.getPowerUpItemName(this.getWinningColor(), powerUp));
+            powerUpItem.setCustomName(BlockSwapUtility.getPowerUpItemName(powerUp));
             CompoundTag itemTag = powerUpItem.hasCompoundTag() ? powerUpItem.getNamedTag() : new CompoundTag();
             itemTag.putList(new ListTag<>("ench"));
             itemTag.putString("ability", "power_up");
@@ -489,7 +479,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
     public void setRoundTime(int ticks) {
         this.roundTime = ticks;
         this.roundTimeLeft = ticks;
-        this.updateTimeScoreboard();
+        this.updateTimeDisplay();
     }
 
     /**
@@ -498,7 +488,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      */
     public void setRoundTimeLeft(int ticks) {
         this.roundTimeLeft = ticks;
-        this.updateTimeScoreboard();
+        this.updateTimeDisplay();
     }
 
     /**

@@ -85,7 +85,7 @@ public class PowerUpManager {
             this.behaviour.updatePlayerInventory(player);
 
             for (Player p : this.behaviour.getSessionHandler().getPlayers()) {
-                p.sendActionBar(String.format("%s%s used %s%s%s%s%s!", player.getDisplayName(), TextFormat.GRAY, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GRAY ));
+                p.sendTip(String.format("%s%s used %s%s%s%s%s!", player.getDisplayName(), TextFormat.GRAY, TextFormat.BOLD, TextFormat.YELLOW, powerUp.getName(), TextFormat.RESET, TextFormat.GRAY ));
             }
         }
     }

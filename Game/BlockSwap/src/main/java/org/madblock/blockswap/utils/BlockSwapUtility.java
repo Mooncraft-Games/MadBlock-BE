@@ -32,11 +32,8 @@ public class BlockSwapUtility {
         return BlockSwapConstants.POSSIBLE_POWER_UPS.get((int) Math.floor(Math.random() * BlockSwapConstants.POSSIBLE_POWER_UPS.size()));
     }
 
-    public static String getPowerUpItemName(DyeColor color, PowerUp powerUp) {
+    public static String getPowerUpItemName(PowerUp powerUp) {
         return new StringBuilder()
-                .append(getBlockItemName(color))
-                .append('\n')
-                .append(TextFormat.RESET)
                 .append(TextFormat.GREEN)
                 .append("Tap to use ")
                 .append(TextFormat.BOLD)
