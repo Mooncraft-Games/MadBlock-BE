@@ -3,6 +3,7 @@ package org.madblock.newgamesapi.game.scheduler.tasks;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.Task;
+import cn.nukkit.utils.BossBarColor;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.newgamesapi.NewGamesAPI1;
@@ -79,7 +80,7 @@ public class TaskTickdownCountdown extends Task {
     protected DummyBossBar getPlayerBossbar(Player player) {
         if(!timerBossbars.containsKey(player)) {
             DummyBossBar bossBar = new DummyBossBar.Builder(player)
-                    .color(255, 255, 0)
+                    .color(BossBarColor.BLUE)
                     .length(100)
                     .text(String.format("%s%sCountdown: %s%s", TextFormat.BLUE, TextFormat.BOLD, TextFormat.DARK_AQUA, "..."))
                     .build();
