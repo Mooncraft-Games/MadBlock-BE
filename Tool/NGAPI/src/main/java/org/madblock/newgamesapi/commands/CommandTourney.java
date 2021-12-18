@@ -30,6 +30,7 @@ import java.util.Optional;
 
 public class CommandTourney extends PluginCommand<NewGamesAPI1> {
 
+    public static final String CLEAR_TOURNEY_USER_SQL = "UPDATE `player_rewards` SET tourney=0 WHERE player_rewards.xuid=?;";
     public static final String CLEAR_TOURNEY_SQL = "UPDATE player_rewards SET tourney=0;";
     public static final String TOURNEY_LEADERBOARD = "SELECT player_lookup.username, player_rewards.tourney FROM `player_rewards` INNER JOIN `player_lookup` ON player_rewards.xuid = player_lookup.xuid WHERE player_rewards.tourney > 0 ORDER BY player_rewards.tourney DESC;";
 
@@ -188,6 +189,45 @@ public class CommandTourney extends PluginCommand<NewGamesAPI1> {
                     if (stmt != null) DatabaseUtility.closeQuietly(stmt);
                     if (wrapper != null) DatabaseUtility.closeQuietly(wrapper);
                 }
+                return true;
+
+            case "resetself":
+
+                if (sender instanceof Player) {
+                    Player pSend = (Player) sender;
+                    String xuid = pSend.getLoginChainData().getXUID();
+                    // Any new saves should now be 0
+                    if((xuid != null) && (xuid.length() > 0))
+                        RewardsManager.get()
+                                .getRewards(pSend.getLoginChainData().getXUID())
+                                .ifPresent(PlayerRewardsProfile::quietlyResetTourney);
+
+                    ConnectionWrapper wrapper2 = null;
+                    PreparedStatement stmt2 = null;
+
+
+                    try {
+                        wrapper2 = DatabaseAPI.getConnection("MAIN");
+                        stmt2 = wrapper2.prepareStatement(new DatabaseStatement(CLEAR_TOURNEY_USER_SQL));
+
+                        stmt2.execute();
+
+                        boolean result = stmt2.executeUpdate() > 0;
+                        stmt2.close();
+
+                        sender.sendMessage(Utility.generateServerMessage("TOURNEY", TextFormat.GOLD, "Reset tourney points for self!", TextFormat.YELLOW));
+                    } catch (SQLException e) {
+                        sender.sendMessage(Utility.generateServerMessage("ERROR", TextFormat.DARK_RED, "An error occurred when accessing the database.", TextFormat.RED));
+                        e.printStackTrace();
+                    } finally {
+                        if (stmt2 != null) DatabaseUtility.closeQuietly(stmt2);
+                        if (wrapper2 != null) DatabaseUtility.closeQuietly(wrapper2);
+                    }
+
+                } else {
+                    sender.sendMessage(Utility.generateServerMessage("ERROR", TextFormat.DARK_RED, "You must be a player to run that command.", TextFormat.RED));
+                }
+
                 return true;
 
 
