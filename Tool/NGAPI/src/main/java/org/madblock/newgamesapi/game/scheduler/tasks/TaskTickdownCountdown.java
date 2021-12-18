@@ -42,7 +42,7 @@ public class TaskTickdownCountdown extends Task {
                     if (player.getLevel().getId() == handler.getPrimaryMap().getId()) {
                         DummyBossBar bossBar = getPlayerBossbar(player);
                         bossBar.setLength(val);
-                        bossBar.setText(String.format("%s%sCountdown: %s%s%s", TextFormat.BLUE, TextFormat.BOLD, TextFormat.RESET, TextFormat.DARK_AQUA, currentTimer));
+                        bossBar.setText(String.format("%s%sCountdown: %s%s%s", TextFormat.GOLD, TextFormat.BOLD, TextFormat.RESET, TextFormat.RED, currentTimer));
                     }
                 }
             }
@@ -51,9 +51,6 @@ public class TaskTickdownCountdown extends Task {
                 String subtitle = currentTimer <= 5 ? TextFormat.YELLOW+" - Get ready! - " : "";
                 Sound tickSound = currentTimer <= 3 ? Sound.NOTE_BANJO : Sound.MOB_SHEEP_SHEAR;
                 for (Player player: handler.getPlayers()) {
-                    player.sendMessage(Utility.generateServerMessage("GAME", TextFormat.DARK_AQUA,
-                            String.format("The game will be starting in %s%s %ssecond" + (currentTimer == 1 ? "" : "s"),
-                                    textColour, currentTimer, Utility.DEFAULT_TEXT_COLOUR)));
                     player.getLevel().addSound(player.getPosition(), tickSound, 1f, 0.8f, player);
                     player.sendTitle(String.format("%s%s%s", textColour, TextFormat.BOLD, currentTimer), subtitle, 6,8,6);
                 }
@@ -62,8 +59,8 @@ public class TaskTickdownCountdown extends Task {
             if (currentTimer <= 0){
                 if(maximumTimer > 0) {
                     for (Player player : handler.getPlayers()) {
-                        player.getLevel().addSound(player.getPosition().add(0, 2, 0), Sound.RAID_HORN, 0.12f, 1.5f, player);
-                        player.sendTitle("" + TextFormat.GREEN + TextFormat.BOLD + "START!", "=---=", 6, 20, 10);
+                        player.getLevel().addSound(player.getPosition().add(0, 2, 0), Sound.BLOCK_BELL_HIT, 0.12f, 0.3f, player);
+                        player.sendTitle("" + TextFormat.GREEN + TextFormat.BOLD + "START!", "", 6, 20, 10);
                     }
                 }
                 handler.setGameState(access_token, GameHandler.GameState.PRE_MAIN_LOOP);
@@ -82,7 +79,7 @@ public class TaskTickdownCountdown extends Task {
             DummyBossBar bossBar = new DummyBossBar.Builder(player)
                     .color(BossBarColor.BLUE)
                     .length(100)
-                    .text(String.format("%s%sCountdown: %s%s", TextFormat.BLUE, TextFormat.BOLD, TextFormat.DARK_AQUA, "..."))
+                    .text(String.format("%s%sCountdown: %s%s", TextFormat.GOLD, TextFormat.BOLD, TextFormat.RED, "..."))
                     .build();
             handler.getBossbars().get(player).add(bossBar);
             timerBossbars.put(player, bossBar);
