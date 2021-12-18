@@ -316,7 +316,7 @@ public class CommandTourney extends PluginCommand<NewGamesAPI1> {
                     if (s != null) {
                         DatabaseUtility.closeQuietly(s);
                     }
-                    DatabaseUtility.closeQuietly(s);
+                    DatabaseUtility.closeQuietly(w);
                 }
 
             } catch (SQLException err) {
