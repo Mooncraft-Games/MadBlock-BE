@@ -162,12 +162,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         getHubManager()
                 .registerHubGame(HubManager.HUB_GAME_ID, HubManager.HUB_NAME, "hub", new String[]{"hub", "lobby"} )
                 //Hardcode tourney hub as there's no good way to put it in the config.
-                .registerHubGame(new GameID("tourney_hub", "tourney", "Tourney Hub", "Welcome olympians, astronauts, and athletes! Or something like that, I don't know.", HubManager.HUB_KIT_ID, new String[]{"tourney_hub"}, 1, defaultTourneyProperties, GameBehaviorTourneyLobby.class))
-                //.registerHubGame("duelshub", "Duels Hub","duelshub", new String[]{"duels_hub"} )
-                //.registerHubGame("blockswaphub", "Blockswap Hub","blockswaphub", new String[]{"blockswap_hub"} )
-                //.registerHubGame("skywarshub", "Skywars Hub","skywarshub", new String[]{"skywars_hub"} )
-                //.registerHubGame("uhchub", "??? Hub","teaser_hub", new String[]{"uhc_hub"} )
-                //.registerHubGame("staffhub", "Staff Hub", "staff", new String[]{"hub", "lobby"} )
+                .registerHubGame(new GameID("tourney_hub", "tourney", Utility.ResourcePackCharacters.TROPHY+" Tourney Hub", "Welcome olympians, astronauts, and athletes! Or something like that, I don't know.", HubManager.HUB_KIT_ID, new String[]{"tourney_hub"}, 1, defaultTourneyProperties, GameBehaviorTourneyLobby.class))
         ;
 
         // -- Nukkit Overrides --

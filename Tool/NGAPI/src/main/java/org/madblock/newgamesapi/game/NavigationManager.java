@@ -43,6 +43,7 @@ public class NavigationManager implements Listener {
     public void openQuickLobbyMenu(Player target){
         ArrayList<ElementButton> buttons = new ArrayList<>();
         ArrayList<String> optionKeys = new ArrayList<>();
+
         for(Map.Entry<String, GameID> game : HubManager.get().getHubGames().entrySet()){
             boolean hide = false;
             for(String permission: game.getValue().getGameProperties().getRequiredPermissions()){
@@ -52,6 +53,7 @@ public class NavigationManager implements Listener {
                     break;
                 }
             }
+
             if(!hide){
                 optionKeys.add(game.getKey());
                 buttons.add(new ElementButton(TextFormat.BLUE+""+TextFormat.BOLD+game.getValue().getGameDisplayName()));
@@ -69,8 +71,11 @@ public class NavigationManager implements Listener {
         if(game != null) {
             ArrayList<ElementButton> buttons = new ArrayList<>();
             ArrayList<String> optionKeys = new ArrayList<>();
+
             for (Team team : game.getTeams().values()) {
+
                 if(team.isActiveGameTeam()) {
+
                     for(Player player: team.getPlayers()) {
                         optionKeys.add(player.getUniqueId().toString());
                         buttons.add(new ElementButton(TextFormat.GOLD + "" + TextFormat.BOLD + player.getDisplayName()));
@@ -91,10 +96,13 @@ public class NavigationManager implements Listener {
     public void onFormWindow(PlayerFormRespondedEvent event){
         if(offeredSimpleFormOptions.containsKey(event.getFormID())){
             String[] options = offeredSimpleFormOptions.remove(event.getFormID());
+
             if(event.getResponse() instanceof FormResponseSimple){
                 FormResponseSimple response = (FormResponseSimple) event.getResponse();
                 int clickedButton = response.getClickedButtonId();
+
                 if(clickedButton < options.length && simpleFormType.containsKey(event.getFormID())) {
+
                     switch (simpleFormType.get(event.getFormID())){
                         case TYPE_QUICK_LOBBY_SELECTOR:
                             String lobbyType = options[clickedButton];
@@ -107,6 +115,8 @@ public class NavigationManager implements Listener {
                                 }
                             }
                             break;
+
+
                         case TYPE_SPECTATE_PLAYER:
                             String playerId = options[clickedButton];
                             try {

@@ -253,7 +253,7 @@ public class KitHub extends Kit {
 
                     if(friendsPlugin != null && friendsPlugin.isEnabled()) {
                         NewGamesAPI1.get().getServer().getCommandMap().dispatch(event.getPlayer(), "friend");
-                        
+
                     } else {
                         event.getPlayer().sendMessage(Utility.generateServerMessage("Friends", TextFormat.RED, "The Social System is down for maintenence. Please check back later."));
                         event.getPlayer().clearTitle();
