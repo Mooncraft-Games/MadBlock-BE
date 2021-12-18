@@ -24,6 +24,7 @@ import org.madblock.lib.stattrack.statistic.StatisticCollection;
 import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.event.TourneyCompleteEvent;
 import org.madblock.newgamesapi.exception.LackOfContentException;
 import org.madblock.newgamesapi.game.deaths.DeathManager;
 import org.madblock.newgamesapi.game.pvp.CustomPVPManager;
@@ -1118,13 +1119,12 @@ public class GameHandler implements Listener {
     public boolean endGame(boolean forceStop, boolean cleanUpImmediatley){
 
         if(!forceStop) {
-            if (gameState != GameState.END){
+            if (gameState != GameState.END)
                 return false;
-            }
+
         } else {
-            if(gameState == GameState.PRE_PREPARE){
+            if(gameState == GameState.PRE_PREPARE)
                 return false;
-            }
             gameState = GameState.END;
         }
 
@@ -1137,21 +1137,20 @@ public class GameHandler implements Listener {
         Team spectatorTeam = teams.get(TeamPresets.DEAD_TEAM_ID);
 
         for(Player player: players){
-            if (getGameID().getGameProperties().isInternalRewardsEnabled()) {
+            if (getGameID().getGameProperties().isInternalRewardsEnabled())
                 addBypassRewardChunk(player, new RewardChunk("participation", "Participation", 60, 4));
-            }
-            KitRegistry.get().getKitGroup("core").ifPresent(k -> {
-                equipPlayerKit(player, k.getGroupKits().getOrDefault("spectate", k.getDefaultKit()), true);
-            });
 
-            if(((!deadTeam.getPlayers().contains(player)) && (!spectatorTeam.getPlayers().contains(player)))){
+            KitRegistry.get().getKitGroup("core").ifPresent(k ->
+                    equipPlayerKit(player, k.getGroupKits().getOrDefault("spectate", k.getDefaultKit()), true)
+            );
+
+            if((!deadTeam.getPlayers().contains(player)) && (!spectatorTeam.getPlayers().contains(player)) )
                 switchPlayerToTeam(player, deadTeam, true);
-            }
+
 
             if(bossbars.containsKey(player)) {
-                for (DummyBossBar bossBar : bossbars.get(player)) {
+                for (DummyBossBar bossBar : bossbars.get(player))
                     bossBar.destroy();
-                }
                 bossbars.remove(player);
             }
         }
@@ -1167,15 +1166,17 @@ public class GameHandler implements Listener {
     }
 
     public boolean cleanUpGame(){
-        if(gameState != GameState.END){ return false; }
+        if(gameState != GameState.END)
+            return false;
 
         for(Player player: new ArrayList<>(getPlayers())) removePlayerFromGame(player);
         for(Player player: new ArrayList<>(getTourneyMasters())) removeTourneymasterFromGame(player, false);
 
 
-        for(Team team: teams.values()){
+        for(Team team: teams.values())
             team.destroy();
-        }
+
+
         for(Level level: new ArrayList<>(getAdditionalLevels().values())){
             try {
                 additionalLevels.values().remove(level);
@@ -1186,6 +1187,7 @@ public class GameHandler implements Listener {
                 err.printStackTrace();
             }
         }
+
         try {
             getPrimaryMap().unload(true);
             FileUtils.deleteDirectory(new File(MapManager.get().API_WORLDS_PATH+MapManager.parseLevelNameStringFromSeries(serverID, "map")));
@@ -1193,15 +1195,22 @@ public class GameHandler implements Listener {
             err.printStackTrace();
             NewGamesAPI1.getPlgLogger().error("Unable to delete world. This has potential to cause issues.");
         }
+
         for(TaskHandler taskHandler: new ArrayList<>(getTaskHandlers())){
             taskHandler.cancel();
             getTaskHandlers().remove(taskHandler);
         }
+
+
         HandlerList.unregisterAll(this);
         HandlerList.unregisterAll(getGameBehaviors());
         HandlerList.unregisterAll(deathManager);
         HandlerList.unregisterAll(spawnManager);
         HandlerList.unregisterAll(customPVPManager);
+
+        TourneyCompleteEvent tourneyCompleteEvent = new TourneyCompleteEvent(this.getGameID().getGameIdentifier(), this.getServerID());
+        NewGamesAPI1.get().getServer().getPluginManager().callEvent(tourneyCompleteEvent);
+
         return true;
     }
 
