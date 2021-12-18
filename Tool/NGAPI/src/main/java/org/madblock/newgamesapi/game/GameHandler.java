@@ -1208,8 +1208,10 @@ public class GameHandler implements Listener {
         HandlerList.unregisterAll(spawnManager);
         HandlerList.unregisterAll(customPVPManager);
 
-        TourneyCompleteEvent tourneyCompleteEvent = new TourneyCompleteEvent(this.getGameID().getGameIdentifier(), this.getServerID());
-        NewGamesAPI1.get().getServer().getPluginManager().callEvent(tourneyCompleteEvent);
+        if(this.getGameID().getGameProperties().isTourneyGamemode()) {
+            TourneyCompleteEvent tourneyCompleteEvent = new TourneyCompleteEvent(this.getGameID().getGameIdentifier(), this.getServerID());
+            NewGamesAPI1.get().getServer().getPluginManager().callEvent(tourneyCompleteEvent);
+        }
 
         return true;
     }

@@ -49,9 +49,16 @@ public class TaskTickdownCountdown extends Task {
             if(currentTimer <= 10 && currentTimer > 0){
                 TextFormat textColour = currentTimer <= 3 ? TextFormat.RED : TextFormat.GOLD;
                 String subtitle = currentTimer <= 5 ? TextFormat.YELLOW+" - Get ready! - " : "";
-                Sound tickSound = currentTimer <= 3 ? Sound.NOTE_BANJO : Sound.MOB_SHEEP_SHEAR;
+                Sound tickSound = currentTimer <= 3 ? Sound.NOTE_BANJO : Sound.NOTE_SNARE;
+
+                float pitch = 0.8f;
+
+                if(currentTimer <= 3)
+                    pitch += (3 - currentTimer) * 0.2;
+
+
                 for (Player player: handler.getPlayers()) {
-                    player.getLevel().addSound(player.getPosition(), tickSound, 1f, 0.8f, player);
+                    player.getLevel().addSound(player.getPosition(), tickSound, 1f, pitch, player);
                     player.sendTitle(String.format("%s%s%s", textColour, TextFormat.BOLD, currentTimer), subtitle, 6,8,6);
                 }
             }
@@ -59,7 +66,7 @@ public class TaskTickdownCountdown extends Task {
             if (currentTimer <= 0){
                 if(maximumTimer > 0) {
                     for (Player player : handler.getPlayers()) {
-                        player.getLevel().addSound(player.getPosition().add(0, 2, 0), Sound.BLOCK_BELL_HIT, 0.12f, 0.3f, player);
+                        player.getLevel().addSound(player.getPosition().add(0, 2, 0), Sound.BLOCK_BELL_HIT, 0.8f, 0.6f, player);
                         player.sendTitle("" + TextFormat.GREEN + TextFormat.BOLD + "START!", "", 6, 20, 10);
                     }
                 }
@@ -77,7 +84,7 @@ public class TaskTickdownCountdown extends Task {
     protected DummyBossBar getPlayerBossbar(Player player) {
         if(!timerBossbars.containsKey(player)) {
             DummyBossBar bossBar = new DummyBossBar.Builder(player)
-                    .color(BossBarColor.BLUE)
+                    .color(BossBarColor.YELLOW)
                     .length(100)
                     .text(String.format("%s%sCountdown: %s%s", TextFormat.GOLD, TextFormat.BOLD, TextFormat.RED, "..."))
                     .build();
