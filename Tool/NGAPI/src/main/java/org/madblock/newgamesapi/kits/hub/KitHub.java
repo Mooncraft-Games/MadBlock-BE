@@ -13,6 +13,7 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.DyeColor;
@@ -247,7 +248,17 @@ public class KitHub extends Kit {
 
                 if(isCorrectItem(item, "isFriendsMenu")) {
                     event.setCancelled();
-                    NewGamesAPI1.get().getServer().getCommandMap().dispatch(event.getPlayer(), "friend");
+
+                    Plugin friendsPlugin = NewGamesAPI1.get().getServer().getPluginManager().getPlugin("MadblockSocial");
+
+                    if(friendsPlugin != null && friendsPlugin.isEnabled()) {
+                        NewGamesAPI1.get().getServer().getCommandMap().dispatch(event.getPlayer(), "friend");
+                        
+                    } else {
+                        event.getPlayer().sendMessage(Utility.generateServerMessage("Friends", TextFormat.RED, "The Social System is down for maintenence. Please check back later."));
+                        event.getPlayer().clearTitle();
+                        event.getPlayer().sendActionBar(TextFormat.RED+"The Social System is down for maintenence. Please check back later.");
+                    }
                 }
 
                 if(isCorrectItem(item, "isCrateMenu")) {
