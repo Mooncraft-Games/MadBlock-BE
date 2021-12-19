@@ -1,5 +1,5 @@
 dependencies {
-    compile group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.30'
-    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
-    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.4.5'
+    externalLib group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.30'
+    externalLib group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+    externalLib group: 'com.zaxxer', name: 'HikariCP', version: '3.4.5'
 }

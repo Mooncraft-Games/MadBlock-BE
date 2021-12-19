@@ -29,6 +29,11 @@ subprojects {
         }
     }
 
+    configurations {
+        implementation.extendsFrom externalLib
+        include.extendsFrom externalLib
+    }
+
     dependencies {
         implementation 'com.google.code.gson:gson:2.8.6'
         implementation 'cn.nukkit:nukkit:1.0-SNAPSHOT'
