@@ -13,9 +13,9 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.CrystalWarsConstants;
 import org.madblock.crystalwars.CrystalWarsPlugin;
-import org.madblock.crystalwars.game.CrystalWarsGame;
 import org.madblock.crystalwars.game.entities.EntityHumanCrystal;
 import org.madblock.crystalwars.util.CrystalWarsUtility;
+import org.madblock.lib.commons.text.HealthbarUtility;
 import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;
@@ -23,7 +23,6 @@ import org.madblock.newgamesapi.map.pointentities.PointEntityType;
 import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.rewards.RewardChunk;
 import org.madblock.newgamesapi.team.Team;
-import org.madblock.newgamesapi.util.HealthbarUtility;
 
 import java.util.ArrayList;
 import java.util.HashMap;

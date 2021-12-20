@@ -28,6 +28,7 @@ import org.madblock.crystalwars.game.pointentities.shop.types.DiamondShopPointEn
 import org.madblock.crystalwars.game.pointentities.team.CrystalPointEntity;
 import org.madblock.crystalwars.game.pointentities.team.GeneratorPointEntity;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
+import org.madblock.lib.commons.text.RawTextBuilder;
 import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
@@ -36,7 +37,6 @@ import org.madblock.newgamesapi.rewards.RewardChunk;
 import org.madblock.newgamesapi.team.SpectatingTeam;
 import org.madblock.newgamesapi.team.Team;
 import org.madblock.newgamesapi.team.TeamPresets;
-import org.madblock.newgamesapi.util.RawTextBuilder;
 
 import java.util.*;
 
