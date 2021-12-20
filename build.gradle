@@ -32,8 +32,8 @@ subprojects {
     }
 
     dependencies {
-        implementation 'com.google.code.gson:gson:2.8.6'
-        implementation 'cn.nukkit:nukkit:1.0-SNAPSHOT'
+        shadow 'com.google.code.gson:gson:2.8.6'
+        shadow 'cn.nukkit:nukkit:1.0-SNAPSHOT'
 
         compileOnly 'org.projectlombok:lombok:1.18.20'
         annotationProcessor 'org.projectlombok:lombok:1.18.20'
@@ -46,7 +46,7 @@ task deepClean {
 }
 
 
-task packageProduction(type: Copy) {
+task assembleProduction(type: Copy) {
     group = "madgradle"
     description = "Used to gather all the jars required for a production server"
     dependsOn deepClean
@@ -55,11 +55,23 @@ task packageProduction(type: Copy) {
         if(it.path == ":External:ScoreboardAPI") return it.tasks.withType(Jar)
         if(!it.path.startsWith(":External")) return it.tasks.withType(Jar)
 
-        shadowJar
+        return new ArrayList<>()
+
+    } into "$buildDir/alllibs"
+}
+
+task packageProduction(type: Copy) {
+    group = "madgradle"
+    description = "Used to gather all the jars required for a production server"
+    dependsOn assembleProduction, shadowJar
+
+    from allprojects.collect {
+        if(it.path == ":External:ScoreboardAPI") return it.tasks.withType(Jar)
+        if(!it.path.startsWith(":External")) return it.tasks.named("shadowJar")
 
         return new ArrayList<>()
 
-    } into "$buildDir/libs"
+    } into "$buildDir/production"
 }
 
 

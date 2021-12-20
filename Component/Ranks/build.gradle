@@ -1,4 +1,4 @@
 dependencies {
-    implementation project(":Tool:Database")
-    implementation project(":Tool:PlayerRegistry")
+    shadow project(":Tool:Database")
+    shadow project(":Tool:PlayerRegistry")
 }

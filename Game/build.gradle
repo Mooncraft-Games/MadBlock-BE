@@ -7,8 +7,8 @@ jar {
 subprojects {
     dependencies {
         // Use NGAPI in all game projects
-        implementation project(path: ":Library:QuirkCommons", configuration: 'shadow')
-        implementation project(":Tool:NGAPI")
-        implementation project(":Tool:StatTrackAPI")
+        shadow project(path: ":Library:QuirkCommons", configuration: 'shadow')
+        shadow project(":Tool:NGAPI")
+        shadow project(":Tool:StatTrackAPI")
     }
 }
