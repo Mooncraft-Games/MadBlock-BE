@@ -7,7 +7,7 @@ import de.lucgameshd.scoreboard.network.DisplayEntry;
 import de.lucgameshd.scoreboard.network.DisplaySlot;
 import de.lucgameshd.scoreboard.network.Scoreboard;
 import de.lucgameshd.scoreboard.network.ScoreboardDisplay;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.lib.commons.text.TextUtils;
 
 import java.util.*;
 
@@ -44,7 +44,7 @@ public class ScoreboardManager {
             // Create the scoreboard if it doesn't exist
             if (!this.scoreboards.containsKey(player)) {
                 Scoreboard scoreboard = ScoreboardAPI.createScoreboard();
-                ScoreboardDisplay display = scoreboard.addDisplay(DisplaySlot.SIDEBAR,  String.format("scoreboard_%s_%s", gameHandler.getGameID().getGameIdentifier(), Utility.generateUniqueToken(6, 4)), String.format("%s%sMooncraft %s%sGames", TextFormat.BLUE, TextFormat.BOLD, TextFormat.DARK_AQUA, TextFormat.BOLD));
+                ScoreboardDisplay display = scoreboard.addDisplay(DisplaySlot.SIDEBAR,  String.format("scoreboard_%s_%s", gameHandler.getGameID().getGameIdentifier(), TextUtils.generateRandomString(6, 4)), String.format("%s%sMooncraft %s%sGames", TextFormat.BLUE, TextFormat.BOLD, TextFormat.DARK_AQUA, TextFormat.BOLD));
                 ScoreboardAPI.setScoreboard(player, scoreboard);
 
                 this.scoreboards.put(player, display);

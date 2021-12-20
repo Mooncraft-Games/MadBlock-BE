@@ -20,6 +20,7 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.TextFormat;
+import org.madblock.lib.commons.text.TextUtils;
 import org.madblock.lib.stattrack.statistic.StatisticCollection;
 import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
 import org.madblock.newgamesapi.NewGamesAPI1;
@@ -104,7 +105,7 @@ public class GameHandler implements Listener {
     protected ArrayList<TaskHandler> taskHandlers;
 
     public GameHandler(GameID id, GameBehavior behavior, String serverID, MapID mapID, Level mapLevel, GameManager gameManager, int cleanUpWaitTime){
-        this.token = Utility.generateUniqueToken(4, 6);
+        this.token = TextUtils.generateRandomString(4, 6);
         this.gameManager = gameManager;
         this.cleanupWaitTime = cleanUpWaitTime;
 

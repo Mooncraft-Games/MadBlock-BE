@@ -26,8 +26,8 @@ import org.madblock.blockswap.powerups.PowerUp;
 import org.madblock.blockswap.powerups.PowerUpManager;
 import org.madblock.blockswap.utils.BlockSwapConstants;
 import org.madblock.blockswap.utils.BlockSwapUtility;
-import org.madblock.newgamesapi.Utility;
-import org.madblock.newgamesapi.data.Settings;
+import org.madblock.lib.commons.data.store.settings.ControlledSettings;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
@@ -181,7 +181,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
         Optional<FunctionalRegionTag> platformRegion = this.getSessionHandler().getFunctionalRegionManager().getRegionFunctionForTag(BlockSwapConstants.FUNCTION_TAG_GENERATE_PLATFORM);
 
         if(platformRegion.isPresent()) {
-            Settings newSettings = new Settings();
+            ControlledSettings newSettings = new ControlledSettings();
 
             //TODO: Add some randomization!
             newSettings.set(ContextKeys.BLOCKSWAP_GAME, this);

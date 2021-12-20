@@ -1,7 +1,7 @@
 package org.madblock.blockswap.generator.util;
 
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
-import org.madblock.newgamesapi.data.keyvalue.Key;
+import org.madblock.lib.commons.data.store.Key;
 
 public final class ContextKeys {
 

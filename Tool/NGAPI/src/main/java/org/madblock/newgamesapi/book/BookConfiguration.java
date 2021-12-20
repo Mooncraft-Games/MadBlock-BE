@@ -1,7 +1,7 @@
 package org.madblock.newgamesapi.book;
 
 import cn.nukkit.item.ItemBookWritten;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.lib.commons.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +19,7 @@ public abstract class BookConfiguration {
     protected List<String> pages;
 
     protected BookConfiguration (boolean unmodifiable, String bookIdentifier, String displayName, String author, List<String> pages) {
-        this.bookIdentifier = bookIdentifier == null ? "book#"+Utility.generateUniqueToken(5, 5) : bookIdentifier;
+        this.bookIdentifier = bookIdentifier == null ? "book#"+TextUtils.generateRandomString(5, 5) : bookIdentifier;
         this.displayName = displayName == null ? "A Book" : displayName;
         this.author = author == null ? "Anonymous" : author;
         this.pages = uList(pages == null ? new ArrayList<>() : pages, unmodifiable);

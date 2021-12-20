@@ -4,7 +4,7 @@ import org.madblock.blockswap.generator.BSwapGenerator;
 import org.madblock.blockswap.generator.util.Axis;
 import org.madblock.blockswap.generator.util.ContextKeys;
 import org.madblock.blockswap.generator.util.OpenSimplex2F;
-import org.madblock.newgamesapi.data.Settings;
+import org.madblock.lib.commons.data.store.settings.ControlledSettings;
 
 /** Generates a random selection of blocks using Random#nextInt(int). */
 public class BSGNoiseStriped extends BSwapGenerator {
@@ -51,7 +51,7 @@ public class BSGNoiseStriped extends BSwapGenerator {
     }
 
     @Override
-    public void setContext(Settings context) {
+    public void setContext(ControlledSettings context) {
         super.setContext(context);
         this.axis = getContext().getOrElse(ContextKeys.AXIS, Axis.X);
         this.scaleX = getContext().getOrElse(ContextKeys.NOISE_SCALE_X, 0.001d);

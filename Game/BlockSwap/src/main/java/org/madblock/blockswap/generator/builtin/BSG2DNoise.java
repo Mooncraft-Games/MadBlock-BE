@@ -4,7 +4,7 @@ import org.madblock.blockswap.BlockSwapPlugin;
 import org.madblock.blockswap.generator.BSwapGenerator;
 import org.madblock.blockswap.generator.util.ContextKeys;
 import org.madblock.blockswap.generator.util.OpenSimplex2F;
-import org.madblock.newgamesapi.data.Settings;
+import org.madblock.lib.commons.data.store.settings.ControlledSettings;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -52,7 +52,7 @@ public class BSG2DNoise extends BSwapGenerator {
     }
 
     @Override
-    public void setContext(Settings context) {
+    public void setContext(ControlledSettings context) {
         super.setContext(context);
 
         Random random = new Random();

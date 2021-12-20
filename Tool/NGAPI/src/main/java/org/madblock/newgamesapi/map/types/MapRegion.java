@@ -3,7 +3,7 @@ package org.madblock.newgamesapi.map.types;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.lib.commons.text.TextUtils;
 
 import java.util.Arrays;
 
@@ -18,7 +18,7 @@ public final class MapRegion {
     private String[] tags;
 
     public MapRegion(String uniqueIdentifier, BlockVector3 pos1, BlockVector3 pos2, String[] tags, boolean isActive){
-        this.uniqueIdentifier = uniqueIdentifier == null ? Utility.generateUniqueToken(4, 4).toLowerCase() : uniqueIdentifier.toLowerCase();
+        this.uniqueIdentifier = uniqueIdentifier == null ? TextUtils.generateRandomString(4, 4).toLowerCase() : uniqueIdentifier.toLowerCase();
         this.posLesser = new BlockVector3(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y), Math.min(pos1.z, pos2.z));
         this.posGreater = new BlockVector3(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y), Math.max(pos1.z, pos2.z));
         this.tags = tags;
@@ -26,7 +26,7 @@ public final class MapRegion {
     }
 
     public void verifyIntegrityFromJson(String uniqueIdentifier){
-        this.uniqueIdentifier = this.uniqueIdentifier == null ? Utility.generateUniqueToken(4, 4).toLowerCase() : uniqueIdentifier.toLowerCase();
+        this.uniqueIdentifier = this.uniqueIdentifier == null ? TextUtils.generateRandomString(4, 4).toLowerCase() : uniqueIdentifier.toLowerCase();
         if(isActive == null){ isActive = true; }
         BlockVector3 less = new BlockVector3(Math.min(posLesser.x, posGreater.x), Math.min(posLesser.y, posGreater.y), Math.min(posLesser.z, posGreater.z));
         BlockVector3 great = new BlockVector3(Math.max(posLesser.x, posGreater.x), Math.max(posLesser.y, posGreater.y), Math.max(posLesser.z, posGreater.z));

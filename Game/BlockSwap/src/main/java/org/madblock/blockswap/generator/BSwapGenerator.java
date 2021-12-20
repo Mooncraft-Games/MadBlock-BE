@@ -1,11 +1,11 @@
 package org.madblock.blockswap.generator;
 
 import org.madblock.blockswap.utils.BlockSwapConstants;
-import org.madblock.newgamesapi.data.Settings;
+import org.madblock.lib.commons.data.store.settings.ControlledSettings;
 
 public abstract class BSwapGenerator {
 
-    private Settings context;
+    private ControlledSettings context;
 
     public BSwapGenerator () {
         this.context = null;
@@ -55,18 +55,18 @@ public abstract class BSwapGenerator {
 
 
     /** @return the last BlockSwapGameBehaviour to properly use this generator. Can be null. */
-    public Settings getContext() {
+    public ControlledSettings getContext() {
         return context;
     }
 
     /** Sets the last BlockSwapGameBehaviour to use this generator. */
-    public void setContext(Settings context) {
+    public void setContext(ControlledSettings context) {
         this.context = context.lock();
     }
 
     /** Sets the context to null. */
     public void resetContext() {
-        this.context = new Settings().lock();
+        this.context = new ControlledSettings().lock();
     }
 
 
