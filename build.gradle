@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.1'
 }
 
 group 'org.madblock'
@@ -9,11 +9,12 @@ sourceCompatibility = targetCompatibility = 1.8
 
 jar {
     jar.enabled(false) // Removes the empty MadBlockServer jar
+    shadowJar.enabled(false)
 }
 
 subprojects {
     apply plugin: 'java'
-    //apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     sourceCompatibility = targetCompatibility = 1.8
 
@@ -27,18 +28,6 @@ subprojects {
         }
         maven {
             url = 'https://repo.opencollab.dev/maven-snapshots/'
-        }
-    }
-
-    configurations {
-        implementation.extendsFrom externalLib
-        include.extendsFrom externalLib
-    }
-
-    jar {
-        duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-        from {
-            configurations.externalLib.collect { it.isDirectory() ? it : zipTree(it) }
         }
     }
 

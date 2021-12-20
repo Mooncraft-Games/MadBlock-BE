@@ -1,10 +1,10 @@
 dependencies {
-    implementation project(":Library:QuirkCommons")
+    implementation project(path: ":Library:QuirkCommons", configuration: 'shadow')
     implementation project(":Tool:Database")
     implementation project(":Tool:PlayerRegistry")
     implementation project(":Tool:StatTrackAPI")
     implementation project(":Component:Ranks")
     implementation project(":External:ScoreboardAPI")
 
-    externalLib project(":External:NukkitTables")
+    shadow project(path: ":External:NukkitTables", configuration: 'shadow')
 }
