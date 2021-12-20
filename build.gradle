@@ -35,6 +35,13 @@ subprojects {
         include.extendsFrom externalLib
     }
 
+    jar {
+        duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        from {
+            configurations.externalLib.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+    }
+
     dependencies {
         implementation 'com.google.code.gson:gson:2.8.6'
         implementation 'cn.nukkit:nukkit:1.0-SNAPSHOT'
@@ -59,11 +66,11 @@ task packageProduction(type: Copy) {
         if(it.path == ":External:ScoreboardAPI") return it.tasks.withType(Jar)
         if(!it.path.startsWith(":External")) return it.tasks.withType(Jar)
 
+        shadowJar
 
         return new ArrayList<>()
 
-    }
-    into "$buildDir/libs"
+    } into "$buildDir/libs"
 }
 
 
