@@ -7,4 +7,4 @@ prefix: "mantlegames"
 
 author: "CG360 @ Madblock Games"
 description: "Our Minigame Core designed for 1.0 Nukkit."
-depend: [MadblockRanks, MadblockDatabase, MadblockPlayerRegistry, ScoreboardPlugin]
+depend: [QuirkCommons, MadblockRanks, MadblockDatabase, MadblockPlayerRegistry, ScoreboardPlugin]

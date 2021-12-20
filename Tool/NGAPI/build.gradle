@@ -1,9 +1,12 @@
 dependencies {
+    implementation project(":Library:QuirkCommons")
     implementation project(":Tool:Database")
     implementation project(":Tool:PlayerRegistry")
     implementation project(":Tool:StatTrackAPI")
     implementation project(":Component:Ranks")
     implementation project(":External:ScoreboardAPI")
+
+
 
     externalLib group: 'commons-io', name: 'commons-io', version: '2.6'
     externalLib project(":External:NukkitTables")
