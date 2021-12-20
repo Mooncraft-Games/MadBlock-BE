@@ -7,3 +7,6 @@
 [submodule "Tool/StatTrackAPI"]
 	path = Tool/StatTrackAPI
 	url = https://github.com/Mooncraft-Games/StatTrackAPI.git
+[submodule "Library/QuirkCommons"]
+	path = Library/QuirkCommons
+	url = https://github.com/Mooncraft-Games/QuirkCommons.git
