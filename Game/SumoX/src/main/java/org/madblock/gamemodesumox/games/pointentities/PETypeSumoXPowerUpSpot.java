@@ -30,7 +30,7 @@ import org.madblock.gamemodesumox.SumoXStrings;
 import org.madblock.gamemodesumox.games.GBehaveSumoBase;
 import org.madblock.gamemodesumox.powerup.PowerUp;
 import org.madblock.gamemodesumox.powerup.PowerUpContext;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;
 import org.madblock.newgamesapi.map.pointentities.PointEntityType;

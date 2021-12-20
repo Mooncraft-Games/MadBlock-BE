@@ -10,7 +10,7 @@ import cn.nukkit.utils.TextFormat;
 import org.madblock.blockswap.BlockSwapPlugin;
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
 import org.madblock.blockswap.utils.BlockSwapUtility;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.util.SkinUtils;
 

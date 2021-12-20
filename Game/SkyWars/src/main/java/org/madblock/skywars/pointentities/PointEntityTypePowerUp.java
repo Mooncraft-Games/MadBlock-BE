@@ -26,7 +26,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.TextFormat;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;

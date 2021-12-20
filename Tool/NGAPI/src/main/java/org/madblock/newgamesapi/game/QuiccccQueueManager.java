@@ -7,7 +7,7 @@ import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.newgamesapi.NewGamesAPI1;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.registry.GameRegistry;
 
 import java.util.*;

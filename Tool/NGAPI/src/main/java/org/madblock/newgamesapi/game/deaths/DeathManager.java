@@ -11,7 +11,7 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.TextFormat;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.game.events.GamePlayerDeathEvent;
 import org.madblock.newgamesapi.kits.Kit;

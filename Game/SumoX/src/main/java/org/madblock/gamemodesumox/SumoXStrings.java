@@ -1,7 +1,7 @@
 package org.madblock.gamemodesumox;
 
 import cn.nukkit.utils.TextFormat;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 
 public class SumoXStrings {
 

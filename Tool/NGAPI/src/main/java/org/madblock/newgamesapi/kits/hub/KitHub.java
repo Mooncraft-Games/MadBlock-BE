@@ -23,7 +23,7 @@ import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
 import org.madblock.lib.stattrack.statistic.StatisticWatcher;
 import org.madblock.lib.stattrack.util.Util;
 import org.madblock.newgamesapi.NewGamesAPI1;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.book.BookConfiguration;
 import org.madblock.newgamesapi.game.NavigationManager;
 import org.madblock.newgamesapi.kits.ExtendedKit;

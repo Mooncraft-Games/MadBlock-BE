@@ -16,7 +16,7 @@ import org.madblock.crystalwars.CrystalWarsPlugin;
 import org.madblock.crystalwars.game.CrystalWarsGame;
 import org.madblock.crystalwars.game.entities.EntityHumanCrystal;
 import org.madblock.crystalwars.util.CrystalWarsUtility;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;
 import org.madblock.newgamesapi.map.pointentities.PointEntityType;

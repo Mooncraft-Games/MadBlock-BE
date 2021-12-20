@@ -10,7 +10,7 @@ import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.level.Location;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.newgamesapi.NewGamesAPI1;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.team.Team;
 import org.madblock.ranks.api.RankManager;
 import org.madblock.ranks.api.RankProfile;

@@ -9,7 +9,7 @@ import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import org.madblock.newgamesapi.NewGamesAPI1;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 
 import java.io.*;
 import java.util.HashMap;

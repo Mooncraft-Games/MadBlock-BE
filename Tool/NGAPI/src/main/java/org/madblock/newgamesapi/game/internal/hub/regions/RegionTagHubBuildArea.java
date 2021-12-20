@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockVector3;
 import org.madblock.newgamesapi.NewGamesAPI1;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.game.internal.hub.GameBehaviorLobby;
 import org.madblock.newgamesapi.kits.Kit;

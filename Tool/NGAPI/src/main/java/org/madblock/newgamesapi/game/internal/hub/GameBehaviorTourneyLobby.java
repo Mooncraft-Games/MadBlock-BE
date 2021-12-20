@@ -3,7 +3,7 @@ package org.madblock.newgamesapi.game.internal.hub;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.utils.TextFormat;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.event.TourneyCompleteEvent;
 import org.madblock.newgamesapi.game.internal.hub.pointentities.PointEntityTypeTourneyNPC;
 import org.madblock.newgamesapi.map.pointentities.defaults.PointEntityTypeFirework;

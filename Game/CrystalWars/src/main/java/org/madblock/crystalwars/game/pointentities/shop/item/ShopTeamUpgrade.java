@@ -6,7 +6,7 @@ import cn.nukkit.item.ItemID;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.game.CrystalWarsGame;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.team.Team;
 
 import java.util.Optional;

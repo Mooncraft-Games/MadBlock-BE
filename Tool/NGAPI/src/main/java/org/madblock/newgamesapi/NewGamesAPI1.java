@@ -40,18 +40,15 @@ import org.madblock.newgamesapi.registry.KitRegistry;
 import org.madblock.newgamesapi.registry.LibraryRegistry;
 import org.madblock.newgamesapi.rewards.PlayerRewardsProfile;
 import org.madblock.newgamesapi.rewards.RewardsManager;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.ranks.api.RankManager;
 import org.madblock.ranks.api.RankProfile;
 import org.madblock.ranks.enums.PrimaryRankID;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class NewGamesAPI1 extends PluginBase implements Listener {
-
-    public static final String DEV_STRING = "Uramaki";
-    public static final int BUILD_NUMBER = 3;
 
     private static NewGamesAPI1 newGamesAPI1;
 

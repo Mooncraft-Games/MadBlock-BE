@@ -14,7 +14,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
 import org.madblock.blockswap.utils.BlockSwapConstants;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.team.TeamPresets;
 

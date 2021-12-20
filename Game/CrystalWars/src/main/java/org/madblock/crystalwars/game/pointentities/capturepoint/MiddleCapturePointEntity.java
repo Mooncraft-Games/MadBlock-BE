@@ -1,6 +1,6 @@
 package org.madblock.crystalwars.game.pointentities.capturepoint;
 
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 
 public class MiddleCapturePointEntity extends CapturePointEntity {

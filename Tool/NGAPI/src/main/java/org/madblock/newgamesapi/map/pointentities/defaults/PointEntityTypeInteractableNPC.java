@@ -2,7 +2,6 @@ package org.madblock.newgamesapi.map.pointentities.defaults;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -10,12 +9,11 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.newgamesapi.NewGamesAPI1;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;
 import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.nukkit.entity.EntityHumanPlus;
-import org.madblock.newgamesapi.nukkit.packet.AnimateEntityPacket;
 
 import java.util.*;
 

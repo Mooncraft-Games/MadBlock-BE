@@ -3,7 +3,7 @@ package org.madblock.crystalwars.util;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.DyeColor;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.team.Team;
 
 public class CrystalWarsUtility {

@@ -7,7 +7,7 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.game.CrystalWarsGame;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.team.Team;
 
 import java.util.HashSet;

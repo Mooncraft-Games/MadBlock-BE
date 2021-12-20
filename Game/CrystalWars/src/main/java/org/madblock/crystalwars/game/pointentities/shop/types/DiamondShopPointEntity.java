@@ -11,7 +11,7 @@ import org.madblock.crystalwars.game.pointentities.shop.item.ShopItem;
 import org.madblock.crystalwars.game.pointentities.shop.item.ShopTeamUpgrade;
 import org.madblock.crystalwars.game.upgrades.CrystalTeamUpgrade;
 import org.madblock.crystalwars.util.CrystalWarsUtility;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.team.Team;
 
 public class DiamondShopPointEntity extends ShopPointEntity {

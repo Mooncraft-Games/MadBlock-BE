@@ -7,7 +7,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.blockswap.behaviours.BlockSwapGameBehaviour;
 import org.madblock.blockswap.powerups.PowerUp;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.team.Team;
 import org.madblock.newgamesapi.team.TeamPresets;

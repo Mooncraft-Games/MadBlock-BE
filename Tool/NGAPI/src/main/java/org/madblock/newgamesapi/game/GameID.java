@@ -2,7 +2,7 @@ package org.madblock.newgamesapi.game;
 
 import cn.nukkit.utils.TextFormat;
 import org.madblock.lib.stattrack.statistic.ITrackedEntityID;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.kits.KitGroup;
 import org.madblock.newgamesapi.registry.KitRegistry;
 

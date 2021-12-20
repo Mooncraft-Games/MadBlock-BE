@@ -12,7 +12,7 @@ import org.madblock.database.DatabaseAPI;
 import org.madblock.database.DatabaseStatement;
 import org.madblock.database.DatabaseUtility;
 import org.madblock.newgamesapi.NewGamesAPI1;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameHandler;
 import org.madblock.newgamesapi.game.GameManager;
 import org.madblock.newgamesapi.rewards.PlayerRewardsProfile;

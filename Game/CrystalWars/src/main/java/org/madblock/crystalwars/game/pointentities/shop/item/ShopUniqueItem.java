@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.crystalwars.game.CrystalWarsGame;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 
 public class ShopUniqueItem extends ShopItem {
     public ShopUniqueItem(Item item, Item cost, String imageLink, CrystalWarsGame base) {

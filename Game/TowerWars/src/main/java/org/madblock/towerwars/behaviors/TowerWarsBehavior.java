@@ -1,7 +1,7 @@
 package org.madblock.towerwars.behaviors;
 
 import cn.nukkit.Player;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.game.GameBehavior;
 import org.madblock.newgamesapi.map.types.MapRegion;
 import org.madblock.newgamesapi.team.Team;

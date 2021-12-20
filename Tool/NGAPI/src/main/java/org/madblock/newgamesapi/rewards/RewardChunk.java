@@ -1,7 +1,7 @@
 package org.madblock.newgamesapi.rewards;
 
 import cn.nukkit.utils.TextFormat;
-import org.madblock.newgamesapi.Utility;
+import org.madblock.newgamesapi.util.Utility;
 
 public class RewardChunk {
 
