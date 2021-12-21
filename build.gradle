@@ -1,7 +1,15 @@
-plugins {
-    id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.1.1'
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
+    }
 }
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+
 
 group 'org.madblock'
 version '1.0'
@@ -13,6 +21,7 @@ jar {
 }
 
 subprojects {
+
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
 
@@ -66,7 +75,7 @@ task packageProduction(type: Copy) {
     dependsOn assembleProduction, shadowJar
 
     from allprojects.collect {
-        if(it.path == ":External:ScoreboardAPI") return it.tasks.withType(Jar)
+        if(it.path == ":External:ScoreboardAPI") return it.tasks.named("shadowJar")
         if(!it.path.startsWith(":External")) return it.tasks.named("shadowJar")
 
         return new ArrayList<>()

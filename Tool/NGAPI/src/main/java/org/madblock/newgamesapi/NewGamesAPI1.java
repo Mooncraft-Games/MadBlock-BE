@@ -118,14 +118,11 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.getServer().getCommandMap().register("ngapi", new CommandLeaveQueue());
 
 
-        //TODO: Check if anything uses the empty group and remove it.
         KitGroup emptyKitGroup = new KitGroup("empty", "Empty", false, new KitEmpty());
-
         KitGroup coreKitGroup = new KitGroup("core", "Core", false, new KitEmpty(), new KitFinalSpectator());
         KitGroup hubKitGroup = new KitGroup(HubManager.HUB_KIT_ID, "Hub", false, new KitHub(), new KitHubBuilder());
 
         KitRegistry.get().registerKitGroup(emptyKitGroup);
-
         KitRegistry.get().registerKitGroup(coreKitGroup);
         KitRegistry.get().registerKitGroup(hubKitGroup);
 
@@ -174,7 +171,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         Block.fullList[Block.LEAVES2] = new BlockLeaves();
 
 
-        if(loadConfiguartion()) {
+        if(loadConfiguration()) {
             this.getServer().getPluginManager().registerEvents(this, this);
             this.getServer().getPluginManager().registerEvents(dimensionWatchdog, this);
         } else {
@@ -183,7 +180,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
 
     }
 
-    public boolean loadConfiguartion(){
+    public boolean loadConfiguration(){
         getLogger().info("== /!\\ == LOADING CONFIGURATIONS + ASSETS == /!\\ ==");
 
         try {
