@@ -18,6 +18,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.plugin.PluginLogger;
 import cn.nukkit.utils.TextFormat;
 import dev.cg360.mc.nukkittables.LootTableRegistry;
+import org.madblock.lib.commons.data.store.settings.ControlledSettings;
 import org.madblock.newgamesapi.cache.VisitorSkinCache;
 import org.madblock.newgamesapi.commands.*;
 import org.madblock.newgamesapi.game.*;
@@ -68,6 +69,8 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
 
     private VisitorSkinCache visitorSkinCache;
 
+    private ControlledSettings configuration;
+
     @Override
     public void onEnable(){
         newGamesAPI1 = this;
@@ -87,6 +90,8 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.queueManager = new QuiccccQueueManager();
 
         this.visitorSkinCache = new VisitorSkinCache();
+
+        this.configuration = new ControlledSettings();
 
 
         this.kitRegistry.setAsPrimaryRegistry();
