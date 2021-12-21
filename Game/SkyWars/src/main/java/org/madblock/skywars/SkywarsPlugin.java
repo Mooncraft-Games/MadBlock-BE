@@ -57,7 +57,7 @@ public class SkywarsPlugin extends PluginBase {
         KitGroup group = new KitGroup("skywars", "Skywars", true, new DefaultKit(), new DefenderKit());
 
         GameID skyWarsGame = new GameID(Constants.GAME_ID,"sw", "Skywars", "Collect loot and be the last one standing!", "skywars", Constants.GAME_MAP_CATEGORY_TYPES.toArray(new String[0]), 1, skyWarsProperties, SkywarsGameBehaviour.class);
-        GameID skyWarsTourneyGame = new GameID("tourney_"+Constants.GAME_ID, NGAPIConstants.EVENT_SERVER_ID, "Skywars Tourney", "Collect loot and be the last one standing! Kills, wins, and top 3 placements give points!", "skywars", (String[])Constants.GAME_MAP_CATEGORY_TYPES.toArray(), 1, skyWarsTourneyProperties, SkywarsGameBehaviour.class);
+        GameID skyWarsTourneyGame = new GameID("tourney_"+Constants.GAME_ID, NGAPIConstants.EVENT_SERVER_ID, "Skywars Tourney", "Collect loot and be the last one standing! Kills, wins, and top 3 placements give points!", "skywars", Constants.GAME_MAP_CATEGORY_TYPES.toArray(new String[0]), 1, skyWarsTourneyProperties, SkywarsGameBehaviour.class);
 
 
         NewGamesAPI1.getGameRegistry().registerGame(skyWarsGame).registerGame(skyWarsTourneyGame);
