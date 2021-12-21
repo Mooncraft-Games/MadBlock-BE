@@ -2,6 +2,7 @@ group 'org.madblock.game'
 
 jar {
     jar.enabled(false)
+    shadowJar.enabled(false)
 }
 
 subprojects {

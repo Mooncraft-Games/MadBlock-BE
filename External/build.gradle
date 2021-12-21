@@ -2,4 +2,5 @@ group 'org.madblock.external'
 
 jar {
     jar.enabled(false)
+    shadowJar.enabled(false)
 }

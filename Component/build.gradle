@@ -2,4 +2,5 @@ group 'org.madblock.component'
 
 jar {
     jar.enabled(false)
+    shadowJar.enabled(false)
 }
