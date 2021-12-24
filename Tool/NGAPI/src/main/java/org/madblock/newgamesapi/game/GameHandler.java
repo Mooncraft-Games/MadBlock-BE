@@ -24,6 +24,7 @@ import org.madblock.lib.commons.text.TextUtils;
 import org.madblock.lib.stattrack.statistic.StatisticCollection;
 import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
 import org.madblock.newgamesapi.NewGamesAPI1;
+import org.madblock.newgamesapi.ServerConfigProcessor;
 import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.event.TourneyCompleteEvent;
 import org.madblock.newgamesapi.exception.LackOfContentException;
@@ -996,6 +997,7 @@ public class GameHandler implements Listener {
 
     private void applyRewardChunks(Player player){
         HashMap<String, RewardChunk> chunks = rewardChunks.get(player);
+
         if(chunks != null){
             String[] paras = new String[4+chunks.size()];
             paras[0] = TextFormat.BOLD + "Rewards!";
@@ -1004,24 +1006,35 @@ public class GameHandler implements Listener {
             int totalCoins = 0;
             int totalExperience = 0;
             int totalTourney = 0;
+
+            float xpMult = NewGamesAPI1.getProperties().getOrDefault(ServerConfigProcessor.XP_MULTIPLIER);
+            float coinsMult = NewGamesAPI1.getProperties().getOrDefault(ServerConfigProcessor.COINS_MULTIPLIER);
+            float tourneyMult = NewGamesAPI1.getProperties().getOrDefault(ServerConfigProcessor.TOURNEY_MULTIPLIER);
+
             for(RewardChunk chunk: chunks.values()){
                 paras[index] = " "+chunk.getMessage(TextFormat.DARK_GREEN, TextFormat.GREEN, gameID.getGameProperties().isTourneyGamemode());
-                totalCoins += chunk.getCoins();
-                totalExperience += chunk.getExperience();
-                totalTourney += gameID.getGameProperties().isTourneyGamemode() ? chunk.getTourneyPoints() : 0;
+                totalCoins += (int) Math.floor(coinsMult * chunk.getCoins());
+                totalExperience += (int) Math.floor(xpMult * chunk.getExperience());
+                totalTourney += gameID.getGameProperties().isTourneyGamemode()
+                        ? (int) Math.floor(tourneyMult * chunk.getTourneyPoints())
+                        : 0;
                 index++;
             }
+
             final RewardChunk finalRewards = new RewardChunk("total-rewards", "Total Rewards", totalExperience, totalCoins, totalTourney);
             Optional<PlayerRewardsProfile> rewardsRecord = RewardsManager.get().getRewards(player);
             final int xpLeftIndex = index + 1;
+
             paras[index] = "";
             paras[xpLeftIndex] = "";
             if (rewardsRecord.isPresent()) {
                 final int oldLevel = rewardsRecord.get().getLevel();
+
                 if (oldLevel < 100) {
                     NewGamesAPI1.get().getServer().getScheduler().scheduleTask(NewGamesAPI1.get(), () -> {
                         try {
                             rewardsRecord.get().addRewards(finalRewards);
+
                         } catch (SQLException exception) {
                             exception.printStackTrace();
                             NewGamesAPI1.get().getServer().getScheduler().scheduleTask(NewGamesAPI1.get(), () ->
@@ -1031,16 +1044,19 @@ public class GameHandler implements Listener {
                             );
                             return;
                         }
+
                         if (oldLevel != rewardsRecord.get().getLevel()) {
                             paras[xpLeftIndex] = " " + String.format("%s%sLEVEL UP!%s %s%s%s more experience required until you reach level %s!", TextFormat.BOLD, TextFormat.AQUA, TextFormat.RESET, TextFormat.YELLOW, rewardsRecord.get().getXPRequiredToLevelUp(), TextFormat.DARK_GREEN, rewardsRecord.get().getLevel() + 1);
                         } else {
                             paras[xpLeftIndex] = " " + String.format("%s%s%s more experience required until you reach level %s!", TextFormat.YELLOW, rewardsRecord.get().getXPRequiredToLevelUp(), TextFormat.DARK_GREEN, rewardsRecord.get().getLevel() + 1);
                         }
+
                         NewGamesAPI1.get().getServer().getScheduler().scheduleTask(NewGamesAPI1.get(), () ->
                                 player.sendMessage(
                                         Utility.generateUnlimitedParagraph(paras, TextFormat.DARK_GREEN, TextFormat.GREEN, 35)
                                 )
                         );
+
                     }, true);
                 } else {
                     player.sendMessage(Utility.generateUnlimitedParagraph(paras, TextFormat.DARK_GREEN, TextFormat.GREEN, 35));

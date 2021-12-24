@@ -52,23 +52,21 @@ public class PlayerRewardsProfile {
     }
 
     public boolean addRewards (RewardChunk rewards) throws SQLException {
-        float xpMult = NewGamesAPI1.getProperties().getOrDefault(ServerConfigProcessor.XP_MULTIPLIER);
-        float coinsMult = NewGamesAPI1.getProperties().getOrDefault(ServerConfigProcessor.COINS_MULTIPLIER);
-        float tourneyMult = NewGamesAPI1.getProperties().getOrDefault(ServerConfigProcessor.TOURNEY_MULTIPLIER);
 
-        int newXP = (int) Math.floor(xpMult * rewards.getExperience());
-        int newCoins = (int) Math.floor(coinsMult * rewards.getCoins());
-        int newTourney = (int) Math.floor(tourneyMult * rewards.getTourneyPoints());
 
-        experience.getAndAdd(newXP);
-        coins.getAndAdd(newCoins);
-        tourney.getAndAdd(newTourney);
+        experience.getAndAdd(rewards.getExperience());
+        coins.getAndAdd(rewards.getCoins());
+        tourney.getAndAdd(rewards.getTourneyPoints());
 
         ConnectionWrapper wrapper = DatabaseAPI.getConnection("MAIN");
         PreparedStatement stmt = null;
         this.recalculateLevel();
         try {
-            stmt = wrapper.prepareStatement(new DatabaseStatement(ADD_REWARDS_QUERY, new Object[]{ xuid, newXP, newCoins, newTourney, newXP, newCoins, newTourney }));
+            stmt = wrapper.prepareStatement(new DatabaseStatement(ADD_REWARDS_QUERY, new Object[]{
+                    xuid,
+                    rewards.getExperience(), rewards.getCoins(), rewards.getTourneyPoints(),
+                    rewards.getExperience(), rewards.getCoins(), rewards.getTourneyPoints()
+            }));
             boolean result = stmt.executeUpdate() > 0;
             stmt.close();
             return result;
