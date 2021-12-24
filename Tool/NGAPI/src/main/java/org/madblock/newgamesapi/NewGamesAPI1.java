@@ -246,6 +246,17 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         }
     }
 
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onJoinMessage(PlayerJoinEvent event) {
+        event.setJoinMessage("");
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onLeaveMessage(PlayerQuitEvent event) {
+        event.setQuitMessage("");
+    }
+
     @EventHandler
     public void onDebugCrouch(PlayerToggleSneakEvent event) {
         if(event.isSneaking()) {
