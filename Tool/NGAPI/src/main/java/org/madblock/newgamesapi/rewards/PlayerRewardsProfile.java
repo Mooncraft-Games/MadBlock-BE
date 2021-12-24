@@ -4,6 +4,8 @@ import org.madblock.database.ConnectionWrapper;
 import org.madblock.database.DatabaseAPI;
 import org.madblock.database.DatabaseStatement;
 import org.madblock.database.DatabaseUtility;
+import org.madblock.newgamesapi.NewGamesAPI1;
+import org.madblock.newgamesapi.ServerConfigProcessor;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -50,14 +52,23 @@ public class PlayerRewardsProfile {
     }
 
     public boolean addRewards (RewardChunk rewards) throws SQLException {
-        experience.getAndAdd(rewards.getExperience());
-        coins.getAndAdd(rewards.getCoins());
-        tourney.getAndAdd(rewards.getTourneyPoints());
+        float xpMult = NewGamesAPI1.getProperties().getOrDefault(ServerConfigProcessor.XP_MULTIPLIER);
+        float coinsMult = NewGamesAPI1.getProperties().getOrDefault(ServerConfigProcessor.COINS_MULTIPLIER);
+        float tourneyMult = NewGamesAPI1.getProperties().getOrDefault(ServerConfigProcessor.TOURNEY_MULTIPLIER);
+
+        int newXP = (int) Math.floor(xpMult * rewards.getExperience());
+        int newCoins = (int) Math.floor(coinsMult * rewards.getCoins());
+        int newTourney = (int) Math.floor(tourneyMult * rewards.getTourneyPoints());
+
+        experience.getAndAdd(newXP);
+        coins.getAndAdd(newCoins);
+        tourney.getAndAdd(newTourney);
+
         ConnectionWrapper wrapper = DatabaseAPI.getConnection("MAIN");
         PreparedStatement stmt = null;
         this.recalculateLevel();
         try {
-            stmt = wrapper.prepareStatement(new DatabaseStatement(ADD_REWARDS_QUERY, new Object[]{ xuid, rewards.getExperience(), rewards.getCoins(), rewards.getTourneyPoints(), rewards.getExperience(), rewards.getCoins(), rewards.getTourneyPoints() }));
+            stmt = wrapper.prepareStatement(new DatabaseStatement(ADD_REWARDS_QUERY, new Object[]{ xuid, newXP, newCoins, newTourney, newXP, newCoins, newTourney }));
             boolean result = stmt.executeUpdate() > 0;
             stmt.close();
             return result;

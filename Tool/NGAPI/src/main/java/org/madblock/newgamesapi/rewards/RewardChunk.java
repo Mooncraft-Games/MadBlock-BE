@@ -8,7 +8,7 @@ public class RewardChunk {
     protected String internalID;
     protected String displayInfo;
     protected int amount; //Purely visual.
-    protected int balanceMultiplier;
+
 
     protected int totalExperience;
     protected int totalCoins;
@@ -19,7 +19,7 @@ public class RewardChunk {
         this.internalID = internalID.toLowerCase();
         this.displayInfo = displayInfo;
         this.amount = 1;
-        this.balanceMultiplier = 1;
+
         this.totalExperience = experience;
         this.totalCoins = coins;
         this.totalTourneyPoints = totalTourneyPoints;
@@ -44,9 +44,6 @@ public class RewardChunk {
         totalTourneyPoints += rewardChunk.getTourneyPoints();
     }
 
-    public void setBalanceMultiplier(int balanceMultiplier) {
-        this.balanceMultiplier = balanceMultiplier;
-    }
 
     public String getMessage(TextFormat baseColour, TextFormat accent, boolean showTourney){
         String initialMessage = String.format("%s%sx %s%s%s -%s", accent, amount, TextFormat.RESET, baseColour, displayInfo, TextFormat.RESET);
@@ -59,7 +56,7 @@ public class RewardChunk {
     public String getInternalID() { return internalID; }
     public String getDisplayInfo() { return displayInfo; }
     public int getQuantity() { return amount; }
-    public int getBalanceMultiplier() { return balanceMultiplier; }
+
     public int getCoins() { return totalCoins; }
     public int getExperience() { return totalExperience; }
     public int getTourneyPoints() { return totalTourneyPoints; }

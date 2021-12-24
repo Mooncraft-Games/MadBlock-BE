@@ -19,6 +19,7 @@ import cn.nukkit.plugin.PluginLogger;
 import cn.nukkit.utils.TextFormat;
 import dev.cg360.mc.nukkittables.LootTableRegistry;
 import org.madblock.lib.commons.data.store.settings.ControlledSettings;
+import org.madblock.lib.commons.data.store.settings.Settings;
 import org.madblock.newgamesapi.cache.VisitorSkinCache;
 import org.madblock.newgamesapi.commands.*;
 import org.madblock.newgamesapi.game.*;
@@ -46,6 +47,7 @@ import org.madblock.ranks.api.RankManager;
 import org.madblock.ranks.api.RankProfile;
 import org.madblock.ranks.enums.PrimaryRankID;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -69,7 +71,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
 
     private VisitorSkinCache visitorSkinCache;
 
-    private ControlledSettings configuration;
+    private Settings configuration;
 
     @Override
     public void onEnable(){
@@ -154,15 +156,13 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
                 //.setRequiredPermissions(new String[]{ "newgameapi.tourney" })
                 ;
 
-        getGameRegistry()
+        NewGamesAPI1.getGameRegistry()
                 .registerGame(new GameID("devtest1", "dev", "Developer Testing #1", "Test Test Test", KitRegistry.DEFAULT.getGroupID(), new String[]{"devtest"}, 1, propertiesDevTest1, GameBehaviorDevmode.class))
         ;
 
-        getHubManager()
-                .registerHubGame(HubManager.HUB_GAME_ID, HubManager.HUB_NAME, "hub", new String[]{"hub", "lobby"} )
+        NewGamesAPI1.getHubManager()
+                .registerHubGame(HubManager.HUB_GAME_ID, HubManager.HUB_NAME, "hub", new String[]{"hub", "lobby"} );
                 //Hardcode tourney hub as there's no good way to put it in the config.
-                .registerHubGame(new GameID("tourney_hub", "tourney", Utility.ResourcePackCharacters.TROPHY+" Tourney Hub", "Welcome olympians, astronauts, and athletes! Or something like that, I don't know.", HubManager.HUB_KIT_ID, new String[]{"tourney_hub"}, 1, defaultTourneyProperties, GameBehaviorTourneyLobby.class))
-        ;
 
         // -- Nukkit Overrides --
 
@@ -176,7 +176,17 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         Block.fullList[Block.LEAVES2] = new BlockLeaves();
 
 
-        if(loadConfiguration()) {
+        if(this.loadConfiguration()) {
+
+            if(NewGamesAPI1.getProperties().getOrDefault(ServerConfigProcessor.IS_TOURNEY_ENABLED))
+                NewGamesAPI1.getHubManager()
+                        .registerHubGame(new GameID("tourney_hub", "tourney",
+                                Utility.ResourcePackCharacters.TROPHY+" Tourney Hub",
+                                "Welcome olympians, astronauts, and athletes! Or something like that, I don't know.",
+                                HubManager.HUB_KIT_ID, new String[]{"tourney_hub"}, 1,
+                                defaultTourneyProperties, GameBehaviorTourneyLobby.class));
+
+
             this.getServer().getPluginManager().registerEvents(this, this);
             this.getServer().getPluginManager().registerEvents(dimensionWatchdog, this);
         } else {
@@ -189,6 +199,9 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         getLogger().info("== /!\\ == LOADING CONFIGURATIONS + ASSETS == /!\\ ==");
 
         try {
+            File cfgFile = new File(this.getDataFolder(), "config.json");
+            this.configuration = ServerConfigProcessor.loadServerConfiguration(cfgFile, true);
+
             this.mapManager.beginServerStartChecks();
             this.mapManager.loadMapDatabase();
             this.hubManager.loadHubTypesConfiguration();
@@ -344,5 +357,6 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
 
     public static NewGamesAPI1 get(){ return newGamesAPI1; }
     public static PluginLogger getPlgLogger(){ return newGamesAPI1.getLogger(); }
+    public static Settings getProperties(){ return newGamesAPI1.configuration; }
 
 }
