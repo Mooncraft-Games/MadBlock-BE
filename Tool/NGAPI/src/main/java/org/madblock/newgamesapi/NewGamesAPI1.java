@@ -199,8 +199,8 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         getLogger().info("== /!\\ == LOADING CONFIGURATIONS + ASSETS == /!\\ ==");
 
         try {
-            File cfgFile = new File(this.getDataFolder(), "config.json");
-            this.configuration = ServerConfigProcessor.loadServerConfiguration(cfgFile, true);
+            File cfgDirectory = new File(NewGamesAPI1.get().getServer().getDataPath()+"./plugins/NGAPI/");
+            this.configuration = ServerConfigProcessor.loadServerConfiguration(cfgDirectory, "config.json", true);
 
             this.mapManager.beginServerStartChecks();
             this.mapManager.loadMapDatabase();

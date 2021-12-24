@@ -7,6 +7,7 @@ import org.madblock.lib.commons.json.JsonObject;
 import org.madblock.lib.commons.json.io.JsonIO;
 import org.madblock.lib.commons.json.io.JsonUtil;
 import org.madblock.lib.commons.json.io.error.*;
+import org.madblock.lib.stattrack.util.Check;
 
 import java.io.*;
 
@@ -37,8 +38,12 @@ public final class ServerConfigProcessor {
         return replacements;
     }
 
-    public static ControlledSettings loadServerConfiguration(File configFile, boolean fillInDefaults) {
+    public static ControlledSettings loadServerConfiguration(File directory, String name, boolean fillInDefaults) {
         NewGamesAPI1.getPlgLogger().info("Loading configuration...");
+
+        Check.nullParam(directory, "directory");
+        directory.mkdirs();
+        File configFile = new File(directory, name);
 
         JsonIO json = new JsonIO();
         ControlledSettings loadedSettings;
