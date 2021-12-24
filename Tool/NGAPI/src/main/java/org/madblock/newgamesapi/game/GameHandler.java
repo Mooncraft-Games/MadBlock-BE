@@ -229,7 +229,8 @@ public class GameHandler implements Listener {
             player.getFoodData().setLevel(20, 20);
             player.setFoodEnabled(false);
 
-            for(Player p: NewGamesAPI1.get().getServer().getOnlinePlayers().values()) p.hidePlayer(player);
+            for(Player p: NewGamesAPI1.get().getServer().getOnlinePlayers().values())
+                p.hidePlayer(player);
 
             String name = TextFormat.GOLD + "" +TextFormat.BOLD + Utility.ResourcePackCharacters.TAG_TOURNEY + " " + TextFormat.RESET + TextFormat.GOLD + player.getName();
             player.setNameTag(name);
@@ -304,7 +305,9 @@ public class GameHandler implements Listener {
         if((players.size() < gameID.getGameProperties().getMaximumPlayers()) && (!players.contains(player))) {
             players.add(player);
             String teamid = null;
+
             switch (gameState) {
+
                 case PREPARING:
                 case PRE_COUNTDOWN:
                     Optional<Team> potentialPrepTeam = getGameBehaviors().onPreGameJoinEvent(player);
@@ -316,6 +319,8 @@ public class GameHandler implements Listener {
                     }
                     player.setImmobile(!getGameID().getGameProperties().canPlayersMoveDuringCountdown());
                     break;
+
+
                 case COUNTDOWN:
                     Optional<Team> potentialCountdownTeam = getGameBehaviors().onCountdownJoinEvent(player);
                     if (potentialCountdownTeam.isPresent()) {
@@ -326,6 +331,8 @@ public class GameHandler implements Listener {
                     }
                     player.setImmobile(!getGameID().getGameProperties().canPlayersMoveDuringCountdown());
                     break;
+
+
                 case PRE_MAIN_LOOP:
                 case MAIN_LOOP:
                     Optional<Team> potentialLoopTeam = getGameBehaviors().onMidGameJoinEvent(player);
@@ -337,16 +344,19 @@ public class GameHandler implements Listener {
                     }
                     player.setImmobile(false);
                     break;
+
+
                 default:
                     players.remove(player);
                     player.setImmobile(false);
                     return false;
             }
+
             Team targetTeam = teams.get(teamid);
-            gameManager.appendPlayerToLookup(player, this);
-            switchPlayerToTeam(player, targetTeam, false);
-            spawnManager.placePlayerInSpawnPosition(player, targetTeam);
-            bossbars.put(player, new ArrayList<>());
+            this.getGameManager().appendPlayerToLookup(player, this);
+            this.switchPlayerToTeam(player, targetTeam, false);
+            this.getSpawnManager().placePlayerInSpawnPosition(player, targetTeam);
+            this.getBossbars().put(player, new ArrayList<>());
             rewardChunks.put(player, new HashMap<>());
 
             if (targetTeam.isActiveGameTeam()) {
@@ -369,6 +379,11 @@ public class GameHandler implements Listener {
                     TaskStartSessionLoops.preparePlayer(player, this);
                     break;
             }
+
+            String joinMessage = Utility.generateServerMessage("+", TextFormat.GOLD, player.getDisplayName(), TextFormat.GRAY);
+            for(Player p: this.getPlayers())
+                p.sendMessage(joinMessage);
+
             return true;
         }
         return false;
@@ -386,25 +401,34 @@ public class GameHandler implements Listener {
 
         if(players.contains(player)) {
             gameBehaviors.onPlayerLeaveGame(player);
+
+            String leaveMessage = Utility.generateServerMessage("-", TextFormat.DARK_GRAY, player.getDisplayName(), TextFormat.GRAY);
+            for(Player p: this.getPlayers())
+                p.sendMessage(leaveMessage);
+
+
             if (kits.containsKey(player)) {
                 kits.get(player).removeKit(player, this, true);
             }
+
             for (Team team : getTeams().values()) {
                 if (team.getPlayers().contains(player)) {
                     team.removePlayerFromTeam(player);
                     break;
                 }
             }
+
             if (bossbars.containsKey(player)) {
-                for (DummyBossBar bossBar : bossbars.get(player)) {
+                for (DummyBossBar bossBar : bossbars.get(player))
                     bossBar.destroy();
-                }
                 bossbars.remove(player);
             }
-            scoreboardManager.cleanUp(player);
+
+            this.getScoreboardManager().cleanUp(player);
             players.remove(player);
             gameManager.removePlayerFromLookup(player, this);
             player.getEnderChestInventory().clearAll();
+
             if(!beingTransferredToNewGame) {
                 Position spawn = NewGamesAPI1.get().getServer().getDefaultLevel().getSpawnLocation();
                 Location dest = spawn.getLocation();
