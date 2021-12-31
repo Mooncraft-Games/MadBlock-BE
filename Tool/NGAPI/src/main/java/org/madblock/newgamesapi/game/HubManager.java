@@ -62,14 +62,16 @@ public class HubManager {
         if(managerInstance == null) managerInstance = this;
     }
 
-    public HubManager registerHubGame(String hubGameID, String displayname, String[] supportedMaps){ return registerHubGame(hubGameID, displayname, null, supportedMaps, null); }
-    public HubManager registerHubGame(String hubGameID, String displayname, String shorthandID, String[] supportedMaps){ return registerHubGame(hubGameID, displayname, shorthandID, supportedMaps, null); }
-    public HubManager registerHubGame(String hubGameID, String displayname, String[] supportedMaps, GameProperties propertiesOverride){ return registerHubGame(hubGameID, displayname, null, supportedMaps, propertiesOverride); }
-    public HubManager registerHubGame(String hubGameID, String displayname, String shorthandID, String[] supportedMaps, GameProperties propertiesOverride){
+    public HubManager registerHubGame(String hubGameID, String displayname, String[] supportedMaps) { return registerHubGame(hubGameID, displayname, null, supportedMaps, null, null); }
+    public HubManager registerHubGame(String hubGameID, String displayname, String shorthandID, String[] supportedMaps) { return registerHubGame(hubGameID, displayname, shorthandID, supportedMaps, null, null); }
+    public HubManager registerHubGame(String hubGameID, String displayname, String shorthandID, String[] supportedMaps, String icon) { return registerHubGame(hubGameID, displayname, shorthandID, supportedMaps, icon, null); }
+    public HubManager registerHubGame(String hubGameID, String displayname, String[] supportedMaps, String icon, GameProperties propertiesOverride) { return registerHubGame(hubGameID, displayname, null, supportedMaps, icon, propertiesOverride); }
+    public HubManager registerHubGame(String hubGameID, String displayname, String shorthandID, String[] supportedMaps, String icon, GameProperties propertiesOverride) {
         String shortId = shorthandID == null ? hubGameID : shorthandID;
-        GameProperties prop = propertiesOverride == null ? defaultHubProperties : propertiesOverride;
+        GameProperties prop = (propertiesOverride == null ? defaultHubProperties : propertiesOverride).copy();
+        prop.setIconPath(icon);
 
-        registerHubGame(new GameID(hubGameID, shortId, displayname, HUB_DESCRIPTION, HUB_KIT_ID, supportedMaps, 1, prop, GameBehaviorLobby.class));
+        this.registerHubGame(new GameID(hubGameID, shortId, displayname, HUB_DESCRIPTION, HUB_KIT_ID, supportedMaps, 1, prop, GameBehaviorLobby.class));
         return this;
     }
 
@@ -216,7 +218,9 @@ public class HubManager {
                             JsonElement gameID = hubObject.get("id"); //Primitive, Required
                             JsonElement name = hubObject.get("name"); //Primitive, Optional
                             JsonElement shortName = hubObject.get("short"); //Primitive, Optional
+                            JsonElement icon = hubObject.get("icon"); //Primitive, Optional
                             JsonElement maps = hubObject.get("categories"); //Array, Required
+
 
                             if (!(gameID instanceof JsonPrimitive)) {
                                 NewGamesAPI1.getPlgLogger().info(": > SKIP - Hub missing an 'id' field of type String.");
@@ -234,20 +238,25 @@ public class HubManager {
                             String propertyGameID = primitiveGameID.getAsString();
                             String propertyName = null;
                             String propertyShortName = null;
+                            String propertyIcon = null;
                             ArrayList<String> propertyMaps = new ArrayList<>();
 
-                            if(name instanceof JsonPrimitive){
+                            if(name instanceof JsonPrimitive) {
                                 JsonPrimitive primitiveName = (JsonPrimitive) name;
                                 propertyName = primitiveName.getAsString();
                             } else {
                                 propertyName = HUB_NAME;
                             }
 
-                            if(shortName instanceof JsonPrimitive){
+                            if(shortName instanceof JsonPrimitive) {
                                 JsonPrimitive primitiveShort = (JsonPrimitive) shortName;
                                 propertyShortName = primitiveShort.getAsString();
                             } else {
                                 propertyShortName = propertyGameID; //Could be hub too but that may be unintentional.
+                            }
+
+                            if(icon instanceof JsonPrimitive) {
+                                propertyIcon = icon.getAsString();
                             }
 
                             for(JsonElement catElement: arrayMaps){
@@ -267,7 +276,7 @@ public class HubManager {
                             }
 
                             if(propertyGameID != null && propertyName != null && propertyShortName != null){
-                                HubManager.get().registerHubGame(propertyGameID, propertyName, propertyShortName, propertyMaps.toArray(new String[0]));
+                                HubManager.get().registerHubGame(propertyGameID, propertyName, propertyShortName, propertyMaps.toArray(new String[0]), propertyIcon);
                                 NewGamesAPI1.getPlgLogger().info(": > PASS - Loaded hubtype '"+propertyGameID+"'.");
                             } else {
                                 NewGamesAPI1.getPlgLogger().info(": > SKIP - Something went wrong as a field was null.");

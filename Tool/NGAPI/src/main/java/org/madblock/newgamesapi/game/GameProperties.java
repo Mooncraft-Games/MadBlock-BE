@@ -1,5 +1,6 @@
 package org.madblock.newgamesapi.game;
 
+import org.madblock.lib.stattrack.util.Check;
 import org.madblock.newgamesapi.game.pvp.CustomGamePVPSettings;
 
 public class GameProperties {
@@ -41,6 +42,8 @@ public class GameProperties {
 
     private String[] requiredPermissions;
 
+    private String iconPath;
+
     public GameProperties(GameHandler.AutomaticWinPolicy winPolicy) {
         this.canWorldBeManipulatedPreGame = false;
         this.canWorldBeManipulated = false;
@@ -78,6 +81,49 @@ public class GameProperties {
         this.maximumPlayers = 16;
 
         this.requiredPermissions = new String[0];
+
+        this.iconPath = "";
+    }
+
+    public GameProperties(GameProperties src) {
+        this.canWorldBeManipulatedPreGame = src.canWorldBeManipulatedPreGame;
+        this.canWorldBeManipulated = src.canWorldBeManipulated;
+
+        this.isHungerEnabled = src.isHungerEnabled;
+        this.isNatualRegenEnabled = src.isNatualRegenEnabled;
+
+        this.doesGameShufflePlayerSpawns = src.doesGameShufflePlayerSpawns;
+        this.defaultCountdownLength = src.defaultCountdownLength;
+        this.canPlayersMoveDuringCountdown = src.canPlayersMoveDuringCountdown;
+
+        this.doesGameUseIntegratedDeathboxes = src.doesGameUseIntegratedDeathboxes;
+        this.doesGameUseIntegratedPointEntities = src.doesGameUseIntegratedPointEntities;
+
+        this.isItemDroppingEnabledPreGame = src.isItemDroppingEnabledPreGame;
+        this.isItemDroppingEnabled = src.isItemDroppingEnabled;
+
+        this.isItemPickUpEnabledPreGame = src.isItemPickUpEnabledPreGame;
+        this.isItemPickUpEnabled = src.isItemPickUpEnabled;
+
+        this.isFallDamageEnabledPreGame = src.isFallDamageEnabledPreGame;
+        this.isFallDamageEnabled = src.isFallDamageEnabled;
+
+        this.customPvpSettings = src.customPvpSettings.clone();
+        this.spawnImmunitySeconds = src.spawnImmunitySeconds;
+
+        this.isTourneyGamemode = src.isTourneyGamemode;
+
+        this.isInternalRewardsEnabled = src.isInternalRewardsEnabled;
+
+        this.winPolicy = src.winPolicy;
+
+        this.minimumPlayers = src.minimumPlayers;
+        this.guidelinePlayers = src.guidelinePlayers;
+        this.maximumPlayers = src.maximumPlayers;
+
+        this.requiredPermissions = src.requiredPermissions;
+
+        this.iconPath = src.iconPath;
     }
 
     public boolean canWorldBeManipulatedPreGame() { return canWorldBeManipulatedPreGame; }
@@ -137,6 +183,10 @@ public class GameProperties {
     public int getMaximumPlayers() { return maximumPlayers; }
 
     public String[] getRequiredPermissions() { return requiredPermissions; }
+
+    public String getIconPath() {
+        return iconPath;
+    }
 
     /**
      * Sets the game world's immutability permission.
@@ -373,5 +423,21 @@ public class GameProperties {
     public GameProperties setRequiredPermissions(String[] requiredPermissions) {
         this.requiredPermissions = requiredPermissions;
         return this;
+    }
+
+    /**
+     * Sets the icon used in a Form UI for game selection.
+     * @param iconPath - The URL to the icon.
+     * @return self for chaining.
+     */
+    public GameProperties setIconPath(String iconPath) {
+        this.iconPath = Check.isNull(iconPath) ? "" : iconPath;
+        return this;
+    }
+
+
+
+    public GameProperties copy() {
+        return new GameProperties(this);
     }
 }

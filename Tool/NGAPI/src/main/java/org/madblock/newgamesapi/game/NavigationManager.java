@@ -5,10 +5,12 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.element.ElementButton;
+import cn.nukkit.form.element.ElementButtonImageData;
 import cn.nukkit.form.response.FormResponseSimple;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.level.Location;
 import cn.nukkit.utils.TextFormat;
+import org.madblock.lib.commons.style.Check;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.team.Team;
@@ -21,6 +23,8 @@ public class NavigationManager implements Listener {
 
     public static final String TYPE_QUICK_LOBBY_SELECTOR = "quicklobby";
     public static final String TYPE_SPECTATE_PLAYER = "spec_player";
+
+    public static final String DEFAULT_HUB_ICON_PATH = ""; //"textures/ui/hub/hub_icon_unknown";
 
     //TODO: Yeet this entirely and make a form manager.
 
@@ -55,8 +59,15 @@ public class NavigationManager implements Listener {
             }
 
             if(!hide){
+                String icon = game.getValue().getGameProperties().getIconPath();
+
+                if(Check.isStringEmpty(icon))
+                    icon = DEFAULT_HUB_ICON_PATH;
+
+                ElementButtonImageData image = new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, icon);
+
                 optionKeys.add(game.getKey());
-                buttons.add(new ElementButton(TextFormat.BLUE+""+TextFormat.BOLD+game.getValue().getGameDisplayName()));
+                buttons.add(new ElementButton(TextFormat.RED+""+TextFormat.BOLD+game.getValue().getGameDisplayName(), image));
             }
         }
 

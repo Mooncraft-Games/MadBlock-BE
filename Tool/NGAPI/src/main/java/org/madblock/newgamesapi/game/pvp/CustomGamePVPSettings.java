@@ -107,7 +107,7 @@ public class CustomGamePVPSettings implements Cloneable {
     }
 
     @Override
-    protected CustomGamePVPSettings clone() {
+    public CustomGamePVPSettings clone() {
         try {
             return (CustomGamePVPSettings)super.clone();
         } catch (CloneNotSupportedException exception) {
