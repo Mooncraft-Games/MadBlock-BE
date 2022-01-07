@@ -1,6 +1,6 @@
 package org.madblock.newgamesapi.game;
 
-import org.madblock.lib.stattrack.util.Check;
+import org.madblock.lib.commons.style.Check;
 import org.madblock.newgamesapi.game.pvp.CustomGamePVPSettings;
 
 public class GameProperties {

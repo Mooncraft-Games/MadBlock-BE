@@ -7,7 +7,7 @@ import org.madblock.lib.commons.json.JsonObject;
 import org.madblock.lib.commons.json.io.JsonIO;
 import org.madblock.lib.commons.json.io.JsonUtil;
 import org.madblock.lib.commons.json.io.error.*;
-import org.madblock.lib.stattrack.util.Check;
+import org.madblock.lib.commons.style.Check;
 
 import java.io.*;
 
