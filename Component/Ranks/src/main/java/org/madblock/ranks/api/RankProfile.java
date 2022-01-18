@@ -140,11 +140,15 @@ public class RankProfile {
         return data;
     }
 
-    private void addRankData () throws SQLException {
+    private void addRankData() throws SQLException {
         ConnectionWrapper wrapper = DatabaseAPI.getConnection("MAIN");
         PreparedStatement stmt = null;
         try {
-            stmt = wrapper.prepareStatement(new DatabaseStatement("INSERT INTO player_ranks (xuid, primary_ranks, sub_ranks) VALUES (?, ?, ?)", new Object[]{ xuid, generatePrimaryRankData(), generateSubRankData() }));
+            stmt = wrapper.prepareStatement(new DatabaseStatement("INSERT INTO player_ranks (xuid, primary_ranks, sub_ranks) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE player_ranks SET primary_ranks=?, sub_ranks=? WHERE xuid=?",
+                    new Object[]{
+                            xuid, generatePrimaryRankData(), generateSubRankData(), // Insert
+                            generatePrimaryRankData(), generateSubRankData(), xuid  // duplicate
+                    }));
             stmt.execute();
         } finally {
             if (stmt != null) {
