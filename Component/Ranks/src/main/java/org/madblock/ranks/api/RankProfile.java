@@ -144,10 +144,10 @@ public class RankProfile {
         ConnectionWrapper wrapper = DatabaseAPI.getConnection("MAIN");
         PreparedStatement stmt = null;
         try {
-            stmt = wrapper.prepareStatement(new DatabaseStatement("INSERT INTO player_ranks (xuid, primary_ranks, sub_ranks) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE player_ranks SET primary_ranks=?, sub_ranks=? WHERE xuid=?",
+            stmt = wrapper.prepareStatement(new DatabaseStatement("INSERT INTO player_ranks (xuid, primary_ranks, sub_ranks) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE primary_ranks=?, sub_ranks=?;",
                     new Object[]{
                             xuid, generatePrimaryRankData(), generateSubRankData(), // Insert
-                            generatePrimaryRankData(), generateSubRankData(), xuid  // duplicate
+                            generatePrimaryRankData(), generateSubRankData()  // duplicate
                     }));
             stmt.execute();
         } finally {
