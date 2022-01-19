@@ -365,6 +365,13 @@ public class Utility {
 
         public static final String TACO = "\uE1CB";
         public static final String DISCORD = "\uE1CC";
+        public static final String HOURGLASS = "\uE1CD";
+        public static final String TWITTER = "\uE1CE";
+        public static final String TIKTOK = "\uE1CF";
+
+        public static final String FIVE_FRAME = "\uE1D0";
+        public static final String MADBLOCK = "\uE1D1";
+        public static final String GITHUB = "\uE1D2";
 
 
         private String character;
