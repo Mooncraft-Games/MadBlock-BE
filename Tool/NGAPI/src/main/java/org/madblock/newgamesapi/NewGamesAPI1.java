@@ -156,6 +156,22 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
                 //.setRequiredPermissions(new String[]{ "newgameapi.tourney" })
                 ;
 
+        GameProperties default_secret_properties = new GameProperties(GameHandler.AutomaticWinPolicy.MANUAL_CALLS_ONLY)
+                .setMinimumPlayers(0)
+                .setGuidelinePlayers(1)
+                .setMaximumPlayers(HubManager.HUB_MAX_PLAYERS)
+                .setDefaultCountdownLength(-1)
+                .setFallDamageEnabled(false)
+                .setFallDamageEnabledPreGame(false)
+                .setItemDroppingEnabled(false)
+                .setItemDroppingEnabledPreGame(false)
+                .setCanPlayersMoveDuringCountdown(true)
+                .setCanWorldBeManipulated(true)
+                .setHungerEnabled(false)
+                .setNatualRegenerationEnabled(true)
+                .setRequiredPermissions(new String[]{ "newgameapi.secrets" })
+                ;
+
         NewGamesAPI1.getGameRegistry()
                 .registerGame(new GameID("devtest1", "dev", "Developer Testing #1", "Test Test Test", KitRegistry.DEFAULT.getGroupID(), new String[]{"devtest"}, 1, propertiesDevTest1, GameBehaviorDevmode.class))
         ;
@@ -185,6 +201,13 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
                                 "Welcome olympians, astronauts, and athletes! Or something like that, I don't know.",
                                 HubManager.HUB_KIT_ID, new String[]{"tourney_hub"}, 1,
                                 defaultTourneyProperties, GameBehaviorTourneyLobby.class));
+
+            NewGamesAPI1.getHubManager()
+                    .registerHubGame(new GameID("secret_hub", "shhh",
+                            Utility.ResourcePackCharacters.TACO + " Secret Hub",
+                            "Shush, it's a secret",
+                            HubManager.HUB_KIT_ID, new String[]{"secret_hub"}, 1,
+                            default_secret_properties, GameBehaviorLobby.class));
 
 
             this.getServer().getPluginManager().registerEvents(this, this);

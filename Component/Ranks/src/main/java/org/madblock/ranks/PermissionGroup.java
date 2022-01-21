@@ -26,7 +26,7 @@ public class PermissionGroup {
 
     public static final List<String> CONTENT = extendPermissions(BASE_STAFF, "newgameapi.commands.game");
 
-    public static final List<String> ADMINISTRATOR = extendPermissions(MODERATOR, "punishments.issue.ntb", "newgameapi.commands.game", "ranks.commands.rank", "newgameapi.commands.tourney", "newgameapi.commands.super", "newgameapi.commands.addstat", "punishments.reports.manage", "is.admin.command", "is.admin.generate", "is.admin.clear", "is.admin.kick", "is.admin.rename", "is.admin.cobblestats", "is.admin.delete");
+    public static final List<String> ADMINISTRATOR = extendPermissions(MODERATOR, "newgameapi.secrets", "punishments.issue.ntb", "newgameapi.commands.game", "ranks.commands.rank", "newgameapi.commands.tourney", "newgameapi.commands.super", "newgameapi.commands.addstat", "punishments.reports.manage", "is.admin.command", "is.admin.generate", "is.admin.clear", "is.admin.kick", "is.admin.rename", "is.admin.cobblestats", "is.admin.delete");
 
     // -- SUB-RANKS --
 
