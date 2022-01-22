@@ -7,6 +7,7 @@ public final class SumoXKeys {
     public static final String INT_LIVES = "lives";
     public static final String INT_MIN_POWERUP_SPAWN_TIME = "min_powerup_spawn_time";
     public static final String INT_VARY_POWERUP_SPAWN_TIME = "var_powerup_spawn_time";
+    public static final String INT_SPAWN_PROTECTION = "spawn_protection";
 
     public static final String FLOAT_BASE_GAME_SPEED = "base_game_speed";
 

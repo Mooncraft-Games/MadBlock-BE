@@ -25,7 +25,9 @@ import org.madblock.gamemodesumox.SumoXStrings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GBehaveSumoBase extends GameBehavior {
 
@@ -46,6 +48,8 @@ public class GBehaveSumoBase extends GameBehavior {
 
     protected int defaultTally;
     protected HashMap<Player, Integer> lifeTally;
+    protected int defaultSpawnProtection;
+    protected HashMap<Player, AtomicInteger> playerSpawnProtection;
 
     protected float gameBaseSpeedMultiplier;
     protected float gameSpeedMultiplier;
@@ -78,12 +82,15 @@ public class GBehaveSumoBase extends GameBehavior {
 
         this.defaultTally = Math.max(getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault(SumoXKeys.INT_LIVES, SumoXConstants.DEFAULT_LIVES), 1);
         this.lifeTally = new HashMap<>();
+        this.defaultSpawnProtection = Math.max(getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault(SumoXKeys.INT_SPAWN_PROTECTION, 3), 0);
+        this.playerSpawnProtection = new HashMap<>();
 
         this.gameBaseSpeedMultiplier = Math.max(getSessionHandler().getPrimaryMapID().getFloats().getOrDefault(SumoXKeys.FLOAT_BASE_GAME_SPEED, SumoXConstants.DEFAULT_BASE_GAME_SPEED), 0f);
         this.gameSpeedMultiplier = gameBaseSpeedMultiplier;
 
         for(Player player: getSessionHandler().getPlayers()){
             lifeTally.put(player, defaultTally);
+            this.playerSpawnProtection.put(player, new AtomicInteger(this.defaultSpawnProtection));
         }
 
         this.initialPlayerCount = getSessionHandler().getPlayers().size();
@@ -124,13 +131,13 @@ public class GBehaveSumoBase extends GameBehavior {
 
         if(newVal <= 0){
 
-            if(lastHit.get(player) != null) getSessionHandler().addRewardChunk(lastHit.get(player), new RewardChunk("kill", "Kill", 6, 3, 2));
+            if(lastHit.get(player) != null) getSessionHandler().addRewardChunk(lastHit.get(player), new RewardChunk("final_kill", "Final Kill", 12, 6, 4));
 
             player.sendTitle(SumoXStrings.DEAD_TITLE, SumoXStrings.DEAD_SUBTITLE, 5, 50, 5);
             event.setDeathState(GamePlayerDeathEvent.DeathState.MOVE_TO_DEAD_SPECTATORS);
 
         } else {
-            if(lastHit.get(player) != null) getSessionHandler().addRewardChunk(lastHit.get(player), new RewardChunk("final_kill", "Final Kill", 12, 6, 3));
+            if(lastHit.get(player) != null) getSessionHandler().addRewardChunk(lastHit.get(player), new RewardChunk("kill", "Kill", 6, 3, 2));
 
             int respawnTime = getSessionHandler().getPrimaryMapID().getIntegers().getOrDefault(SumoXKeys.INT_RESPAWN_SECS, SumoXConstants.DEFAULT_RESPAWN_SECONDS);
 
@@ -141,12 +148,21 @@ public class GBehaveSumoBase extends GameBehavior {
                 event.setDeathState(GamePlayerDeathEvent.DeathState.TIMED_RESPAWN);
                 event.setRespawnSeconds(respawnTime);
             }
+
+            this.playerSpawnProtection.put(player, new AtomicInteger(respawnTime + defaultSpawnProtection));
+
         }
         lifeTally.put(player, newVal);
     }
 
     protected void handleTimerTick(){
         checkMidGameWinStatus();
+
+        for(Map.Entry<Player, AtomicInteger> set: new HashMap<>(this.playerSpawnProtection).entrySet()) {
+            int val = set.getValue().decrementAndGet();
+            if(val <= 0) this.playerSpawnProtection.remove(set.getKey());
+        }
+
         if(isTimerEnabled){
             roundTimer--;
             if(roundTimer < 0){
@@ -270,21 +286,21 @@ public class GBehaveSumoBase extends GameBehavior {
     public void onDamage(EntityDamageByEntityEvent event){
         if(event.getEntity() instanceof Player && event.getDamager() instanceof Player && event.getCause() != EntityDamageEvent.DamageCause.CONTACT){
             Player player = (Player) event.getEntity();
+            Player victim = (Player) event.getDamager();
+
             if(getSessionHandler().getPlayers().contains(player)){
                 event.setCancelled(true);
 
+                if(this.playerSpawnProtection.containsKey(player)) return;
+                if(this.playerSpawnProtection.containsKey(victim)) return;
+
                 double attackModifier = 1.0f;
 
-                if(event.getDamager() instanceof Player) {
-                    Player p = (Player) event.getDamager();
-                    Kit attackerkit = getSessionHandler().getAppliedSessionKits().get(p);
-                    if (attackerkit != null) {
-                        attackModifier = SumoUtil.StringToFloat(attackerkit.getProperty(SumoXKeys.KIT_PROP_GIVEN_KB_MULT).orElse(null)).orElse(1.0f);
-                    }
+                Kit attackerkit = getSessionHandler().getAppliedSessionKits().get(victim);
+                if (attackerkit != null)
+                    attackModifier = SumoUtil.StringToFloat(attackerkit.getProperty(SumoXKeys.KIT_PROP_GIVEN_KB_MULT).orElse(null)).orElse(1.0f);
 
-                    lastHit.put(player, p);
-                }
-
+                lastHit.put(player, victim);
                 doKnockback(player, event.getDamager(), SumoXConstants.KNOCKBACK_BASE, attackModifier);
 
             }
