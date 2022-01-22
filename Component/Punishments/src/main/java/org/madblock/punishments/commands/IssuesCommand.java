@@ -65,6 +65,7 @@ public class IssuesCommand extends PluginCommand<PunishmentsPlugin> {
                 getPlugin().getServer().getScheduler().scheduleTask(getPlugin(), () -> sender.sendMessage(
                         Utility.generateServerMessage("PUNISHMENTS", TextFormat.DARK_RED, "The player is not registered in our database.", TextFormat.RED)
                 ));
+                return;
             }
 
             List<PunishmentEntry> punishments;

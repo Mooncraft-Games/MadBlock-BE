@@ -223,7 +223,9 @@ public class PunishmentFormListener implements Listener {
                 plugin.getServer().getScheduler().scheduleTask(plugin, () -> staffMember.sendMessage(
                         Utility.generateServerMessage("ERROR", TextFormat.DARK_RED, "Internal Server Error", TextFormat.RED)
                 ));
+                return;
             }
+
             plugin.getServer().getScheduler().scheduleTask(plugin, () -> staffMember.sendMessage(
                     Utility.generateServerMessage("PUNISHMENTS", TextFormat.DARK_RED, "Punished " + target + " for " + TextFormat.YELLOW + category.getCode(), TextFormat.GREEN)
             ));
