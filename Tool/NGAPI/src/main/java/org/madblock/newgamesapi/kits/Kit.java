@@ -3,15 +3,14 @@ package org.madblock.newgamesapi.kits;
 import cn.nukkit.Player;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.item.Item;
-import org.madblock.lib.stattrack.statistic.ITrackedEntityID;
-import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
+import org.madblock.lib.stattrack.statistic.id.ITrackedHolderID;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.game.GameHandler;
 
 import java.util.HashMap;
 import java.util.Optional;
 
-public abstract class Kit implements ITrackedEntityID {
+public abstract class Kit implements ITrackedHolderID {
 
     private HashMap<Player, ExtendedKit> extendedKitVariants;
     private HashMap<String, String> properties;
@@ -116,9 +115,6 @@ public abstract class Kit implements ITrackedEntityID {
         player.getInventory().sendContents(player);
         onKitEquip(player);
         handler.getGameBehaviors().onKitEquip(player, this);
-
-        StatisticEntitiesList.get().createCollection(this)
-                .createStatistic("times_applied").increment();
     }
 
     public final void removeKit(Player player, GameHandler handler, boolean clearWholeInventory) {

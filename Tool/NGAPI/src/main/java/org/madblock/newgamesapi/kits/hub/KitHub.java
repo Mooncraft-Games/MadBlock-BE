@@ -18,10 +18,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.TextFormat;
-import org.madblock.lib.stattrack.statistic.StatisticCollection;
-import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
-import org.madblock.lib.stattrack.statistic.StatisticWatcher;
-import org.madblock.lib.stattrack.util.Util;
+import org.madblock.lib.stattrack.statistic.id.server.PlayerWrapperID;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.book.BookConfiguration;
@@ -140,24 +137,6 @@ public class KitHub extends Kit {
                 if(target.isOnGround() && (bonusJumpCount >= 10)) {
                     int count = bonusJumpCount;
                     this.bonusJumpCount = 0;
-
-                    NewGamesAPI1.get().getServer().getScheduler().scheduleAsyncTask(NewGamesAPI1.get(), new AsyncTask() {
-                        @Override
-                        public void onRun() {
-                            StatisticCollection pStat = StatisticEntitiesList.get().createCollection(Util.getPlayerEntityID(target));
-                            StatisticWatcher w = pStat.createStatistic("lobby_leap_streak", false);
-                            w.fetchRemote();
-
-                            if(w.getValueDelta() < count) {
-                                w.resetLocal();
-                                w.modify(count); // Ensure no old streak is saved
-                            }
-                            if(w.getValueRemote() < count) {
-                                w.resetRemote();
-                                w.pushRemote();
-                            }
-                        }
-                    });
                 }
             }, 1, 1);
         }
@@ -173,8 +152,6 @@ public class KitHub extends Kit {
         public void onItemInteract(PlayerInteractEvent event){
 
             if(checkEventIsForTargetPlayer(event.getPlayer()) && !itemCooldown) {
-                StatisticCollection pStat = StatisticEntitiesList.get().createCollection(Util.getPlayerEntityID(event.getPlayer()));
-
                 itemCooldown = true;
                 getGameHandler().getGameScheduler().registerGameTask(() -> { itemCooldown = false; }, 10);
                 Item item = event.getItem();
@@ -242,7 +219,6 @@ public class KitHub extends Kit {
                     Vector3 dir = event.getPlayer().getDirectionVector();
                     float tweak = dir.y < 0 ? 0.65f : 1f;
                     event.getPlayer().setMotion(new Vector3(dir.x, Math.abs(dir.y * tweak), dir.z).multiply(1.8f)); // 1.62 taken from SumoX
-                    pStat.createStatistic("lobby_leap_total").increment();
                 }
 
 
@@ -279,16 +255,9 @@ public class KitHub extends Kit {
 
                 if(isCorrectItem(item, "isDiscordLink")) {
                     event.setCancelled();
-                    event.getPlayer().sendMessage(Utility.generateServerMessage("Discord", TextFormat.DARK_PURPLE, "You can join our discord at: "+TextFormat.LIGHT_PURPLE+"https://discord.gg/nqNcvpU"));
+                    event.getPlayer().sendMessage(Utility.generateServerMessage("Discord", TextFormat.DARK_PURPLE, "You can join our discord at: "+TextFormat.LIGHT_PURPLE+"https://discord.gg/kvgZ7dk"));
                     event.getPlayer().clearTitle();
-                    event.getPlayer().sendActionBar(TextFormat.GRAY+"Join the discord today at: "+TextFormat.LIGHT_PURPLE+" https://discord.gg/nqNcvpU");
-                }
-
-                if(isCorrectItem(item, "isStoreMenu")) {
-                    event.setCancelled();
-                    event.getPlayer().sendMessage(Utility.generateServerMessage("Store", TextFormat.DARK_GREEN, "You can view our store at: "+TextFormat.GREEN+"https://mooncraftgames-bedrock.tebex.io/"));
-                    event.getPlayer().clearTitle();
-                    event.getPlayer().sendActionBar(TextFormat.GRAY+"View our store: "+TextFormat.GREEN+"https://mooncraftgames-bedrock.tebex.io/");
+                    event.getPlayer().sendActionBar(TextFormat.GRAY+"Join the discord today at: "+TextFormat.LIGHT_PURPLE+" https://discord.gg/kvgZ7dk");
                 }
             }
         }

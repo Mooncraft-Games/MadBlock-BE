@@ -21,8 +21,6 @@ import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.TextFormat;
 import org.madblock.lib.commons.text.TextUtils;
-import org.madblock.lib.stattrack.statistic.StatisticCollection;
-import org.madblock.lib.stattrack.statistic.StatisticEntitiesList;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.ServerConfigProcessor;
 import org.madblock.newgamesapi.util.Utility;
@@ -475,14 +473,7 @@ public class GameHandler implements Listener {
     }
 
     public void applyGeneralGameStats() {
-        StatisticCollection mapStats = StatisticEntitiesList.get().createCollection(mapID);
-        StatisticCollection gameStats = StatisticEntitiesList.get().createCollection(gameID);
-
-        mapStats.createStatistic("times_played").increment();
-        mapStats.createStatistic("total_players").modify(players.size()); // used to average the player counts
-
-        gameStats.createStatistic("games_started").increment();
-        gameStats.createStatistic("total_players").modify(players.size());
+        //TODO: Game Stats
     }
 
     @EventHandler(priority = EventPriority.HIGH)

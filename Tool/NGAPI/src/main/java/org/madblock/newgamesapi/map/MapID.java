@@ -3,7 +3,7 @@ package org.madblock.newgamesapi.map;
 import cn.nukkit.utils.TextFormat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.madblock.lib.stattrack.statistic.ITrackedEntityID;
+import org.madblock.lib.stattrack.statistic.id.ITrackedHolderID;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.util.Utility;
 import org.madblock.newgamesapi.exception.MapIDParseException;
@@ -17,7 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 
-public class MapID implements ITrackedEntityID {
+public class MapID implements ITrackedHolderID {
 
     private transient static final List<Integer> API_SUPPORTED_MAPID_VERSIONS = Arrays.asList(1);
 
