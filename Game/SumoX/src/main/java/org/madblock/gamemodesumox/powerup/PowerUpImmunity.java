@@ -71,6 +71,7 @@ public final class PowerUpImmunity extends PowerUp implements Listener {
         if(immunityPowerUps.containsKey(context.getPlayer())){
             int oldVal = immunityPowerUps.get(context.getPlayer());
             immunityPowerUps.put(context.getPlayer(), oldVal + 1);
+
         } else {
             immunityPowerUps.put(context.getPlayer(), 1);
             context.getPlayer().getInventory().setArmorContents(
@@ -86,7 +87,8 @@ public final class PowerUpImmunity extends PowerUp implements Listener {
             if(immunityPowerUps.containsKey(context.getPlayer())){
                 int oldVal = immunityPowerUps.get(context.getPlayer());
                 immunityPowerUps.put(context.getPlayer(), oldVal - 1);
-                if((oldVal - 1) < 1){
+
+                if((oldVal - 1) < 1) {
                     Kit kit = gameHandler.getAppliedSessionKits().get(context.getPlayer());
                     if(kit != null) {
                         context.getPlayer().getInventory().setArmorContents(
@@ -105,6 +107,8 @@ public final class PowerUpImmunity extends PowerUp implements Listener {
                                         new BlockAir().toItem()
                                 });
                     }
+
+                    this.immunityPowerUps.remove(context.getPlayer());
                 }
             }
         }, 20*7);
