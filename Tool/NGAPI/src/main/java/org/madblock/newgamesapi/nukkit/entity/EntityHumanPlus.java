@@ -97,6 +97,14 @@ public class EntityHumanPlus extends EntityHuman {
 
     }
 
+    public String getSpawnAnimationID() {
+        return spawnAnimationID;
+    }
+
+    public String getSpawnAnimationController() {
+        return spawnAnimationController;
+    }
+
     protected void fixEverythingPlsThankYou(Player player) {
         NewGamesAPI1.get().getServer().getScheduler().scheduleDelayedTask(NewGamesAPI1.get(), () -> {
             this.teleport(new Vector3(this.x, this.y, this.z), null);

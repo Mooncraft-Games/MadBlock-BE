@@ -9,6 +9,8 @@ public class AnimateEntityPacket extends DataPacket {
     public String animation;
     public String controller;
 
+    public String stopExpression = "false";
+
     @Override
     public byte pid() {
         return ProtocolInfo.ANIMATE_ENTITY_PACKET;
@@ -19,12 +21,14 @@ public class AnimateEntityPacket extends DataPacket {
 
     }
 
+
+
     @Override
     public void encode() {
         this.reset();
         this.putString(animation);
         this.putString("default");
-        this.putString("false");
+        this.putString(stopExpression);
         this.putInt(0); // stop expression version
         this.putString(controller);
         this.putLFloat(0);

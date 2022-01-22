@@ -1,5 +1,6 @@
 package org.madblock.newgamesapi.map.pointentities.defaults;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.EventHandler;
@@ -20,9 +21,11 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.madblock.newgamesapi.NewGamesAPI1;
 import org.madblock.newgamesapi.game.GameHandler;
+import org.madblock.newgamesapi.map.pointentities.PointEntityCallData;
 import org.madblock.newgamesapi.map.pointentities.PointEntityType;
 import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.nukkit.entity.EntityHumanPlus;
+import org.madblock.newgamesapi.nukkit.packet.AnimateEntityPacket;
 import org.madblock.newgamesapi.util.SkinUtils;
 
 import javax.imageio.ImageIO;
@@ -52,6 +55,7 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
     @Override
     public void onRegister() {
         NewGamesAPI1.get().getServer().getPluginManager().registerEvents(this, NewGamesAPI1.get());
+        this.addFunction("animate", this::animate);
     }
 
     @Override
@@ -168,6 +172,32 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
 
     protected String formatNameFromColourCodes(String unformattedName){
         return TextFormat.colorize(unformattedName);
+    }
+
+
+
+    protected void animate(PointEntityCallData pointEntityCallData) {
+        String animation = pointEntityCallData.getParameters().get("animation");
+        String controller = pointEntityCallData.getParameters().get("controller");
+
+        EntityHumanPlus entity = this.lastInstances.get(pointEntityCallData.getPointEntity());
+
+        if(animation == null) animation = entity.getSpawnAnimationID();
+        if(controller == null) controller = entity.getSpawnAnimationController();
+
+
+        if(animation != null && controller != null) {
+
+            AnimateEntityPacket dataPacket = new AnimateEntityPacket();
+            dataPacket.eid = entity.getId();
+            dataPacket.animation = animation;
+            dataPacket.controller = controller;
+            dataPacket.stopExpression = "query.any_animation_finished";
+
+            for(Player player : entity.getViewers().values()) {
+                player.dataPacket(dataPacket);
+            }
+        }
     }
 
 
