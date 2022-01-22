@@ -12,18 +12,37 @@ import org.madblock.newgamesapi.map.types.PointEntity;
 import org.madblock.newgamesapi.team.Team;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Launches the player in a specific direction.
  */
 public class TagBehaviorFixedLaunchRegion extends TagBehaviorCollisionbox {
 
+    public static final int TICK_INTERVAL = 3;
+
+    protected HashMap<MapRegion, AtomicInteger> cooldownTicks;
+
     public TagBehaviorFixedLaunchRegion(GameHandler handler) {
         super(handler);
+        this.cooldownTicks = new HashMap<>();
+    }
+
+    @Override
+    public void accept(FunctionalRegionCallData data) {
+        super.accept(data);
+
+        for(Map.Entry<MapRegion, AtomicInteger> ticks : new HashMap<>(this.cooldownTicks).entrySet()) {
+            int val = ticks.getValue().addAndGet(-TICK_INTERVAL);
+            if(val <= 0) cooldownTicks.remove(ticks.getKey());
+        }
     }
 
     @Override
     public void execute(Player player, Team team, MapRegion mapRegion, Level level) {
+        if(cooldownTicks.containsKey(mapRegion)) return;
+
         String paramType = "";
         float[] forces = new float[] {0, 0, 1.8f}; // formatted x, z, y as Y is somewhat less important;
         int foundForces = 0;
@@ -51,6 +70,11 @@ public class TagBehaviorFixedLaunchRegion extends TagBehaviorCollisionbox {
                     controllerName = tag;
                     break;
 
+                case "cooldown":
+                    paramType = "";
+                    cooldownTicks.put(mapRegion, new AtomicInteger(Integer.parseInt(tag)));
+                    break;
+
                 default:
                     if(tag.equalsIgnoreCase("animator:")) {
                         paramType = "animator";
@@ -64,6 +88,11 @@ public class TagBehaviorFixedLaunchRegion extends TagBehaviorCollisionbox {
 
                     if(tag.equalsIgnoreCase("controller:")) {
                         paramType = "controller";
+                        continue;
+                    }
+
+                    if(tag.equalsIgnoreCase("cooldown:")) {
+                        paramType = "cooldown";
                         continue;
                     }
 

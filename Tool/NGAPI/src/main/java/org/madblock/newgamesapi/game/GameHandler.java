@@ -450,7 +450,7 @@ public class GameHandler implements Listener {
             functionalRegionManager.setTagFunction("deathbox", new TagBehaviorDeathbox(this), 2);
             functionalRegionManager.setTagFunction("deathbox_inverted", new TagBehaviorInvertedDeathbox(this), 2, 1);
             functionalRegionManager.setTagFunction("var_launch", new TagBehaviorVarLaunchRegion(this), 3);
-            functionalRegionManager.setTagFunction("fixed_launch", new TagBehaviorFixedLaunchRegion(this), 3);
+            functionalRegionManager.setTagFunction("fixed_launch", new TagBehaviorFixedLaunchRegion(this), TagBehaviorFixedLaunchRegion.TICK_INTERVAL);
         }
         if(getGameID().getGameProperties().doesGameUseIntegratedPointEntities()){
             pointEntityTypeManager.registerPointEntityType(new PointEntityTypeInteractableNPC(this));
