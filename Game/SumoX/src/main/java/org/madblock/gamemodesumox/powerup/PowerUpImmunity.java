@@ -65,7 +65,7 @@ public final class PowerUpImmunity extends PowerUp implements Listener {
 
                     PowerUpImmunity.immuneEntities.remove(player);
                     this.immunityPowerUps.remove(player);
-                    this.gameHandler.getScoreboardManager().setLine(player, 2, null);
+                    this.gameHandler.getScoreboardManager().cleanUp(player); // hacky removal as setLine null doesn't seem to work
 
                 } else {
                     this.gameHandler.getScoreboardManager().setLine(player, 2,

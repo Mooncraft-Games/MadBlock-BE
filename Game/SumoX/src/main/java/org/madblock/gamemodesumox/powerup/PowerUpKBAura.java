@@ -100,9 +100,9 @@ public class PowerUpKBAura extends PowerUp {
 
             } else {
                 // A fuse kinda sound in a way, let players know it's coming.
-                context.getPlayer().getLevel().addSound(context.getPlayer(), Sound.NOTE_HARP, 0.9f, 0.9f + ((((float) newCount) / COUNTDOWN_LENGTH) / 1.5f) );
+                context.getPlayer().getLevel().addSound(context.getPlayer(), Sound.NOTE_HARP, 0.9f, 1.2f + ((1 - (((float) newCount) / COUNTDOWN_LENGTH)) / 2f) );
             }
-        }, 0, 5);
+        }, 0, 2);
 
         return true;
     }
