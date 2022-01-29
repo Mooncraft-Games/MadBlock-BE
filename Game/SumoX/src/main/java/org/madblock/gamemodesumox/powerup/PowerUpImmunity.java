@@ -22,7 +22,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class PowerUpImmunity extends PowerUp implements Listener {
 
-    private HashMap<Player, AtomicInteger> immunityPowerUps;
+    // Helper static for use in other components. It should not be used here
+    // as that's bound to cause a disaster.
+    private static ArrayList<Player> immuneEntities = new ArrayList<>();
+
+    private final HashMap<Player, AtomicInteger> immunityPowerUps;
     private final TaskHandler armourTask;
 
     public static final int IMMUNITY_LENGTH = 7;
@@ -59,6 +63,7 @@ public final class PowerUpImmunity extends PowerUp implements Listener {
                                 });
                     }
 
+                    PowerUpImmunity.immuneEntities.remove(player);
                     this.immunityPowerUps.remove(player);
                     this.gameHandler.getScoreboardManager().setLine(player, 2, null);
 
@@ -119,8 +124,11 @@ public final class PowerUpImmunity extends PowerUp implements Listener {
     public boolean use(PowerUpContext context) {
         if(immunityPowerUps.containsKey(context.getPlayer()))
             immunityPowerUps.get(context.getPlayer()).addAndGet(IMMUNITY_LENGTH);
-        else
+        else {
+            PowerUpImmunity.immuneEntities.add(context.getPlayer());
             immunityPowerUps.put(context.getPlayer(), new AtomicInteger(IMMUNITY_LENGTH));
+        }
+
 
         context.getPlayer().getInventory().setArmorContents(
                 new Item[]{
@@ -155,5 +163,13 @@ public final class PowerUpImmunity extends PowerUp implements Listener {
     public void cleanUp() {
         HandlerList.unregisterAll(this);
         this.armourTask.cancel();
+
+        for(Player player: this.immunityPowerUps.keySet())
+            PowerUpImmunity.immuneEntities.remove(player);
+    }
+
+
+    public static ArrayList<Player> getImmuneEntities() {
+        return new ArrayList<>(immuneEntities);
     }
 }
