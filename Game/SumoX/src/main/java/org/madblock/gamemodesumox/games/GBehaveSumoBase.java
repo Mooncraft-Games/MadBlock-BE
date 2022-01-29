@@ -91,6 +91,10 @@ public class GBehaveSumoBase extends GameBehavior {
         for(Player player: getSessionHandler().getPlayers()){
             lifeTally.put(player, defaultTally);
             this.playerSpawnProtection.put(player, new AtomicInteger(this.defaultSpawnProtection));
+
+            StringBuilder lives = new StringBuilder();
+            for(int i = 0; i < defaultTally; i++) lives.append(Utility.ResourcePackCharacters.HEART_FULL);
+            player.setScoreTag(lives.toString());
         }
 
         this.initialPlayerCount = getSessionHandler().getPlayers().size();
@@ -111,12 +115,13 @@ public class GBehaveSumoBase extends GameBehavior {
     @Override
     public void onPlayerLeaveGame(Player player) {
         player.clearTitle();
+        player.setScoreTag("");
     }
 
     @Override
     public void onAddPlayerToTeam(Player player, Team team) {
         if(getSessionHandler().getGameState() == GameHandler.GameState.MAIN_LOOP){
-            checkMidGameWinStatus();
+            this.checkMidGameWinStatus();
         }
     }
 
@@ -149,14 +154,18 @@ public class GBehaveSumoBase extends GameBehavior {
                 event.setRespawnSeconds(respawnTime);
             }
 
-            this.playerSpawnProtection.put(player, new AtomicInteger(respawnTime + defaultSpawnProtection));
+            StringBuilder lives = new StringBuilder();
+            for(int i = 0; i < newVal; i++) lives.append(Utility.ResourcePackCharacters.HEART_FULL);
+            player.setScoreTag(lives.toString());
 
+            this.playerSpawnProtection.put(player, new AtomicInteger(respawnTime + defaultSpawnProtection));
         }
+
         lifeTally.put(player, newVal);
     }
 
     protected void handleTimerTick(){
-        checkMidGameWinStatus();
+        this.checkMidGameWinStatus();
 
         for(Map.Entry<Player, AtomicInteger> set: new HashMap<>(this.playerSpawnProtection).entrySet()) {
             int val = set.getValue().decrementAndGet();
@@ -235,8 +244,6 @@ public class GBehaveSumoBase extends GameBehavior {
         getSessionHandler().getScoreboardManager().setLine(player, 5, String.format("%s %s%s/%s", Utility.ResourcePackCharacters.MORE_PEOPLE, TextFormat.WHITE, aliveCount, initialPlayerCount));
         getSessionHandler().getScoreboardManager().setLine(player, 9, String.format("%s %s%s", Utility.ResourcePackCharacters.TIME, isInPanicMode ? TextFormat.RED : TextFormat.WHITE, roundTimer));
     }
-
-
 
     public int getTimeElapsed() { return maxTimer-roundTimer; }
     public boolean isTimerEnabled() { return isTimerEnabled; }

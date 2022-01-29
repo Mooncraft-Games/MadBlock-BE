@@ -33,9 +33,9 @@ public final class PowerUpImmunity extends PowerUp implements Listener {
 
         SumoX.get().getServer().getPluginManager().registerEvents(this, SumoX.get());
 
-        this.armourTask = gameHandler.getGameScheduler().registerGameTask(() -> {
+        this.armourTask = this.gameHandler.getGameScheduler().registerGameTask(() -> {
             for(Player player: new ArrayList<>(this.immunityPowerUps.keySet())) {
-                int newCounter = immunityPowerUps.get(player).getAndDecrement();
+                int newCounter = this.immunityPowerUps.get(player).decrementAndGet();
 
                 if (newCounter < 1) {
                     Kit kit = this.gameHandler.getAppliedSessionKits().get(player);
@@ -72,7 +72,7 @@ public final class PowerUpImmunity extends PowerUp implements Listener {
                     );
                 }
             }
-        }, 20);
+        }, 20,20);
     }
 
     @Override
