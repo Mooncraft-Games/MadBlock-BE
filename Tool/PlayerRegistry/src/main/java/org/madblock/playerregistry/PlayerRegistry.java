@@ -25,7 +25,7 @@ public class PlayerRegistry extends PluginBase implements Listener {
     // service - short id - examples such as "discord", "minecraft", ... - If it's "minecraft" it can link to anything. If it's anything else, it must be linked back to minecraft unless we introduce forums.
     // identifier - user identifier - the id given to a user for that specific service (minecraft -> [add xuid], discord -> [add discord id])
     // code - the code required on the other service for a successful link.
-    private static final String CREATE_SERVICE_LINK_TABLE = "CREATE TABLE IF NOT EXISTS pending_service_links ( service VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, code VARCHAR(9), PRIMARY KEY (service, identifier) );";
+    private static final String CREATE_SERVICE_LINK_TABLE = "CREATE TABLE IF NOT EXISTS pending_service_links ( service VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, code VARCHAR(9) NOT NULL, expire BIGINT NOT NULL,  PRIMARY KEY (service, identifier) );";
 
 
     private static final String SELECT_PLAYER_QUERY = "SELECT 1 FROM player_lookup WHERE xuid=?";
