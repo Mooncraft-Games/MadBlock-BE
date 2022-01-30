@@ -18,6 +18,8 @@ import java.util.Optional;
 
 public class PlayerRegistry extends PluginBase implements Listener {
 
+    private static PlayerRegistry pluginInst;
+
     // Note: Discord IDs do not have a fixed length as they're the millis since jan 1st 2015! Currently, they're 17/18 chars, but I'm setting it to 28 for future-proofing.
     private static final String CREATE_PLAYER_LOOKUP_TABLE = "CREATE TABLE IF NOT EXISTS player_lookup ( xuid VARCHAR(16) NOT NULL PRIMARY KEY, username VARCHAR(12) NOT NULL, discord_id VARCHAR(28));";
 
@@ -35,6 +37,7 @@ public class PlayerRegistry extends PluginBase implements Listener {
 
     @Override
     public void onEnable() {
+        pluginInst = this;
 
         ConnectionWrapper wrapper;
 
@@ -44,6 +47,7 @@ public class PlayerRegistry extends PluginBase implements Listener {
             this.getLogger().error("Failed to establish connection to MAIN database. Disabling...");
             this.getLogger().error(connectionException.toString());
             this.getServer().getPluginManager().disablePlugin(this);
+            pluginInst = null;
             return;
         }
 
@@ -68,6 +72,7 @@ public class PlayerRegistry extends PluginBase implements Listener {
             DatabaseUtility.closeQuietly(wrapper);
 
             this.getServer().getPluginManager().disablePlugin(this);
+            pluginInst = null;
             return;
         }
 
@@ -170,4 +175,8 @@ public class PlayerRegistry extends PluginBase implements Listener {
         return Optional.empty();
     }
 
+
+    public static PlayerRegistry get() {
+        return pluginInst;
+    }
 }
