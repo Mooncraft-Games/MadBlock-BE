@@ -13,6 +13,7 @@ import org.madblock.social.Utility;
 import org.madblock.social.friends.Friend;
 import org.madblock.social.friends.comparators.FriendComparator;
 import org.madblock.social.friends.FriendsManager;
+import org.madblock.util.DatabaseReturn;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -95,7 +96,7 @@ public class FriendCommand extends PluginCommand<SocialAPI> {
                 }
 
                 getPlugin().getServer().getScheduler().scheduleTask(getPlugin(), () -> {
-                    Optional<String> targetXuid;
+                    DatabaseReturn<String> targetXuid;
                     try {
                         targetXuid = PlayerRegistry.getPlayerXuidByName(friendRequestTargetName);
                     } catch (SQLException exception) {
@@ -147,7 +148,7 @@ public class FriendCommand extends PluginCommand<SocialAPI> {
                 String removeFriendName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
                 getPlugin().getServer().getScheduler().scheduleTask(getPlugin(), () -> {
 
-                    Optional<String> targetXuid;
+                    DatabaseReturn<String> targetXuid;
                     try {
                         targetXuid = PlayerRegistry.getPlayerXuidByName(removeFriendName);
                     } catch (SQLException exception) {
@@ -196,7 +197,7 @@ public class FriendCommand extends PluginCommand<SocialAPI> {
 
                 String acceptFriendRequestName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
                 getPlugin().getServer().getScheduler().scheduleTask(getPlugin(), () -> {
-                    Optional<String> targetXuid;
+                    DatabaseReturn<String> targetXuid;
                     try {
                         targetXuid = PlayerRegistry.getPlayerXuidByName(acceptFriendRequestName);
                     } catch (SQLException exception) {
@@ -245,7 +246,7 @@ public class FriendCommand extends PluginCommand<SocialAPI> {
 
                 String denyFriendRequestName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
                 getPlugin().getServer().getScheduler().scheduleTask(getPlugin(), () -> {
-                    Optional<String> targetXuid;
+                    DatabaseReturn<String> targetXuid;
                     try {
                         targetXuid = PlayerRegistry.getPlayerXuidByName(denyFriendRequestName);
                     } catch (SQLException exception) {
@@ -297,7 +298,7 @@ public class FriendCommand extends PluginCommand<SocialAPI> {
                 String cancelFriendRequestName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
                 getPlugin().getServer().getScheduler().scheduleTask(getPlugin(), () -> {
 
-                    Optional<String> targetXuid;
+                    DatabaseReturn<String> targetXuid;
                     try {
                         targetXuid = PlayerRegistry.getPlayerXuidByName(cancelFriendRequestName);
                     } catch (SQLException exception) {

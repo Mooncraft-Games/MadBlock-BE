@@ -24,6 +24,7 @@ import org.madblock.punishments.list.SubPunishmentOffense;
 import org.madblock.punishments.utils.Utility;
 import org.madblock.ranks.api.RankManager;
 import org.madblock.ranks.api.RankProfile;
+import org.madblock.util.DatabaseReturn;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -190,7 +191,7 @@ public class PunishmentFormListener implements Listener {
 
     private void executePunishment (String target, PunishmentCategory category, String reason, Player staffMember) {
         plugin.getServer().getScheduler().scheduleTask(plugin, () -> {
-            Optional<String> xuid;
+            DatabaseReturn<String> xuid;
             try {
                 xuid = PlayerRegistry.getPlayerXuidByName(target);
             } catch (SQLException exception) {

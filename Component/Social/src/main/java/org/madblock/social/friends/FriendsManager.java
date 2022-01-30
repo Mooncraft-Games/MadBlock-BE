@@ -26,6 +26,7 @@ import org.madblock.social.Utility;
 import org.madblock.social.events.*;
 import org.madblock.social.friends.comparators.FriendComparator;
 import org.madblock.social.friends.comparators.RequestsComparator;
+import org.madblock.util.DatabaseReturn;
 
 import java.sql.*;
 import java.util.*;
@@ -132,7 +133,7 @@ public class FriendsManager implements Listener {
             return false;
         }
         plugin.getServer().getScheduler().scheduleTask(plugin, () -> {
-            Optional<String> name;
+            DatabaseReturn<String> name;
             try {
                 name = PlayerRegistry.getPlayerNameByXuid(playerXuid);
             } catch (SQLException exception) {
@@ -160,7 +161,7 @@ public class FriendsManager implements Listener {
                 });
             }
 
-            Optional<String> targetName;
+            DatabaseReturn<String> targetName;
             try {
                 targetName = PlayerRegistry.getPlayerNameByXuid(targetPlayerXuid);
             } catch (SQLException exception) {
@@ -214,7 +215,7 @@ public class FriendsManager implements Listener {
         if (deleted) {
             plugin.getServer().getScheduler().scheduleTask(plugin, () -> {
 
-                Optional<String> name;
+                DatabaseReturn<String> name;
                 try {
                     name = PlayerRegistry.getPlayerNameByXuid(playerXuid);
                 } catch (SQLException exception) {
@@ -240,7 +241,7 @@ public class FriendsManager implements Listener {
                     });
                 }
 
-                Optional<String> targetName;
+                DatabaseReturn<String> targetName;
                 try {
                     targetName = PlayerRegistry.getPlayerNameByXuid(targetPlayerXuid);
                 } catch (SQLException exception) {
@@ -294,7 +295,7 @@ public class FriendsManager implements Listener {
         }
 
         plugin.getServer().getScheduler().scheduleTask(plugin, () -> {
-            Optional<String> playerName;
+            DatabaseReturn<String> playerName;
             try {
                 playerName = PlayerRegistry.getPlayerNameByXuid(playerXuid);
             } catch (SQLException nameSqlException) {
@@ -321,7 +322,7 @@ public class FriendsManager implements Listener {
                     }
                 });
             }
-            Optional<String> targetPlayerName;
+            DatabaseReturn<String> targetPlayerName;
             try {
                 targetPlayerName = PlayerRegistry.getPlayerNameByXuid(targetPlayerXuid);
             } catch (SQLException nameSqlException) {
@@ -429,7 +430,7 @@ public class FriendsManager implements Listener {
             while (results.next()) {
                 // For each friend, construct the friend object and add it to the cache it's missing.
                 String friendXuid = results.getString("xuid");
-                Optional<String> name = PlayerRegistry.getPlayerNameByXuid(friendXuid);
+                DatabaseReturn<String> name = PlayerRegistry.getPlayerNameByXuid(friendXuid);
                 Optional<PlayerServerLocation> location = PlayerRegistry.getPlayerLocationByXuid(friendXuid);
                 if (!name.isPresent()) {
                     continue;   // Name isn't registered in database?...
@@ -508,7 +509,7 @@ public class FriendsManager implements Listener {
             ResultSet results = fetchIncomingFriendRequestsQuery.executeQuery();
             while (results.next()) {
                 String xuid = results.getString("xuid");
-                Optional<String> name = PlayerRegistry.getPlayerNameByXuid(xuid);
+                DatabaseReturn<String> name = PlayerRegistry.getPlayerNameByXuid(xuid);
                 if (name.isPresent()) {
                     FriendRequest request = new FriendRequest(xuid, name.get());
                     FriendRequestProfile profile = friendRequestsCache.getOrDefault(playerXuid, new FriendRequestProfile());
@@ -567,7 +568,7 @@ public class FriendsManager implements Listener {
             ResultSet results = fetchOutgoingFriendRequestsQuery.executeQuery();
             while (results.next()) {
                 String xuid = results.getString("xuid");
-                Optional<String> name = PlayerRegistry.getPlayerNameByXuid(xuid);
+                DatabaseReturn<String> name = PlayerRegistry.getPlayerNameByXuid(xuid);
                 PlayerRegistry.getPlayerNameByXuid(xuid);
                 if (name.isPresent()) {
                     FriendRequest request = new FriendRequest(xuid, name.get());
@@ -667,7 +668,7 @@ public class FriendsManager implements Listener {
                         String profileXuid = isIncoming ? toXuid : fromXuid;
                         String friendRequestXuid = isIncoming ? fromXuid : toXuid;
 
-                        Optional<String> name = PlayerRegistry.getPlayerNameByXuid(friendRequestXuid);
+                        DatabaseReturn<String> name = PlayerRegistry.getPlayerNameByXuid(friendRequestXuid);
                         if (name.isPresent()) {
                             FriendRequest request = new FriendRequest(friendRequestXuid, name.get());
                             if (removedFriendRequests.containsKey(profileXuid)) {
@@ -718,7 +719,7 @@ public class FriendsManager implements Listener {
                             if (friendRequestsCache.containsKey(xuid)) {
                                 friendRequestsCache.get(xuid).removeIncomingFriendRequest(request);
                             }
-                            Optional<String> name = PlayerRegistry.getPlayerNameByXuid(xuid);
+                            DatabaseReturn<String> name = PlayerRegistry.getPlayerNameByXuid(xuid);
                             if (!name.isPresent()) {
                                 plugin.getLogger().warning(String.format("Failed to retrieve the username for the xuid %s", xuid));
                                 continue;
@@ -811,7 +812,7 @@ public class FriendsManager implements Listener {
                     String friendXuid = results.getString("friend_xuid");
                     String xuid = results.getString("xuid");
 
-                    Optional<String> name = PlayerRegistry.getPlayerNameByXuid(friendXuid);
+                    DatabaseReturn<String> name = PlayerRegistry.getPlayerNameByXuid(friendXuid);
                     if (!name.isPresent()) {
                         plugin.getLogger().warning(String.format("Failed to retrieve the username for the xuid %s", friendXuid));
                         return;
@@ -945,7 +946,7 @@ public class FriendsManager implements Listener {
                 ResultSet results = fetchFriendsQueryStmt.executeQuery();
                 while (results.next()) {
                     String targetXuid = results.getString("xuid");
-                    Optional<String> name = PlayerRegistry.getPlayerNameByXuid(targetXuid);
+                    DatabaseReturn<String> name = PlayerRegistry.getPlayerNameByXuid(targetXuid);
                     if (!name.isPresent()) {
                         plugin.getLogger().warning(String.format("Failed to retrieve the username for the xuid %s", targetXuid));
                         continue;
@@ -974,7 +975,7 @@ public class FriendsManager implements Listener {
                 ResultSet results = fetchIncomingFriendRequestsQueryStmt.executeQuery();
                 while (results.next()) {
                     String targetXuid = results.getString("xuid");
-                    Optional<String> targetName = PlayerRegistry.getPlayerNameByXuid(targetXuid);
+                    DatabaseReturn<String> targetName = PlayerRegistry.getPlayerNameByXuid(targetXuid);
                     if (!targetName.isPresent()) {
                         plugin.getLogger().warning(String.format("Failed to retrieve the username for the xuid %s", targetXuid));
                         continue;
@@ -1000,7 +1001,7 @@ public class FriendsManager implements Listener {
                 ResultSet results = fetchOutgoingFriendRequestsQueryStmt.executeQuery();
                 while (results.next()) {
                     String targetXuid = results.getString("xuid");
-                    Optional<String> targetName = PlayerRegistry.getPlayerNameByXuid(targetXuid);
+                    DatabaseReturn<String> targetName = PlayerRegistry.getPlayerNameByXuid(targetXuid);
                     if (!targetName.isPresent()) {
                         plugin.getLogger().warning(String.format("Failed to retrieve the username for the xuid %s", targetXuid));
                         continue;
@@ -1326,7 +1327,7 @@ public class FriendsManager implements Listener {
                         }
 
                         plugin.getServer().getScheduler().scheduleTask(plugin, () -> {
-                            Optional<String> xuid;
+                            DatabaseReturn<String> xuid;
                             try {
                                 xuid = PlayerRegistry.getPlayerXuidByName(name);
                             } catch (SQLException exception) {

@@ -13,6 +13,7 @@ import org.madblock.ranks.api.RankProfile;
 import org.madblock.ranks.enums.PrimaryRankID;
 import org.madblock.ranks.enums.SubRankID;
 import org.madblock.ranks.util.Utility;
+import org.madblock.util.DatabaseReturn;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -108,7 +109,7 @@ public class RankCommand extends PluginCommand<RankPlugin> {
             String playerName = builder.toString();
 
             getPlugin().getServer().getScheduler().scheduleTask(getPlugin(), () -> {
-                Optional<String> xuid;
+                DatabaseReturn<String> xuid;
                 try {
                     xuid = PlayerRegistry.getPlayerXuidByName(playerName);
                 } catch (SQLException exception) {
@@ -189,7 +190,7 @@ public class RankCommand extends PluginCommand<RankPlugin> {
             String playerName = builder.toString();
 
             getPlugin().getServer().getScheduler().scheduleTask(getPlugin(), () -> {
-                Optional<String> xuid;
+                DatabaseReturn<String> xuid;
                 try {
                     xuid = PlayerRegistry.getPlayerXuidByName(playerName);
                 } catch (SQLException exception) {

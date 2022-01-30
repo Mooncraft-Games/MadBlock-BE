@@ -10,6 +10,8 @@ import org.madblock.database.ConnectionWrapper;
 import org.madblock.database.DatabaseAPI;
 import org.madblock.database.DatabaseStatement;
 import org.madblock.database.DatabaseUtility;
+import org.madblock.util.DatabaseResult;
+import org.madblock.util.DatabaseReturn;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -116,7 +118,7 @@ public class PlayerRegistry extends PluginBase implements Listener {
     }
 
 
-    public static Optional<String> getPlayerNameByXuid(String xuid) throws SQLException {
+    public static DatabaseReturn<String> getPlayerNameByXuid(String xuid) throws SQLException {
         ConnectionWrapper wrapper = DatabaseAPI.getConnection("MAIN");
         PreparedStatement getUsernameStatement = null;
         String username = null;
@@ -137,10 +139,10 @@ public class PlayerRegistry extends PluginBase implements Listener {
         DatabaseUtility.closeQuietly(getUsernameStatement);
         DatabaseUtility.closeQuietly(wrapper);
 
-        return Optional.ofNullable(username);
+        return DatabaseReturn.of(username, DatabaseResult.SUCCESS);
     }
 
-    public static Optional<String> getPlayerXuidByName(String username) throws SQLException {
+    public static DatabaseReturn<String> getPlayerXuidByName(String username) throws SQLException {
         ConnectionWrapper wrapper = DatabaseAPI.getConnection("MAIN");
         PreparedStatement getXuidStatement = null;
         String xuid = null;
@@ -162,7 +164,7 @@ public class PlayerRegistry extends PluginBase implements Listener {
         DatabaseUtility.closeQuietly(getXuidStatement);
         DatabaseUtility.closeQuietly(wrapper);
 
-        return Optional.ofNullable(xuid);
+        return DatabaseReturn.of(xuid, DatabaseResult.SUCCESS);
     }
 
     @Deprecated

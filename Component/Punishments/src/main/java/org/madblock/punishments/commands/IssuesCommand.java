@@ -11,6 +11,7 @@ import org.madblock.punishments.api.PunishmentManager;
 import org.madblock.punishments.utils.Utility;
 import org.madblock.ranks.api.RankManager;
 import org.madblock.ranks.api.RankProfile;
+import org.madblock.util.DatabaseReturn;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -50,7 +51,7 @@ public class IssuesCommand extends PluginCommand<PunishmentsPlugin> {
         final String targetName = targetNameBuilder.toString();
 
         getPlugin().getServer().getScheduler().scheduleTask(getPlugin(), () -> {
-            Optional<String> xuid;
+            DatabaseReturn<String> xuid;
             try {
                 xuid = PlayerRegistry.getPlayerXuidByName(targetName);
             } catch (SQLException exception) {

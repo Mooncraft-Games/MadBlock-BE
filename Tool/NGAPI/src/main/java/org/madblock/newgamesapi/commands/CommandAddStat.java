@@ -15,6 +15,7 @@ import org.madblock.newgamesapi.rewards.RewardsManager;
 import org.madblock.playerregistry.PlayerRegistry;
 import org.madblock.ranks.api.RankManager;
 import org.madblock.ranks.api.RankProfile;
+import org.madblock.util.DatabaseReturn;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -68,7 +69,7 @@ public class CommandAddStat extends PluginCommand<NewGamesAPI1> {
         String playerName = builder.toString();
 
         getPlugin().getServer().getScheduler().scheduleTask(getPlugin(), () -> {
-            Optional<String> xuid;
+            DatabaseReturn<String> xuid;
             try {
                 xuid = PlayerRegistry.getPlayerXuidByName(playerName);
             } catch (SQLException exception) {
