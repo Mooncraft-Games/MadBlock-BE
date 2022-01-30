@@ -27,7 +27,6 @@ public class PlayerRegistry extends PluginBase implements Listener {
     // code - the code required on the other service for a successful link.
     private static final String CREATE_SERVICE_LINK_TABLE = "CREATE TABLE IF NOT EXISTS pending_service_links ( service VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, code VARCHAR(9) NOT NULL, expire BIGINT NOT NULL, PRIMARY KEY (service, identifier) );";
 
-
     private static final String SELECT_PLAYER_QUERY = "SELECT 1 FROM player_lookup WHERE xuid=?";
     private static final String PLAYER_JOIN_QUERY = "INSERT INTO player_lookup (xuid, username) VALUES (?, ?) ON DUPLICATE KEY UPDATE player_lookup SET username=?;";
 
