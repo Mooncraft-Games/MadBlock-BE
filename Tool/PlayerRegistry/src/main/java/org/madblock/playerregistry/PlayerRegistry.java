@@ -10,6 +10,8 @@ import org.madblock.database.ConnectionWrapper;
 import org.madblock.database.DatabaseAPI;
 import org.madblock.database.DatabaseStatement;
 import org.madblock.database.DatabaseUtility;
+import org.madblock.playerregistry.command.CommandLink;
+import org.madblock.playerregistry.link.IntegrationLinkerForm;
 import org.madblock.util.DatabaseResult;
 import org.madblock.util.DatabaseReturn;
 
@@ -22,18 +24,17 @@ public class PlayerRegistry extends PluginBase implements Listener {
 
     private static PlayerRegistry pluginInst;
 
-
     private static final String CREATE_PLAYER_LOOKUP_TABLE = "CREATE TABLE IF NOT EXISTS player_lookup ( xuid VARCHAR(16) NOT NULL PRIMARY KEY, username VARCHAR(12) NOT NULL);";
 
     // Used for storing established links between a player xuid and an external integration.
     // Note: Discord IDs do not have a fixed length as they're the millis since jan 1st 2015! Currently, they're 17/18 chars, but I'm setting it to 28 for future-proofing.
-    private static final String CREATE_PLAYER_INTEGRATION_LOOKUP_TABLE = "CREATE TABLE IF NOT EXISTS integration_links ( xuid VARCHAR(16) NOT NULL, integration VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, PRIMARY KEY (xuid, integration) );";
+    private static final String CREATE_PLAYER_INTEGRATION_LOOKUP_TABLE = "CREATE TABLE IF NOT EXISTS integration_links ( xuid VARCHAR(16) NOT NULL, integration VARCHAR(24) NOT NULL, identifier VARCHAR(32) NOT NULL, PRIMARY KEY (xuid, integration) );";
 
     // Used for linking integrations such as discord and the minecraft server.
     // service - short id - examples such as "discord", "minecraft", ... - If it's "minecraft" it can link to anything. If it's anything else, it must be linked back to minecraft unless we introduce forums.
     // identifier - user identifier - the id given to a user for that specific integration (minecraft -> [add xuid], discord -> [add discord id])
     // code - the code required on the other integration for a successful link.
-    private static final String CREATE_PENDING_INTEGRATION_LINK_TABLE = "CREATE TABLE IF NOT EXISTS pending_integration_links ( integration VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, code VARCHAR(9) NOT NULL UNIQUE, expire BIGINT NOT NULL, PRIMARY KEY (integration, identifier) );";
+    private static final String CREATE_PENDING_INTEGRATION_LINK_TABLE = "CREATE TABLE IF NOT EXISTS pending_integration_links ( integration VARCHAR(24) NOT NULL, identifier VARCHAR(32) NOT NULL, code VARCHAR(9) NOT NULL UNIQUE, expire BIGINT NOT NULL, PRIMARY KEY (integration, identifier) );";
 
 
 
@@ -42,6 +43,12 @@ public class PlayerRegistry extends PluginBase implements Listener {
 
     private static final String GET_XUID_QUERY = "SELECT xuid FROM player_lookup WHERE UPPER(username)=UPPER(?)";
     private static final String GET_USERNAME_QUERY = "SELECT username FROM player_lookup WHERE xuid=?";
+
+
+    protected IntegrationLinkerForm linkerFormManager;
+
+
+
 
     @Override
     public void onEnable() {
@@ -95,7 +102,13 @@ public class PlayerRegistry extends PluginBase implements Listener {
         DatabaseUtility.closeQuietly(stmtTablePendingLink);
         DatabaseUtility.closeQuietly(wrapper);
 
+
+        this.linkerFormManager = new IntegrationLinkerForm();
+
+        this.getServer().getCommandMap().register("playerregistry", new CommandLink());
+
         this.getServer().getPluginManager().registerEvents(this, this);
+        this.getServer().getPluginManager().registerEvents(this.linkerFormManager, this);
     }
 
 
@@ -130,6 +143,9 @@ public class PlayerRegistry extends PluginBase implements Listener {
         }, true);
     }
 
+    public IntegrationLinkerForm getLinkerFormManager() {
+        return linkerFormManager;
+    }
 
     public static DatabaseReturn<String> getPlayerNameByXuid(String xuid) throws SQLException {
         ConnectionWrapper wrapper = DatabaseAPI.getConnection("MAIN");

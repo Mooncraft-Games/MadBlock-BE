@@ -283,7 +283,7 @@ public class IntegrationLinker {
                     IntegrationLinker.rollbackQuietly(wrapper.getConnection());
                     DatabaseUtility.closeQuietly(stmtGetLinkForCode);
                     DatabaseUtility.closeQuietly(wrapper);
-                    return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.LINK_SAME_PLATFORM);
+                    return DatabaseReturn.empty(DatabaseResult.FAILURE, PlayerRegistryReturns.LINK_SAME_PLATFORM);
                 }
 
             }
@@ -306,7 +306,7 @@ public class IntegrationLinker {
             return DatabaseReturn.empty(DatabaseResult.FAILURE, PlayerRegistryReturns.LINK_NONE_FOUND);
         }
 
-        boolean redeemerIsMinecraft = false;
+        boolean redeemerIsMinecraft;
         String xuid, integration, integrationIdentifier;
 
         // Get whichever platform is minecraft, assign the xuid based off that, and

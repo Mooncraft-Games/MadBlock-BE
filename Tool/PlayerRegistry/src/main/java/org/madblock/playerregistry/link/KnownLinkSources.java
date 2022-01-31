@@ -2,10 +2,10 @@ package org.madblock.playerregistry.link;
 
 public enum KnownLinkSources {
 
-    MINECRAFT("minecraft"), // servers all use xuid, group under one.
-    DISCORD("discord"),
+    MINECRAFT("Minecraft"), // servers all use xuid, group under one.
+    DISCORD("Discord"),
 
-    UNKNOWN("error"); // what.
+    UNKNOWN("???"); // what.
 
     private final String id;
 

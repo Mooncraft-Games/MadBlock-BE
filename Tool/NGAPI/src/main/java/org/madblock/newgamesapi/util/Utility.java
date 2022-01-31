@@ -23,10 +23,13 @@ public class Utility {
 
     public static final TextFormat DEFAULT_TEXT_COLOUR = TextFormat.GRAY;
 
+    //TODO: Remove and direct people to QuirkCommons -> text.ServerFormat
+    @Deprecated
     public static String generateServerMessage(String topic, TextFormat topicColour, String text) {
         return generateServerMessage(topic, topicColour, text, DEFAULT_TEXT_COLOUR);
     }
 
+    @Deprecated
     public static String generateServerMessage(String topic, TextFormat topicColour, String text, TextFormat defaultTextColour) {
         return String.format("%s%s%s %s%s>> %s%s%s", topicColour, TextFormat.BOLD, topic.toUpperCase(), TextFormat.DARK_GRAY, TextFormat.BOLD, TextFormat.RESET, defaultTextColour, text);
     }

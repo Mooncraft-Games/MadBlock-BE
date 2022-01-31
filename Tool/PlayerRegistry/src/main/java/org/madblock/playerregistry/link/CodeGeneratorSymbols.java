@@ -35,6 +35,7 @@ public final class CodeGeneratorSymbols {
     }
 
 
+
     public static String getGraphicFromCode(Character code) {
         Check.nullParam(code, "code");
         int index = CodeGeneratorSymbols.charactersInternal.indexOf(code);
@@ -72,4 +73,12 @@ public final class CodeGeneratorSymbols {
     }
 
 
+
+    public static ArrayList<String> getGraphics() {
+        return new ArrayList<>(graphicsInternal);
+    }
+
+    public static ArrayList<String> getNamesInternal() {
+        return new ArrayList<>(namesInternal);
+    }
 }
