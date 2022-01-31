@@ -245,19 +245,149 @@ public class IntegrationLinker {
      *
      * @return the code to link with
      */
-    public static DatabaseReturn<String> linkFromService(KnownLinkSources service, String id) {
-        return IntegrationLinker.linkFromService(service.getId(), id);
+    public static DatabaseReturn<String> linkFromPlatform(KnownLinkSources service, String id) {
+        return IntegrationLinker.linkFromPlatform(service.getId(), id);
     }
 
 
-    //TODO: Remember that the redeeming service is whatever the /link [code] has been ran on.
-    //      and not where the initial /link was ran.
-    public static DatabaseResult redeemLink(String code, String redeemingService) {
 
+    // TODO: Return the name of the service that generated the code
+    public static DatabaseReturn<String> redeemLink(String code, String redeemingPlatform, String redeemingIdentifier) {
+        Check.notEmptyString(code, "code");
+        Check.notEmptyString(redeemingPlatform, "redeemingPlatform");
+        Check.notEmptyString(redeemingIdentifier, "redeemingIdentifier");
+
+        ConnectionWrapper wrapper;
+
+        try {
+            wrapper = DatabaseAPI.getConnection("MAIN");
+
+        } catch (SQLException err) {
+            err.printStackTrace();
+            return DatabaseReturn.empty(DatabaseResult.DATABASE_OFFLINE);
+        } catch (Exception err) {
+            err.printStackTrace();
+            return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.UNKNOWN_CONNECTION_ERROR);
+        }
+
+        try {
+            wrapper.getConnection().setAutoCommit(false);
+        } catch (Exception err) {
+            err.printStackTrace();
+            DatabaseUtility.closeQuietly(wrapper);
+            return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.FAILED_TO_OBTAIN_LOCK);
+        }
+
+        // Attempt to check the code against the pending database to get the
+        PreparedStatement stmtGetLinkForCode = null;
+        String linkingPlatform = null;
+        String linkingIdentifier = null;
+        try {
+            // code + current timestamp
+            stmtGetLinkForCode = wrapper.prepareStatement(new DatabaseStatement(SQL_FETCH_LINK_DETAILS_FOR_CODE, new Object[]{ code, System.currentTimeMillis() }) );
+            ResultSet results = stmtGetLinkForCode.executeQuery();
+
+            if(results.next()) {
+                linkingPlatform = results.getString("integration");
+                linkingIdentifier = results.getString("identifier");
+
+                if(linkingPlatform.equals(redeemingPlatform)) {
+                    IntegrationLinker.rollbackQuietly(wrapper.getConnection());
+                    DatabaseUtility.closeQuietly(stmtGetLinkForCode);
+                    DatabaseUtility.closeQuietly(wrapper);
+                    return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.LINK_SAME_PLATFORM);
+                }
+
+            }
+
+        } catch (Exception err) {
+            IntegrationLinker.rollbackQuietly(wrapper.getConnection());
+            DatabaseUtility.closeQuietly(stmtGetLinkForCode);
+            DatabaseUtility.closeQuietly(wrapper);
+
+            err.printStackTrace();
+            return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.LINK_FETCH_DETAILS_FROM_CODE_ERRORED);
+        }
+
+        DatabaseUtility.closeQuietly(stmtGetLinkForCode);
+
+        if(Check.isStringEmpty(linkingPlatform) || Check.isStringEmpty(linkingIdentifier)) {
+            IntegrationLinker.rollbackQuietly(wrapper.getConnection());
+            DatabaseUtility.closeQuietly(wrapper);
+
+            return DatabaseReturn.empty(DatabaseResult.FAILURE, PlayerRegistryReturns.LINK_NONE_FOUND);
+        }
+
+        boolean redeemerIsMinecraft = false;
+        String xuid, integration, integrationIdentifier;
+
+        // Get whichever platform is minecraft, assign the xuid based off that, and
+        // sort the order out.
+        // If neither, someone messed up.
+        if(redeemingPlatform.equals(KnownLinkSources.MINECRAFT.getId())) {
+            redeemerIsMinecraft = true;
+            xuid = redeemingIdentifier;
+            integration = linkingPlatform;
+            integrationIdentifier = linkingIdentifier;
+
+        } else if(linkingPlatform.equals(KnownLinkSources.MINECRAFT.getId())) {
+            redeemerIsMinecraft = false;
+            xuid = linkingIdentifier;
+            integration = redeemingPlatform;
+            integrationIdentifier = redeemingIdentifier;
+
+        } else {
+            IntegrationLinker.rollbackQuietly(wrapper.getConnection());
+            DatabaseUtility.closeQuietly(wrapper);
+
+            return DatabaseReturn.empty(DatabaseResult.FAILURE, PlayerRegistryReturns.LINK_INCOMPATIBLE_PLATFORM);
+        }
+
+
+        // Code is valid, attempt to
+        PreparedStatement stmtPublishLink = null;
+        PreparedStatement stmtDeleteLinkCode = null;
+        try {
+
+            stmtPublishLink = wrapper.prepareStatement(new DatabaseStatement(SQL_CREATE_ESTABLISHED_LINK, new Object[]{ xuid, integration, integrationIdentifier }));
+            stmtPublishLink.executeUpdate();
+
+            stmtDeleteLinkCode = wrapper.prepareStatement(new DatabaseStatement(SQL_REMOVE_COMPLETED_CODE, new Object[]{ code }));
+            stmtDeleteLinkCode.executeUpdate();
+
+        } catch (Exception err) {
+            // rollback changes if there's a clash
+            IntegrationLinker.rollbackQuietly(wrapper.getConnection());
+            DatabaseUtility.closeQuietly(stmtPublishLink);
+            DatabaseUtility.closeQuietly(stmtDeleteLinkCode);
+            DatabaseUtility.closeQuietly(wrapper);
+
+            return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.LINK_CREATE_PAIRING_ERRORED);
+        }
+
+        DatabaseUtility.closeQuietly(stmtPublishLink);
+        DatabaseUtility.closeQuietly(stmtDeleteLinkCode);
+
+        // commit all changes made previously.
+        try {
+            wrapper.getConnection().commit();
+
+        } catch (Exception err) {
+            IntegrationLinker.rollbackQuietly(wrapper.getConnection());
+            DatabaseUtility.closeQuietly(wrapper);
+
+            err.printStackTrace();
+            return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.FAILED_TO_RELEASE_LOCK);
+        }
+
+        DatabaseUtility.closeQuietly(wrapper);
+        return redeemerIsMinecraft
+                ? DatabaseReturn.of(linkingPlatform, DatabaseResult.SUCCESS)
+                : DatabaseReturn.of(redeemingPlatform, DatabaseResult.SUCCESS);
     }
 
-    public static DatabaseResult redeemLink(String code, KnownLinkSources redeemingService) {
-        return IntegrationLinker.redeemLink(code, redeemingService.getId());
+    public static DatabaseReturn<String> redeemLink(String code, KnownLinkSources redeemingPlatform, String redeemingIdentifier) {
+        return IntegrationLinker.redeemLink(code, redeemingPlatform.getId(), redeemingIdentifier);
     }
 
 
