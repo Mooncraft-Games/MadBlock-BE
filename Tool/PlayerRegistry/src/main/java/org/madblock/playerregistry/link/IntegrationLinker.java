@@ -1,15 +1,23 @@
 package org.madblock.playerregistry.link;
 
+import org.madblock.database.ConnectionWrapper;
+import org.madblock.database.DatabaseAPI;
+import org.madblock.database.DatabaseStatement;
+import org.madblock.database.DatabaseUtility;
 import org.madblock.playerregistry.PlayerRegistry;
+import org.madblock.playerregistry.PlayerRegistryReturns;
 import org.madblock.util.DatabaseResult;
 import org.madblock.util.DatabaseReturn;
 
 import java.security.SecureRandom;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class ServiceLinker {
+public class IntegrationLinker {
 
     // The following tests were all done using a 9 character source CHARACTERS array.
 
@@ -86,6 +94,7 @@ public class ServiceLinker {
 
     //TODO: Add to a config
     public static final long CODE_EXPIRE_LENGTH = 1000*60*20; // 20 minutes
+    public static final int MAX_CODE_GEN_ATTEMPTS = 5;
 
     public static final int ERROR_CODE_DUPLICATE_KEY = 1062;
 
@@ -100,29 +109,111 @@ public class ServiceLinker {
 
     /**
      * Creates a code to be shown to the user in order to link
-     * two services.
+     * two platforms.
      *
-     * @param service the service the link has been started from
-     * @param id the identifier of the user on the source service
+     * @param service the platform the link has been started from
+     * @param id the identifier of the user on the source platform
      *
      * @return the code to link with
      */
     public static DatabaseReturn<String> linkFromService(String service, String id) {
 
+        ConnectionWrapper wrapper;
+
+        try {
+            wrapper = DatabaseAPI.getConnection("MAIN");
+        } catch (SQLException err) {
+            err.printStackTrace();
+            return DatabaseReturn.empty(DatabaseResult.DATABASE_OFFLINE);
+        } catch (Exception err) {
+            err.printStackTrace();
+            return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.UNKNOWN_CONNECTION_ERROR);
+        }
+
+        // As the goal is to link back to minecraft from other platforms, you can check
+        // if they have a link already. The other way around does not have the shortcut below.
+        if(!service.equals(KnownLinkSources.MINECRAFT.getId())) {
+            PreparedStatement stmtCheckIntegrations = null;
+            ResultSet resultSet;
+            try {
+                stmtCheckIntegrations = wrapper.prepareStatement(new DatabaseStatement(SQL_FETCH_USER_INTEGRATION_WITH_PLATFORM_ID, new Object[] {service, id} ));
+                resultSet = stmtCheckIntegrations.executeQuery();
+
+                // Integration already exists, abort.
+                if(resultSet.next()) {
+                    DatabaseUtility.closeQuietly(stmtCheckIntegrations);
+                    DatabaseUtility.closeQuietly(wrapper);
+                    return DatabaseReturn.empty(DatabaseResult.FAILURE, PlayerRegistryReturns.INTEGRATION_ALREADY_EXISTS);
+                }
+
+            } catch (Exception err) {
+                DatabaseUtility.closeQuietly(stmtCheckIntegrations);
+                DatabaseUtility.closeQuietly(wrapper);
+                err.printStackTrace();
+                return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.INTEGRATION_EXISTENCE_CHECK_ERRORED);
+            }
+
+            DatabaseUtility.closeQuietly(stmtCheckIntegrations);
+        }
+
+
+        String code = null;
+
+        // From testing with 100000 codes, averaging out multiple runs, the most
+        // back to back collisions was 3. - 5 should be enough.
+        for(int attempt = 0; attempt < MAX_CODE_GEN_ATTEMPTS; attempt++) {
+            code = IntegrationLinker.generateCode();
+            long expiryTime = System.currentTimeMillis() + CODE_EXPIRE_LENGTH;
+
+            PreparedStatement stmtPublishCode = null;
+            try {
+                stmtPublishCode = wrapper.prepareStatement(new DatabaseStatement(SQL_CREATE_PENDING_LINK, new Object[] { service, id, code, expiryTime, code, expiryTime } ));
+                stmtPublishCode.execute();
+
+            } catch (SQLException err) {
+                DatabaseUtility.closeQuietly(stmtPublishCode);
+
+                int errCode = err.getErrorCode();
+                if(errCode == ERROR_CODE_DUPLICATE_KEY) {
+                    code = null;
+                    continue; // duplicate key, try again
+                }
+
+                DatabaseUtility.closeQuietly(wrapper);
+                err.printStackTrace();
+                return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.INTEGRATION_CODE_GENERATION_ERRORED);
+
+            } catch (Exception err) {
+                DatabaseUtility.closeQuietly(stmtPublishCode);
+                DatabaseUtility.closeQuietly(wrapper);
+
+                err.printStackTrace();
+                return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.INTEGRATION_CODE_GENERATION_ERRORED);
+            }
+
+            DatabaseUtility.closeQuietly(stmtPublishCode);
+            break;
+        }
+
+
+        DatabaseUtility.closeQuietly(wrapper);
+        return code != null
+                ? DatabaseReturn.of(code, DatabaseResult.SUCCESS)
+                : DatabaseReturn.empty(DatabaseResult.FAILURE, PlayerRegistryReturns.INTEGRATION_ALL_LINK_CODES_DUPES);
     }
 
 
     /**
      * Creates a code to be shown to the user in order to link
-     * two services.
+     * two platforms.
      *
-     * @param service the service the link has been started from
-     * @param id the identifier of the user on the source service
+     * @param service the platform the link has been started from
+     * @param id the identifier of the user on the source platform
      *
      * @return the code to link with
      */
     public static DatabaseReturn<String> linkFromService(KnownLinkSources service, String id) {
-        return ServiceLinker.linkFromService(service.getId(), id);
+        return IntegrationLinker.linkFromService(service.getId(), id);
     }
 
 
@@ -133,7 +224,7 @@ public class ServiceLinker {
     }
 
     public static DatabaseResult redeemLink(String code, KnownLinkSources redeemingService) {
-        return ServiceLinker.redeemLink(code, redeemingService.getId());
+        return IntegrationLinker.redeemLink(code, redeemingService.getId());
     }
 
 
@@ -202,20 +293,21 @@ public class ServiceLinker {
 
                 } else {
                     pastCodes.add(code);
-                    if(dupeStreak > longestDupeStreak)
+                    if (dupeStreak > longestDupeStreak)
                         longestDupeStreak = dupeStreak;
                     dupeStreak = 0;
                 }
             }
+        }
 
 
         double avgFirstDupe = (double) totalFirstDupe / runs;
         double avgDupes = (double) totalDupes / runs;
 
         PlayerRegistry.get().getLogger().info("- Settings ----");
-        PlayerRegistry.get().getLogger().info(String.format("CODE_CHARSET_VARIETY: %s%n", ServiceLinker.CODE_CHARSET_VARIETY));
-        PlayerRegistry.get().getLogger().info(String.format("CODE_VARIETY: %s%n", ServiceLinker.CODE_VARIETY));
-        PlayerRegistry.get().getLogger().info(String.format("CODE_BLOCK_SIZE: %s%n", ServiceLinker.CODE_BLOCK_SIZE));
+        PlayerRegistry.get().getLogger().info(String.format("CODE_CHARSET_VARIETY: %s%n", IntegrationLinker.CODE_CHARSET_VARIETY));
+        PlayerRegistry.get().getLogger().info(String.format("CODE_VARIETY: %s%n", IntegrationLinker.CODE_VARIETY));
+        PlayerRegistry.get().getLogger().info(String.format("CODE_BLOCK_SIZE: %s%n", IntegrationLinker.CODE_BLOCK_SIZE));
 
         PlayerRegistry.get().getLogger().info(String.format("%n- Stats ----%n"));
 
