@@ -1,5 +1,7 @@
 package org.madblock.playerregistry.link;
 
+import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import org.madblock.database.ConnectionWrapper;
 import org.madblock.database.DatabaseAPI;
 import org.madblock.database.DatabaseStatement;
@@ -79,20 +81,6 @@ public class IntegrationLinker {
     public static final int CODE_CHARSET_VARIETY = 6;
     public static final int CODE_VARIETY = 8;
     public static final int CODE_BLOCK_SIZE = 4;
-
-    public static final Character[] CHARACTERS = new Character[] {
-            'p', // pig
-            'c', // cow
-            'S', // squid
-            'v', // villager
-            's', // sheep
-
-            'd', // diamond
-            'E', // emerald
-            'g', // gold ingot
-            'i', // iron ingot
-            'C', // coal
-    };
 
     //TODO: Add to a config
     public static final long CODE_EXPIRE_LENGTH = 1000*60*20; // 20 minutes
@@ -407,9 +395,9 @@ public class IntegrationLinker {
 
         // Firstly, draw a subset of characters from the larger
         // set to make memorisation easier.
-        int size = Math.min(CODE_CHARSET_VARIETY, CHARACTERS.length); // ignore intellij's warnings, this is intended.
+        int size = Math.min(CODE_CHARSET_VARIETY, CodeGeneratorSymbols.CHARACTERS.length); // ignore intellij's warnings, this is intended.
         char[] charSet = new char[size];
-        ArrayList<Character> source = new ArrayList<>(Arrays.asList(CHARACTERS)); // must be Character and not char as java is dumb
+        ArrayList<Character> source = new ArrayList<>(Arrays.asList(CodeGeneratorSymbols.CHARACTERS)); // must be Character and not char as java is dumb
 
         for(int i = 0; i < charSet.length; i++) {
             int index = random.nextInt(source.size());

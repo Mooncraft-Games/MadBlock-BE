@@ -13,7 +13,8 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'org.madblock'
 version '1.0'
-sourceCompatibility = targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 jar {
     jar.enabled(false) // Removes the empty MadBlockServer jar
