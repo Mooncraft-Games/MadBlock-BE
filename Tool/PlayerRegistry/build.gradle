@@ -1,3 +1,4 @@
 dependencies {
+    shadow project(path: ":Library:QuirkCommons", configuration: 'shadow')
     shadow project(":Tool:Database")
 }

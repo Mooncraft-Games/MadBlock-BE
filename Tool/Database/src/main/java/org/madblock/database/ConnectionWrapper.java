@@ -33,4 +33,8 @@ public class ConnectionWrapper {
         return stmt;
     }
 
+    /** @return the connection wrapped by this object */
+    public Connection getConnection() {
+        return connection;
+    }
 }

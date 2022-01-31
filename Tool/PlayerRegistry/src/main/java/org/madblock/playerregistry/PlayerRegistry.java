@@ -33,7 +33,7 @@ public class PlayerRegistry extends PluginBase implements Listener {
     // service - short id - examples such as "discord", "minecraft", ... - If it's "minecraft" it can link to anything. If it's anything else, it must be linked back to minecraft unless we introduce forums.
     // identifier - user identifier - the id given to a user for that specific integration (minecraft -> [add xuid], discord -> [add discord id])
     // code - the code required on the other integration for a successful link.
-    private static final String CREATE_PENDING_INTEGRATION_LINK_TABLE = "CREATE TABLE IF NOT EXISTS pending_integration_links ( integration VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, code VARCHAR(9) NOT NULL, expire BIGINT NOT NULL, PRIMARY KEY (integration, identifier) );";
+    private static final String CREATE_PENDING_INTEGRATION_LINK_TABLE = "CREATE TABLE IF NOT EXISTS pending_integration_links ( integration VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, code VARCHAR(9) NOT NULL UNIQUE, expire BIGINT NOT NULL, PRIMARY KEY (integration, identifier) );";
 
 
 

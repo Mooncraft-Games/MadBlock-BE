@@ -4,12 +4,14 @@ import org.madblock.database.ConnectionWrapper;
 import org.madblock.database.DatabaseAPI;
 import org.madblock.database.DatabaseStatement;
 import org.madblock.database.DatabaseUtility;
+import org.madblock.lib.commons.style.Check;
 import org.madblock.playerregistry.PlayerRegistry;
 import org.madblock.playerregistry.PlayerRegistryReturns;
 import org.madblock.util.DatabaseResult;
 import org.madblock.util.DatabaseReturn;
 
 import java.security.SecureRandom;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -99,24 +101,29 @@ public class IntegrationLinker {
     public static final int ERROR_CODE_DUPLICATE_KEY = 1062;
 
     public static final String SQL_CREATE_PENDING_LINK = "INSERT INTO pending_service_links (integration, identifier, code, expire) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE code=?, expire=?;";
+    public static final String SQL_CREATE_ESTABLISHED_LINK = "INSERT INTO integration_links (xuid, integration, identifier) VALUES (?, ?, ?);";
 
     public static final String SQL_FETCH_LINK_DETAILS_FOR_CODE = "SELECT integration, identifier FROM pending_service_links WHERE code=? AND expire>?;";
     public static final String SQL_REMOVE_EXPIRED_CODES = "DELETE FROM pending_service_links WHERE expire<?;";
+    public static final String SQL_REMOVE_COMPLETED_CODE = "DELETE FROM pending_service_links WHERE code=?;";
 
     public static final String SQL_FETCH_USER_INTEGRATION_WITH_XUID = "SELECT integration, identifier FROM integration_links WHERE xuid=? AND integration=?;";
     public static final String SQL_FETCH_USER_INTEGRATION_WITH_PLATFORM_ID = "SELECT xuid FROM integration_links WHERE identifier=? AND integration=?;";
+
 
 
     /**
      * Creates a code to be shown to the user in order to link
      * two platforms.
      *
-     * @param service the platform the link has been started from
+     * @param platform the platform the link has been started from
      * @param id the identifier of the user on the source platform
      *
      * @return the code to link with
      */
-    public static DatabaseReturn<String> linkFromService(String service, String id) {
+    public static DatabaseReturn<String> linkFromPlatform(String platform, String id) {
+        Check.notEmptyString(platform, "platform");
+        Check.notEmptyString(id, "id");
 
         ConnectionWrapper wrapper;
 
@@ -130,23 +137,35 @@ public class IntegrationLinker {
             return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.UNKNOWN_CONNECTION_ERROR);
         }
 
+        // Enter a transaction as we're chaining multiple statements.
+        try {
+            wrapper.getConnection().setAutoCommit(false);
+        } catch (Exception err) {
+            err.printStackTrace();
+            DatabaseUtility.closeQuietly(wrapper);
+            return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.FAILED_TO_OBTAIN_LOCK);
+        }
+
+
         // As the goal is to link back to minecraft from other platforms, you can check
         // if they have a link already. The other way around does not have the shortcut below.
-        if(!service.equals(KnownLinkSources.MINECRAFT.getId())) {
+        if(!platform.equals(KnownLinkSources.MINECRAFT.getId())) {
             PreparedStatement stmtCheckIntegrations = null;
             ResultSet resultSet;
             try {
-                stmtCheckIntegrations = wrapper.prepareStatement(new DatabaseStatement(SQL_FETCH_USER_INTEGRATION_WITH_PLATFORM_ID, new Object[] {service, id} ));
+                stmtCheckIntegrations = wrapper.prepareStatement(new DatabaseStatement(SQL_FETCH_USER_INTEGRATION_WITH_PLATFORM_ID, new Object[] {platform, id} ));
                 resultSet = stmtCheckIntegrations.executeQuery();
 
                 // Integration already exists, abort.
                 if(resultSet.next()) {
+                    IntegrationLinker.rollbackQuietly(wrapper.getConnection());
                     DatabaseUtility.closeQuietly(stmtCheckIntegrations);
                     DatabaseUtility.closeQuietly(wrapper);
                     return DatabaseReturn.empty(DatabaseResult.FAILURE, PlayerRegistryReturns.INTEGRATION_ALREADY_EXISTS);
                 }
 
             } catch (Exception err) {
+                IntegrationLinker.rollbackQuietly(wrapper.getConnection());
                 DatabaseUtility.closeQuietly(stmtCheckIntegrations);
                 DatabaseUtility.closeQuietly(wrapper);
                 err.printStackTrace();
@@ -167,8 +186,8 @@ public class IntegrationLinker {
 
             PreparedStatement stmtPublishCode = null;
             try {
-                stmtPublishCode = wrapper.prepareStatement(new DatabaseStatement(SQL_CREATE_PENDING_LINK, new Object[] { service, id, code, expiryTime, code, expiryTime } ));
-                stmtPublishCode.execute();
+                stmtPublishCode = wrapper.prepareStatement(new DatabaseStatement(SQL_CREATE_PENDING_LINK, new Object[] { platform, id, code, expiryTime, code, expiryTime } ));
+                stmtPublishCode.executeUpdate();
 
             } catch (SQLException err) {
                 DatabaseUtility.closeQuietly(stmtPublishCode);
@@ -179,11 +198,13 @@ public class IntegrationLinker {
                     continue; // duplicate key, try again
                 }
 
+                IntegrationLinker.rollbackQuietly(wrapper.getConnection());
                 DatabaseUtility.closeQuietly(wrapper);
                 err.printStackTrace();
                 return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.INTEGRATION_CODE_GENERATION_ERRORED);
 
             } catch (Exception err) {
+                IntegrationLinker.rollbackQuietly(wrapper.getConnection());
                 DatabaseUtility.closeQuietly(stmtPublishCode);
                 DatabaseUtility.closeQuietly(wrapper);
 
@@ -193,6 +214,18 @@ public class IntegrationLinker {
 
             DatabaseUtility.closeQuietly(stmtPublishCode);
             break;
+        }
+
+
+
+        try {
+            wrapper.getConnection().commit();
+        } catch (Exception err) {
+            IntegrationLinker.rollbackQuietly(wrapper.getConnection());
+            DatabaseUtility.closeQuietly(wrapper);
+
+            err.printStackTrace();
+            return DatabaseReturn.empty(DatabaseResult.ERROR, PlayerRegistryReturns.FAILED_TO_RELEASE_LOCK);
         }
 
 
@@ -225,6 +258,12 @@ public class IntegrationLinker {
 
     public static DatabaseResult redeemLink(String code, KnownLinkSources redeemingService) {
         return IntegrationLinker.redeemLink(code, redeemingService.getId());
+    }
+
+
+    private static void rollbackQuietly(Connection connection) {
+        try { connection.rollback(); }
+        catch (Exception ignored) { }
     }
 
 
