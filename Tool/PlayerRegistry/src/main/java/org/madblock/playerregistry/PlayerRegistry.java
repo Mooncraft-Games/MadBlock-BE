@@ -25,15 +25,15 @@ public class PlayerRegistry extends PluginBase implements Listener {
 
     private static final String CREATE_PLAYER_LOOKUP_TABLE = "CREATE TABLE IF NOT EXISTS player_lookup ( xuid VARCHAR(16) NOT NULL PRIMARY KEY, username VARCHAR(12) NOT NULL);";
 
-    // Used for storing established links between a player xuid and an external service.
+    // Used for storing established links between a player xuid and an external integration.
     // Note: Discord IDs do not have a fixed length as they're the millis since jan 1st 2015! Currently, they're 17/18 chars, but I'm setting it to 28 for future-proofing.
-    private static final String CREATE_PLAYER_SERVICE_LOOKUP_TABLE = "CREATE TABLE IF NOT EXISTS service_links ( xuid VARCHAR(16) NOT NULL, service VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, PRIMARY KEY (xuid, service) );";
+    private static final String CREATE_PLAYER_INTEGRATION_LOOKUP_TABLE = "CREATE TABLE IF NOT EXISTS integration_links ( xuid VARCHAR(16) NOT NULL, integration VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, PRIMARY KEY (xuid, integration) );";
 
-    // Used for linking services such as discord and the minecraft server.
+    // Used for linking integrations such as discord and the minecraft server.
     // service - short id - examples such as "discord", "minecraft", ... - If it's "minecraft" it can link to anything. If it's anything else, it must be linked back to minecraft unless we introduce forums.
-    // identifier - user identifier - the id given to a user for that specific service (minecraft -> [add xuid], discord -> [add discord id])
-    // code - the code required on the other service for a successful link.
-    private static final String CREATE_PENDING_SERVICE_LINK_TABLE = "CREATE TABLE IF NOT EXISTS pending_service_links ( service VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, code VARCHAR(9) NOT NULL, expire BIGINT NOT NULL, PRIMARY KEY (service, identifier) );";
+    // identifier - user identifier - the id given to a user for that specific integration (minecraft -> [add xuid], discord -> [add discord id])
+    // code - the code required on the other integration for a successful link.
+    private static final String CREATE_PENDING_INTEGRATION_LINK_TABLE = "CREATE TABLE IF NOT EXISTS pending_integration_links ( integration VARCHAR(10) NOT NULL, identifier VARCHAR(32) NOT NULL, code VARCHAR(9) NOT NULL, expire BIGINT NOT NULL, PRIMARY KEY (integration, identifier) );";
 
 
 
@@ -67,17 +67,17 @@ public class PlayerRegistry extends PluginBase implements Listener {
             stmtPlayerLookup = wrapper.prepareStatement(new DatabaseStatement(CREATE_PLAYER_LOOKUP_TABLE));
             stmtPlayerLookup.execute();
 
-            stmtTableLink = wrapper.prepareStatement(new DatabaseStatement(CREATE_PLAYER_SERVICE_LOOKUP_TABLE));
+            stmtTableLink = wrapper.prepareStatement(new DatabaseStatement(CREATE_PLAYER_INTEGRATION_LOOKUP_TABLE));
             stmtTableLink.execute();
 
 
-            stmtTablePendingLink = wrapper.prepareStatement(new DatabaseStatement(CREATE_PENDING_SERVICE_LINK_TABLE));
+            stmtTablePendingLink = wrapper.prepareStatement(new DatabaseStatement(CREATE_PENDING_INTEGRATION_LINK_TABLE));
             stmtTablePendingLink.execute();
 
 
 
         } catch (SQLException initException) {
-            this.getLogger().error("Failed to create player_lookup table. Disabling...");
+            this.getLogger().error("Failed to create an essential table. Disabling...");
             this.getLogger().error(initException.toString());
 
             DatabaseUtility.closeQuietly(stmtPlayerLookup);

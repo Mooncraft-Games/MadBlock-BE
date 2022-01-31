@@ -87,10 +87,15 @@ public class ServiceLinker {
     //TODO: Add to a config
     public static final long CODE_EXPIRE_LENGTH = 1000*60*20; // 20 minutes
 
-    public static final String SQL_CREATE_PENDING_LINK = "INSERT INTO pending_service_links (service, identifier, code, expire) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE code=?, expire=?;";
+    public static final int ERROR_CODE_DUPLICATE_KEY = 1062;
 
-    public static final String SQL_FETCH_LINK_DETAILS_FOR_CODE = "SELECT service, identifier FROM pending_service_links WHERE code=? AND expire>?;";
+    public static final String SQL_CREATE_PENDING_LINK = "INSERT INTO pending_service_links (integration, identifier, code, expire) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE code=?, expire=?;";
+
+    public static final String SQL_FETCH_LINK_DETAILS_FOR_CODE = "SELECT integration, identifier FROM pending_service_links WHERE code=? AND expire>?;";
     public static final String SQL_REMOVE_EXPIRED_CODES = "DELETE FROM pending_service_links WHERE expire<?;";
+
+    public static final String SQL_FETCH_USER_INTEGRATION_WITH_XUID = "SELECT integration, identifier FROM integration_links WHERE xuid=? AND integration=?;";
+    public static final String SQL_FETCH_USER_INTEGRATION_WITH_PLATFORM_ID = "SELECT xuid FROM integration_links WHERE identifier=? AND integration=?;";
 
 
     /**
@@ -176,6 +181,7 @@ public class ServiceLinker {
     private static Number[] testCodeGeneration(int runs, int codesPerRun) {
         float totalFirstDupe = 0;
         float totalDupes = 0;
+        int longestDupeStreak = 0;
 
 
         for(int run = 0; run < runs; run++) {
@@ -183,21 +189,25 @@ public class ServiceLinker {
 
             int dupes = 0;
             int firstDupe = -1;
+            int dupeStreak = 0;
 
             for (int i = 0; i < codesPerRun; i++) {
-                String code = ServiceLinker.generateCode();
+                String code = IntegrationLinker.generateCode();
                 //System.out.printf("Code: %s\n", code);
 
                 if (pastCodes.contains(code)) {
                     dupes++;
+                    dupeStreak += 1;
                     if (firstDupe < 0) firstDupe = i;
 
-                } else pastCodes.add(code);
+                } else {
+                    pastCodes.add(code);
+                    if(dupeStreak > longestDupeStreak)
+                        longestDupeStreak = dupeStreak;
+                    dupeStreak = 0;
+                }
             }
 
-            totalDupes += dupes;
-            totalFirstDupe += firstDupe;
-        }
 
         double avgFirstDupe = (double) totalFirstDupe / runs;
         double avgDupes = (double) totalDupes / runs;
@@ -213,9 +223,10 @@ public class ServiceLinker {
         PlayerRegistry.get().getLogger().info(String.format("Codes Per Run: %s%n", codesPerRun));
 
         PlayerRegistry.get().getLogger().info(String.format("%nTotal Dupes: %s%n", totalDupes));
+        PlayerRegistry.get().getLogger().info(String.format("Longest Dupe Streak: %s%n", longestDupeStreak));
         PlayerRegistry.get().getLogger().info(String.format("Avg Dupes: %s%n", avgDupes));
         PlayerRegistry.get().getLogger().info(String.format("Avg First Dupe Index: %s%n", avgFirstDupe));
 
-        return new Number[] { totalDupes, avgDupes, avgFirstDupe };
+        return new Number[] { totalDupes, longestDupeStreak, avgDupes, avgFirstDupe };
     }
 }
