@@ -1,4 +1,8 @@
-package org.madblock.playerregistry;
+package org.madblock.playerregistry.link;
+
+import org.madblock.playerregistry.PlayerRegistry;
+import org.madblock.util.DatabaseResult;
+import org.madblock.util.DatabaseReturn;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -6,6 +10,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class ServiceLinker {
+
+    // The following tests were all done using a 9 character source CHARACTERS array.
 
     /*
      * - Example ----
@@ -65,21 +71,65 @@ public class ServiceLinker {
     public static final int CODE_BLOCK_SIZE = 4;
 
     public static final Character[] CHARACTERS = new Character[] {
-            'c', // creeper
-            'z', // zombie
-            'e', // enderman
-
-            'v', // villager
             'p', // pig
+            'c', // cow
+            'S', // squid
+            'v', // villager
             's', // sheep
 
             'd', // diamond
+            'E', // emerald
             'g', // gold ingot
-            'i'  // iron ingot
+            'i', // iron ingot
+            'C', // coal
     };
 
+    //TODO: Add to a config
+    public static final long CODE_EXPIRE_LENGTH = 1000*60*20; // 20 minutes
+
+    public static final String SQL_CREATE_PENDING_LINK = "INSERT INTO pending_service_links (service, identifier, code, expire) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE code=?, expire=?;";
+
+    public static final String SQL_FETCH_LINK_DETAILS_FOR_CODE = "SELECT service, identifier FROM pending_service_links WHERE code=? AND expire>?;";
+    public static final String SQL_REMOVE_EXPIRED_CODES = "DELETE FROM pending_service_links WHERE expire<?;";
 
 
+    /**
+     * Creates a code to be shown to the user in order to link
+     * two services.
+     *
+     * @param service the service the link has been started from
+     * @param id the identifier of the user on the source service
+     *
+     * @return the code to link with
+     */
+    public static DatabaseReturn<String> linkFromService(String service, String id) {
+
+    }
+
+
+    /**
+     * Creates a code to be shown to the user in order to link
+     * two services.
+     *
+     * @param service the service the link has been started from
+     * @param id the identifier of the user on the source service
+     *
+     * @return the code to link with
+     */
+    public static DatabaseReturn<String> linkFromService(KnownLinkSources service, String id) {
+        return ServiceLinker.linkFromService(service.getId(), id);
+    }
+
+
+    //TODO: Remember that the redeeming service is whatever the /link [code] has been ran on.
+    //      and not where the initial /link was ran.
+    public static DatabaseResult redeemLink(String code, String redeemingService) {
+
+    }
+
+    public static DatabaseResult redeemLink(String code, KnownLinkSources redeemingService) {
+        return ServiceLinker.redeemLink(code, redeemingService.getId());
+    }
 
 
     /**
@@ -92,10 +142,11 @@ public class ServiceLinker {
 
         // Firstly, draw a subset of characters from the larger
         // set to make memorisation easier.
-        char[] charSet = new char[CODE_CHARSET_VARIETY];
+        int size = Math.min(CODE_CHARSET_VARIETY, CHARACTERS.length); // ignore intellij's warnings, this is intended.
+        char[] charSet = new char[size];
         ArrayList<Character> source = new ArrayList<>(Arrays.asList(CHARACTERS)); // must be Character and not char as java is dumb
 
-        for(int i = 0; i < CODE_CHARSET_VARIETY; i++) {
+        for(int i = 0; i < charSet.length; i++) {
             int index = random.nextInt(source.size());
             Character chr = source.remove(index);
 
