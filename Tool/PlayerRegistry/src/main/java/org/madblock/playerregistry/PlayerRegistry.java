@@ -129,7 +129,7 @@ public class PlayerRegistry extends PluginBase implements Listener {
 
             PreparedStatement updateStmt = null;
             try {
-                updateStmt = wrapper.prepareStatement(new DatabaseStatement(PLAYER_JOIN_QUERY, new Object[]{ username, xuid, username }));
+                updateStmt = wrapper.prepareStatement(new DatabaseStatement(PLAYER_JOIN_QUERY, new Object[]{ xuid, username, username }));
                 updateStmt.executeUpdate();
 
             } catch (SQLException updateException) {

@@ -88,12 +88,12 @@ public class IntegrationLinker {
 
     public static final int ERROR_CODE_DUPLICATE_KEY = 1062;
 
-    public static final String SQL_CREATE_PENDING_LINK = "INSERT INTO pending_service_links (integration, identifier, code, expire) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE code=?, expire=?;";
+    public static final String SQL_CREATE_PENDING_LINK = "INSERT INTO pending_integration_links (integration, identifier, code, expire) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE code=?, expire=?;";
     public static final String SQL_CREATE_ESTABLISHED_LINK = "INSERT INTO integration_links (xuid, integration, identifier) VALUES (?, ?, ?);";
 
-    public static final String SQL_FETCH_LINK_DETAILS_FOR_CODE = "SELECT integration, identifier FROM pending_service_links WHERE code=? AND expire>?;";
-    public static final String SQL_REMOVE_EXPIRED_CODES = "DELETE FROM pending_service_links WHERE expire<?;";
-    public static final String SQL_REMOVE_COMPLETED_CODE = "DELETE FROM pending_service_links WHERE code=?;";
+    public static final String SQL_FETCH_LINK_DETAILS_FOR_CODE = "SELECT integration, identifier FROM pending_integration_links WHERE code=? AND expire>?;";
+    public static final String SQL_REMOVE_EXPIRED_CODES = "DELETE FROM pending_integration_links WHERE expire<?;";
+    public static final String SQL_REMOVE_COMPLETED_CODE = "DELETE FROM pending_integration_links WHERE code=?;";
 
     public static final String SQL_FETCH_USER_INTEGRATION_WITH_XUID = "SELECT integration, identifier FROM integration_links WHERE xuid=? AND integration=?;";
     public static final String SQL_FETCH_USER_INTEGRATION_WITH_PLATFORM_ID = "SELECT xuid FROM integration_links WHERE identifier=? AND integration=?;";
