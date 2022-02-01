@@ -181,15 +181,10 @@ public class IntegrationLinkerForm implements Listener {
             for(int i = 0; i < formIn.getResponses().size(); i++) {
                 Object element = formIn.getResponses().get(i);
 
-                if(element instanceof FormResponseData) {
-                    FormResponseData dropdown = (FormResponseData) element;
-                    String response = dropdown.getElementContent();
-                    Character symbol = CodeGeneratorSymbols.getCodeFromGraphic(response);
-                    assemble.append(symbol);
+                String character = element.toString();
+                Character symbol = CodeGeneratorSymbols.getCodeFromGraphic(character);
 
-                } else {
-                    assemble.append("-");
-                }
+                assemble.append(symbol == ' ' ? "-" : symbol);
             }
 
             String code = assemble.toString();
