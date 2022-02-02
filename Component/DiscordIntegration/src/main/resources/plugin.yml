@@ -1,0 +1,7 @@
+name: MadBotIntegrated
+main: org.madblock.madbot.MadBot
+version: "1.0.0"
+api: ["1.0.0"]
+
+author: "CG360"
+depend: [NewGamesAPI1, MadblockDatabase, MadblockRanks, MadblockPlayerRegistry]

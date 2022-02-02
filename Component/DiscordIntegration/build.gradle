@@ -1,0 +1,9 @@
+dependencies {
+    shadow project(":Tool:NGAPI")
+    shadow project(":Tool:Database")
+    shadow project(":Tool:PlayerRegistry")
+    shadow project(":Component:Ranks")
+    shadow project(path: ":Library:QuirkCommons", configuration: 'shadow')
+
+    implementation "com.discord4j:discord4j-core:3.2.1"
+}

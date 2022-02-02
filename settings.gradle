@@ -1,7 +1,7 @@
 rootProject.name = 'MadBlockServer'
 include 'Library:QuirkCommons', //'Library:MapDescriptor',
         'Tool:NGAPI', 'Tool:Database', 'Tool:PlayerRegistry', 'Tool:StatTrackAPI',
-        'Component:Ranks', 'Component:Punishments', 'Component:Social',
+        'Component:Ranks', 'Component:Punishments', 'Component:Social', 'Component:DiscordIntegration',
         'Game:CrystalWars', 'Game:BlockSwap', 'Game:SumoX', 'Game:TowerWars', 'Game:SkyWars',
         'External:NukkitTables', 'External:ScoreboardAPI'
 
