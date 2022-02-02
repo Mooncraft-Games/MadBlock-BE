@@ -29,8 +29,8 @@ public class MadBot extends PluginBase {
 
     protected long[] commandGuildIDs = new long[] {
             937695968843943976L, // MadBlock Brain
-            879854387265171526L, // Quibble Dev
-            549066921945858050L  // 5 Frame Studios
+            879854387265171526L // Quibble Dev
+            //549066921945858050L  // 5 Frame Studios
     };
 
     @Override
@@ -50,11 +50,6 @@ public class MadBot extends PluginBase {
             return;
         }
 
-
-        this.botCommandRegistry = new BotCommandRegistry();
-        this.botCommandRegistry.setAsMain();
-        this.registerCommands();
-
         this.gatewayClient = DiscordClientBuilder.create(token).build().login().block();
 
         if(this.gatewayClient == null) {
@@ -65,6 +60,10 @@ public class MadBot extends PluginBase {
         }
 
         this.applicationID = this.gatewayClient.getRestClient().getApplicationId().block();
+
+        this.botCommandRegistry = new BotCommandRegistry();
+        this.botCommandRegistry.setAsMain();
+        this.registerCommands();
 
         this.gatewayClient.on(ApplicationCommandInteractionEvent.class).subscribe(MadBotEventCore::handleAppCommandExecuted);
         this.gatewayClient.on(ButtonInteractionEvent.class).subscribe(MadBotEventCore::handleAppButtonPushed);
