@@ -3,17 +3,18 @@ package org.madblock.madbot;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.ConfigSection;
-import discord4j.core.DiscordClient;
+import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent;
 import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
+import discord4j.core.object.entity.GuildEmoji;
 import discord4j.discordjson.json.ApplicationCommandRequest;
-import discord4j.rest.RestClient;
 import org.madblock.lib.commons.style.Check;
 import org.madblock.madbot.command.BotCommand;
 import org.madblock.madbot.command.BotCommandRegistry;
 import org.madblock.madbot.command.account.CommandLink;
+import org.madblock.madbot.link.MadBotLinker;
 
 import java.io.File;
 
@@ -21,16 +22,20 @@ public class MadBot extends PluginBase {
 
     private static MadBot madBotInstance;
 
+    public static final long BRAIN_GUILD = 549066921945858050L;
+
+
     protected Config config = null;
     protected GatewayDiscordClient gatewayClient = null;
     protected long applicationID = 0;
 
     protected BotCommandRegistry botCommandRegistry;
+    protected MadBotLinker madBotLinker;
 
     protected long[] commandGuildIDs = new long[] {
-            937695968843943976L, // MadBlock Brain
-            879854387265171526L // Quibble Dev
-            //549066921945858050L  // 5 Frame Studios
+            //937695968843943976L, // MadBlock Brain
+            //879854387265171526L // Quibble Dev
+            549066921945858050L  // 5 Frame Studios
     };
 
     @Override
@@ -65,8 +70,12 @@ public class MadBot extends PluginBase {
         this.botCommandRegistry.setAsMain();
         this.registerCommands();
 
+        this.madBotLinker = new MadBotLinker();
+
         this.gatewayClient.on(ApplicationCommandInteractionEvent.class).subscribe(MadBotEventCore::handleAppCommandExecuted);
         this.gatewayClient.on(ButtonInteractionEvent.class).subscribe(MadBotEventCore::handleAppButtonPushed);
+
+        this.gatewayClient.on(ButtonInteractionEvent.class).subscribe(this.madBotLinker::handleAppButtonPushed);
     }
 
     @Override
@@ -129,6 +138,14 @@ public class MadBot extends PluginBase {
 
     public BotCommandRegistry getBotCommandRegistry() {
         return this.botCommandRegistry;
+    }
+
+    public MadBotLinker getMadBotLinker() {
+        return madBotLinker;
+    }
+
+    public GuildEmoji getEmoji(Snowflake guild, Snowflake emoji) {
+        return MadBot.get().getGatewayClient().getGuildEmojiById(guild, emoji).block();
     }
 
 
