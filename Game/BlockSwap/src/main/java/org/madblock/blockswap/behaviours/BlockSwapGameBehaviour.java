@@ -183,14 +183,23 @@ public class BlockSwapGameBehaviour extends GameBehavior {
 
         if(platformRegion.isPresent()) {
             ControlledSettings newSettings = new ControlledSettings();
+            Random random = new Random();
 
             //TODO: Add some randomization!
             newSettings.set(ContextKeys.BLOCKSWAP_GAME, this);
-            newSettings.set(ContextKeys.AXIS, Axis.X);
-            newSettings.set(ContextKeys.NOISE_SCALE_X, 16d).set(ContextKeys.NOISE_SCALE_Y, 16d).set(ContextKeys.NOISE_SCALE_Z, 16d);
 
-            int randomScale = 2 + new Random().nextInt(4);
-            newSettings.set(ContextKeys.RANDOM_SCALE_X, randomScale).set(ContextKeys.RANDOM_SCALE_Y, randomScale).set(ContextKeys.RANDOM_SCALE_Z, randomScale);
+            if(this.currentGenerator.getGeneratorID().equalsIgnoreCase("blockswap:striped")) {
+                newSettings.set(ContextKeys.AXIS, random.nextInt(2) == 0 ? Axis.X : Axis.Z);
+                int randomScale = 1 + new Random().nextInt(2);
+                newSettings.set(ContextKeys.RANDOM_SCALE_X, randomScale).set(ContextKeys.RANDOM_SCALE_Y, randomScale).set(ContextKeys.RANDOM_SCALE_Z, randomScale);
+
+            } else {
+                newSettings.set(ContextKeys.AXIS, Axis.X);
+                newSettings.set(ContextKeys.NOISE_SCALE_X, 16d).set(ContextKeys.NOISE_SCALE_Y, 16d).set(ContextKeys.NOISE_SCALE_Z, 16d);
+
+                int randomScale = 2 + new Random().nextInt(4);
+                newSettings.set(ContextKeys.RANDOM_SCALE_X, randomScale).set(ContextKeys.RANDOM_SCALE_Y, randomScale).set(ContextKeys.RANDOM_SCALE_Z, randomScale);
+            }
 
             this.currentGenerator.setContext(newSettings); // Claim generator
             platformRegion.get().runFunction();
