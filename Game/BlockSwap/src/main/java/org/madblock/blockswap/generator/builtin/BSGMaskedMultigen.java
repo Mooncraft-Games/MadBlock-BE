@@ -79,4 +79,10 @@ public class BSGMaskedMultigen extends BSwapGenerator {
             throw new IllegalStateException("BSGMaskedMultigen requires at least 3 BSwapGenerator types to be registered on the server.");
         }
     }
+
+
+    @Override
+    public int getWeight() {
+        return 1;
+    }
 }

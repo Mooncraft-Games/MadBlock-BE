@@ -78,7 +78,7 @@ public class BlockSwapPlugin extends PluginBase {
         )
                 .setGuidelinePlayers(1)
                 .setMinimumPlayers(1)
-                .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS)
+                .setMaximumPlayers(BlockSwapConstants.MAXIMUM_PLAYERS_TOURNEY)
                 .setCanWorldBeManipulated(false)
                 .setTourneyGamemode(true)
                 .setDefaultCountdownLength(10);

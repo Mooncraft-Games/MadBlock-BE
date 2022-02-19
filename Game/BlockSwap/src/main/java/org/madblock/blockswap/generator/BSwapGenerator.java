@@ -96,4 +96,7 @@ public abstract class BSwapGenerator {
 
         return (int) ((value - remainder) / section); // Calculate section by removing remainder to get a whole number.
     }
+
+
+    public abstract int getWeight();
 }

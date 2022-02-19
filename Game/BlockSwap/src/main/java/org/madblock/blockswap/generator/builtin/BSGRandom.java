@@ -61,4 +61,9 @@ public class BSGRandom extends BSwapGenerator {
         this.scaleY = getContext().getOrElse(ContextKeys.RANDOM_SCALE_Y, 1);
         this.scaleZ = getContext().getOrElse(ContextKeys.RANDOM_SCALE_Z, 1);
     }
+
+    @Override
+    public int getWeight() {
+        return 4;
+    }
 }

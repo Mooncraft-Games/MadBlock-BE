@@ -58,4 +58,9 @@ public class BSGNoiseStriped extends BSwapGenerator {
         this.scaleY = getContext().getOrElse(ContextKeys.NOISE_SCALE_Y, 0.001d);
         this.scaleZ = getContext().getOrElse(ContextKeys.NOISE_SCALE_Z, 0.001d);
     }
+
+    @Override
+    public int getWeight() {
+        return 1;
+    }
 }

@@ -63,4 +63,9 @@ public class BSG2DNoise extends BSwapGenerator {
         this.scaleZ = getContext().getOrElse(ContextKeys.NOISE_SCALE_Z, 0.0005d);
         BlockSwapPlugin.getLog().info(Arrays.toString(context.get(ContextKeys.BLOCKSWAP_GAME).getColors().toArray()));
     }
+
+    @Override
+    public int getWeight() {
+        return 1;
+    }
 }
