@@ -6,6 +6,7 @@ import cn.nukkit.utils.Logger;
 import org.madblock.blockswap.behaviours.PracticeBlockSwapGameBehaviour;
 import org.madblock.blockswap.generator.BSwapGeneratorManager;
 import org.madblock.blockswap.generator.builtin.BSGRandom;
+import org.madblock.blockswap.generator.builtin.BSGRandomStriped;
 import org.madblock.blockswap.kits.DefaultKit;
 import org.madblock.blockswap.kits.LeaperKit;
 import org.madblock.blockswap.kits.RunnerKit;
@@ -39,7 +40,7 @@ public class BlockSwapPlugin extends PluginBase {
         //BSwapGeneratorManager.get().registerGenerator(new BSGMaskedMultigen()); - Needs more generation options
         //BSwapGeneratorManager.get().registerGenerator(new BSGNoiseStriped());
         BSwapGeneratorManager.get().registerGenerator(new BSGRandom());
-        //BSwapGeneratorManager.get().registerGenerator(new BSGRandomStriped());
+        BSwapGeneratorManager.get().registerGenerator(new BSGRandomStriped());
 
 
         // -- Kits --
