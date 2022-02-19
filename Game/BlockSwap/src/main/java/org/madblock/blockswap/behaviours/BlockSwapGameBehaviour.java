@@ -148,7 +148,6 @@ public class BlockSwapGameBehaviour extends GameBehavior {
             this.setRoundTime(Math.max(40, this.getRoundTime() - 10));
         }
         this.setRoundTimeLeft(this.getRoundTime());
-        this.setCompletedRounds(0);
 
         // Reregister all tasks.
         this.getSessionHandler().getGameScheduler().registerGameTask(this::generateNewPlatformTask);
