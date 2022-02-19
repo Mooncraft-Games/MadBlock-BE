@@ -148,6 +148,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
             this.setRoundTime(Math.max(40, this.getRoundTime() - 10));
         }
         this.setRoundTimeLeft(this.getRoundTime());
+        this.setCompletedRounds(0);
 
         // Reregister all tasks.
         this.getSessionHandler().getGameScheduler().registerGameTask(this::generateNewPlatformTask);
@@ -305,6 +306,14 @@ public class BlockSwapGameBehaviour extends GameBehavior {
         }
     }
 
+    protected void updateCurrentRoundScoreboard() {
+        for (Player player : this.getSessionHandler().getPlayers()) {
+            this.getSessionHandler().getScoreboardManager().setLine(player, BlockSwapConstants.SCOREBOARD_ROUND_INDEX, String.format("%s %d", Utility.ResourcePackCharacters.TROPHY, completedRounds + 1));
+        }
+    }
+
+
+
     protected static String generateBlockID(int x, int y, int z) {
         return String.format("%s|%s|%s;", x, y, z);
     }
@@ -425,6 +434,7 @@ public class BlockSwapGameBehaviour extends GameBehavior {
      */
     public void setCompletedRounds(int rounds) {
         this.completedRounds = rounds;
+        this.updateCurrentRoundScoreboard();
     }
 
     /**
