@@ -24,6 +24,7 @@ public class BlockSwapConstants {
 
     public static final int SCOREBOARD_COLOR_INDEX = 0;
     public static final int SCOREBOARD_PLAYERS_INDEX = 1;
+    public static final int SCOREBOARD_ROUND_INDEX = 2;
 
     public static final String FUNCTION_TAG_GENERATE_PLATFORM = "platform_gen";
     public static final String FUNCTION_TAG_CLEAR_PLATFORM = "platform_clear";
