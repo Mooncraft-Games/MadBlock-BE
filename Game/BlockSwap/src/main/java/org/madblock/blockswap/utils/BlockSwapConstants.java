@@ -11,14 +11,15 @@ public class BlockSwapConstants {
 
     public static final int MINIMUM_PLAYERS = 2;
     public static final int MAXIMUM_PLAYERS = 16;
+    public static final int MAXIMUM_PLAYERS_TOURNEY = 128;
 
     public static final int ROUND_SECONDS = 6;
 
-    public static final int POWERUP_SPAWN_TIMER_SECONDS = 20;
-    public static final int MINIMUM_POWERUP_SPAWN_TIMER_SECONDS = 5;
+    public static final int POWERUP_SPAWN_TIMER_SECONDS = 28;
+    public static final int MINIMUM_POWERUP_SPAWN_TIMER_SECONDS = 12;
     public static final int POWERUP_SPAWN_TIMER_SECONDS_DECREMENT = 2;
 
-    public static final int MAXIMUM_POWERUPS_ON_MAP = 8;
+    public static final int MAXIMUM_POWERUPS_ON_MAP = 3;
 
     public static final float LEAP_STRENGTH = 1.7f;
 
@@ -34,7 +35,7 @@ public class BlockSwapConstants {
             this.put(DyeColor.RED, TextFormat.RED);
             this.put(DyeColor.BLACK, TextFormat.BLACK);
             this.put(DyeColor.BLUE, TextFormat.BLUE);
-            this.put(DyeColor.CYAN, TextFormat.DARK_AQUA);
+            //this.put(DyeColor.CYAN, TextFormat.DARK_AQUA); Rest in peace cyan.
             this.put(DyeColor.GREEN, TextFormat.DARK_GREEN);
             this.put(DyeColor.LIGHT_BLUE, TextFormat.AQUA);
             this.put(DyeColor.LIME, TextFormat.GREEN);
@@ -42,6 +43,7 @@ public class BlockSwapConstants {
             this.put(DyeColor.ORANGE, TextFormat.GOLD);
             this.put(DyeColor.WHITE, TextFormat.WHITE);
             this.put(DyeColor.YELLOW, TextFormat.YELLOW);
+            this.put(DyeColor.GRAY, TextFormat.GRAY);
         }
     });
 
@@ -51,6 +53,7 @@ public class BlockSwapConstants {
             ColorExchangePowerUp.class,
             BlindnessPowerUp.class,
             ShufflePowerUp.class,
-            SpeedPowerUp.class));
+            SpeedPowerUp.class
+    ));
 
 }

@@ -54,7 +54,15 @@ public final class BSwapGeneratorManager {
     }
 
     public BSwapGenerator getRandomGenerator() {
-        ArrayList<BSwapGenerator> pool = new ArrayList<>(generators.values());
+        ArrayList<BSwapGenerator> gen = new ArrayList<>(generators.values());
+        ArrayList<BSwapGenerator> pool = new ArrayList<>();
+
+        //TODO: Terribly inefficient for large weights, redo this!
+        for(BSwapGenerator generator: gen) {
+            for(int i = 0; i < generator.getWeight(); i++) {
+                pool.add(generator);
+            }
+        }
 
         if(pool.size() > 0) {
             int genIndex = generators.size() == 1 ? 0 : random.nextInt(pool.size());
