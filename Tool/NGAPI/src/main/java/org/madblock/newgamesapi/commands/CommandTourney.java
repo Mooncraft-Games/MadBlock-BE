@@ -65,7 +65,12 @@ public class CommandTourney extends PluginCommand<NewGamesAPI1> {
 
         if (sender.isPlayer()) {
 
-            if (!(args.length == 1) && (args[0].equalsIgnoreCase("board"))) { // Tourney board is the only public command
+            if (args.length < 1) {
+                sender.sendMessage(Utility.generateServerMessage("ERROR", TextFormat.DARK_RED, "Invalid Usage", TextFormat.RED));
+                return true;
+            }
+
+            if (!args[0].equalsIgnoreCase("board")) { // Tourney board is the only public command
 
                 Optional<RankProfile> profile = RankManager.getInstance().getRankProfile((Player) sender);
 
