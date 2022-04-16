@@ -1,0 +1,5 @@
+name: MadblockPlaceGamemode
+main: org.madblock.place.PlacePlugin
+version: "1.0.0"
+api: ["1.0.0"]
+depend: [NewGamesAPI1]

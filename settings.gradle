@@ -4,4 +4,6 @@ include 'Library:QuirkCommons', //'Library:MapDescriptor',
         'Component:Ranks', 'Component:Punishments', 'Component:Social',
         'Game:CrystalWars', 'Game:BlockSwap', 'Game:SumoX', 'Game:TowerWars', 'Game:SkyWars',
         'External:NukkitTables', 'External:ScoreboardAPI'
+include 'Game:Place'
+findProject(':Game:Place')?.name = 'Place'
 
