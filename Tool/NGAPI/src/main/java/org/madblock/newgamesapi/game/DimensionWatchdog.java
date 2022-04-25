@@ -7,9 +7,15 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
+import cn.nukkit.level.DimensionData;
+import cn.nukkit.level.DimensionEnum;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
+import cn.nukkit.level.biome.Biome;
+import cn.nukkit.level.biome.EnumBiome;
+import cn.nukkit.level.util.PalettedBlockStorage;
 import cn.nukkit.network.protocol.*;
+import cn.nukkit.utils.BinaryStream;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +26,7 @@ import java.util.UUID;
  */
 public class DimensionWatchdog implements Listener {
 
-    public static final int CHUNK_RADIUS = 4;
+    public static final int CHUNK_RADIUS = 1;
     private static DimensionWatchdog dimensionWatchdog;
 
     protected HashMap<UUID, Location> dimensionAckIDs; // to-do: maybe we should make this it's own thing.
@@ -77,12 +83,12 @@ public class DimensionWatchdog implements Listener {
         if(fake) {
             NetworkChunkPublisherUpdatePacket publishPacket = new NetworkChunkPublisherUpdatePacket();
             publishPacket.position = pos.asBlockVector3();
-            publishPacket.radius = CHUNK_RADIUS * 16;
+            publishPacket.radius = player.getViewDistance() * 16;
             player.dataPacket(publishPacket);
 
             for (int cX = pos.getChunkX() - CHUNK_RADIUS; cX <= pos.getChunkX() + CHUNK_RADIUS; cX++) {
                 for (int cZ = pos.getChunkZ() - CHUNK_RADIUS; cZ <= pos.getChunkZ() + CHUNK_RADIUS; cZ++) {
-                    player.dataPacket(provideEmptyChunkPacket(cX, cZ));
+                    player.dataPacket(provideEmptyChunkPacket(cX, cZ, DimensionEnum.getDataFromId(changeDimensionPacket.dimension)));
                 }
             }
 
@@ -144,12 +150,28 @@ public class DimensionWatchdog implements Listener {
     }
 
 
-    private static LevelChunkPacket provideEmptyChunkPacket(int cX, int cZ) {
+    private static LevelChunkPacket provideEmptyChunkPacket(int cX, int cZ, DimensionData dimensionData) {
+        BinaryStream payload = new BinaryStream();
+
+        // 3D biome data
+        BinaryStream biomeStream = new BinaryStream();
+        PalettedBlockStorage palette = PalettedBlockStorage.createWithDefaultState(EnumBiome.OCEAN.id);
+        palette.writeTo(biomeStream);
+        byte[] biomePayload = biomeStream.getBuffer();
+
+        // Put biome data x amount depending on dimension max height.
+        for (int i = 0; i < dimensionData.getHeight() >> 4; i++) {
+            payload.put(biomePayload);
+        }
+
+        // border blocks (useless)
+        payload.putByte((byte) 0);
+
         LevelChunkPacket chunkData = new LevelChunkPacket();
         chunkData.chunkX = cX;
         chunkData.chunkZ = cZ;
         chunkData.subChunkCount = 0;
-        chunkData.data = new byte[257];
+        chunkData.data = payload.getBuffer();
         chunkData.cacheEnabled = false;
         return chunkData;
     }
