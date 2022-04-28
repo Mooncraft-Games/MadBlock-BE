@@ -7,15 +7,12 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
-import cn.nukkit.level.DimensionData;
-import cn.nukkit.level.DimensionEnum;
+import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
-import cn.nukkit.level.biome.Biome;
-import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.util.PalettedBlockStorage;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.network.protocol.*;
-import cn.nukkit.utils.BinaryStream;
+import org.madblock.newgamesapi.nukkit.packet.EmptyLevelChunkPacket;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,33 +66,35 @@ public class DimensionWatchdog implements Listener {
 
     //TODO: If we ever add support for dimensions that are not the overworld, adjust ids
     private void switchDimension(Location pos, Player player, Level target, boolean fake) {
-
         ChangeDimensionPacket changeDimensionPacket = new ChangeDimensionPacket();
         changeDimensionPacket.dimension = fake ? 1 : 0;
-        changeDimensionPacket.respawn = true;
         changeDimensionPacket.x = (float) pos.x;
         changeDimensionPacket.y = (float) pos.y;
         changeDimensionPacket.z = (float) pos.z;
-        player.locallyInitialized = false;
+        changeDimensionPacket.respawn = true;
         player.dataPacket(changeDimensionPacket);
 
-        // Send empty chunks for the nether.
-        if(fake) {
-            NetworkChunkPublisherUpdatePacket publishPacket = new NetworkChunkPublisherUpdatePacket();
-            publishPacket.position = pos.asBlockVector3();
-            publishPacket.radius = player.getViewDistance() * 16;
-            player.dataPacket(publishPacket);
+        NetworkChunkPublisherUpdatePacket publishPacket = new NetworkChunkPublisherUpdatePacket();
+        publishPacket.position = new BlockVector3((int) changeDimensionPacket.x, (int) changeDimensionPacket.y, (int) changeDimensionPacket.z);
+        publishPacket.radius = player.getViewDistance() * 16;
+        player.dataPacket(publishPacket);
 
+        if (fake) {
+            // Send empty chunks as required.
+            // (otherwise the client will not be able to transfer back from the nether properly)
             for (int cX = pos.getChunkX() - CHUNK_RADIUS; cX <= pos.getChunkX() + CHUNK_RADIUS; cX++) {
                 for (int cZ = pos.getChunkZ() - CHUNK_RADIUS; cZ <= pos.getChunkZ() + CHUNK_RADIUS; cZ++) {
-                    player.dataPacket(provideEmptyChunkPacket(cX, cZ, DimensionEnum.getDataFromId(changeDimensionPacket.dimension)));
+                    player.dataPacket(provideEmptyChunkPacket(cX, cZ));
                 }
             }
 
-            // Queue an ack check
+            // Queue an ack check.
+            // Also prevents actual chunks from the previous map being sent mid-dimension transfer.
             dimensionAckIDs.put(player.getUniqueId(), new Location(pos.x, pos.y, pos.z, pos.yaw, pos.pitch, target));
-
         } else {
+            // Send the actual chunks of the map we're teleporting to.
+            player.switchLevel(pos.level);
+            player.teleport(pos);
 
             for (int cX = pos.getChunkX() - CHUNK_RADIUS; cX <= pos.getChunkX() + CHUNK_RADIUS; cX++) {
                 for (int cZ = pos.getChunkZ() - CHUNK_RADIUS; cZ <= pos.getChunkZ() + CHUNK_RADIUS; cZ++) {
@@ -103,28 +102,20 @@ public class DimensionWatchdog implements Listener {
                 }
             }
 
-            player.switchLevel(pos.level);
-            player.teleport(pos);
-
+            // Force the client to close the dimension transfer screen.
             PlayStatusPacket statusPacket = new PlayStatusPacket();
             statusPacket.status = PlayStatusPacket.PLAYER_SPAWN;
-            player.locallyInitialized = false;
             player.dataPacket(statusPacket);
-
         }
     }
 
-
     @EventHandler
     public void onDimensionSuccessPacket(DataPacketReceiveEvent event) {
-
         if (event.getPacket() instanceof PlayerActionPacket) {
             PlayerActionPacket actionPacket = (PlayerActionPacket) event.getPacket();
 
             if (actionPacket.action == PlayerActionPacket.ACTION_DIMENSION_CHANGE_ACK) {
-                event.getPlayer().locallyInitialized = true;
-
-                if(dimensionAckIDs.containsKey(event.getPlayer().getUniqueId())) {
+                if (dimensionAckIDs.containsKey(event.getPlayer().getUniqueId())) {
                     Location pos = dimensionAckIDs.remove(event.getPlayer().getUniqueId());
                     switchDimension(pos, event.getPlayer(), pos.level, false);
 
@@ -134,6 +125,16 @@ public class DimensionWatchdog implements Listener {
                     event.getPlayer().dataPacket(stopSoundPacket);
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onSendChunkPacket(DataPacketSendEvent event) {
+        if (this.dimensionAckIDs.containsKey(event.getPlayer().getUniqueId())
+                && event.getPacket() instanceof LevelChunkPacket) {
+            // If a LevelChunkPacket is sent from the map prior to the nether dimension transfer
+            // during the nether transfer, the client may hang/crash from it.
+            event.setCancelled();
         }
     }
 
@@ -149,30 +150,10 @@ public class DimensionWatchdog implements Listener {
         freshPlayers.remove(event.getPlayer().getId());
     }
 
-
-    private static LevelChunkPacket provideEmptyChunkPacket(int cX, int cZ, DimensionData dimensionData) {
-        BinaryStream payload = new BinaryStream();
-
-        // 3D biome data
-        BinaryStream biomeStream = new BinaryStream();
-        PalettedBlockStorage palette = PalettedBlockStorage.createWithDefaultState(EnumBiome.OCEAN.id);
-        palette.writeTo(biomeStream);
-        byte[] biomePayload = biomeStream.getBuffer();
-
-        // Put biome data x amount depending on dimension max height.
-        for (int i = 0; i < dimensionData.getHeight() >> 4; i++) {
-            payload.put(biomePayload);
-        }
-
-        // border blocks (useless)
-        payload.putByte((byte) 0);
-
-        LevelChunkPacket chunkData = new LevelChunkPacket();
+    private static EmptyLevelChunkPacket provideEmptyChunkPacket(int cX, int cZ) {
+        EmptyLevelChunkPacket chunkData = new EmptyLevelChunkPacket();
         chunkData.chunkX = cX;
         chunkData.chunkZ = cZ;
-        chunkData.subChunkCount = 0;
-        chunkData.data = payload.getBuffer();
-        chunkData.cacheEnabled = false;
         return chunkData;
     }
 
