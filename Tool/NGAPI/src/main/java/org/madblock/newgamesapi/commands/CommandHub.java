@@ -41,6 +41,7 @@ public class CommandHub extends PluginCommand<NewGamesAPI1> {
         } else {
             String hubWorldID = args[0].toLowerCase();
             Optional<GameHandler> hub = HubManager.get().getAvailableHub(hubWorldID);
+
             if(hub.isPresent()){
                 hub.get().addPlayerToGame(player);
             } else {
