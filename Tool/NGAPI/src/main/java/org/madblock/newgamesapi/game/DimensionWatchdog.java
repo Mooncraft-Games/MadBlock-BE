@@ -93,7 +93,6 @@ public class DimensionWatchdog implements Listener {
             dimensionAckIDs.put(player.getUniqueId(), new Location(pos.x, pos.y, pos.z, pos.yaw, pos.pitch, target));
         } else {
             // Send the actual chunks of the map we're teleporting to.
-            player.switchLevel(pos.level);
             player.teleport(pos);
 
             for (int cX = pos.getChunkX() - CHUNK_RADIUS; cX <= pos.getChunkX() + CHUNK_RADIUS; cX++) {

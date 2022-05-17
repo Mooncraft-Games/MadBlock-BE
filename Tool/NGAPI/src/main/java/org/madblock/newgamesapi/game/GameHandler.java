@@ -292,7 +292,6 @@ public class GameHandler implements Listener {
                 Position spawn = NewGamesAPI1.get().getServer().getDefaultLevel().getSpawnLocation();
                 Location dest = spawn.getLocation();
                 dest.setLevel(NewGamesAPI1.get().getServer().getDefaultLevel());
-                player.switchLevel(dest.getLevel());
                 player.teleport(dest);
             }
             return true;
@@ -432,7 +431,6 @@ public class GameHandler implements Listener {
                 Position spawn = NewGamesAPI1.get().getServer().getDefaultLevel().getSpawnLocation();
                 Location dest = spawn.getLocation();
                 dest.setLevel(NewGamesAPI1.get().getServer().getDefaultLevel());
-                player.switchLevel(dest.getLevel());
                 player.teleport(dest);
             }
         }
@@ -806,7 +804,6 @@ public class GameHandler implements Listener {
             if(getPlayers().size() > 1){
                 boolean autoPolicyExecuted = false;
                 if(checkDeathWinPolicyConditions()) autoPolicyExecuted = true;
-
                 if(!autoPolicyExecuted) declareTie();
             } else {
                 endGame(true);
@@ -1189,11 +1186,11 @@ public class GameHandler implements Listener {
 
         GameManager.get().removeSession(this.serverID);
 
-        if (cleanUpImmediatley) {
-            this.cleanUpGame();
-        } else {
-            NewGamesAPI1.get().getServer().getScheduler().scheduleDelayedTask(NewGamesAPI1.get(), this::cleanUpGame, cleanupWaitTime);
-        }
+//        if (cleanUpImmediatley) {
+//            this.cleanUpGame();
+//        } else {
+//            NewGamesAPI1.get().getServer().getScheduler().scheduleDelayedTask(NewGamesAPI1.get(), this::cleanUpGame, cleanupWaitTime);
+//        }
         return true;
     }
 

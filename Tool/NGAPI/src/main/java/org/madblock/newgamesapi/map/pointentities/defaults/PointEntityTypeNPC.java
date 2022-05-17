@@ -153,7 +153,7 @@ public abstract class PointEntityTypeNPC extends PointEntityType implements List
             skin.setSkinData(skinImage.get());
             skin.setTrusted(true);
             skin.setArmSize(entity.getStringProperties().getOrDefault("arm_size", "wide"));
-            skin.generateSkinId(entity.getId());
+            skin.setSkinId(UUID.randomUUID() + entity.getId());
 
             if(modelData.isPresent() && entity.getStringProperties().containsKey("model_id")) {
                 skin.setGeometryName(entity.getStringProperties().get("model_id"));

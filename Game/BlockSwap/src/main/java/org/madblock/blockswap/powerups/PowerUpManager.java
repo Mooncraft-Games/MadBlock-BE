@@ -158,7 +158,7 @@ public class PowerUpManager {
                 .putByteArray("Data", skin.getSkinData().data)
                 .putInt("SkinImageWidth", skin.getSkinData().width)
                 .putInt("SkinImageHeight", skin.getSkinData().height)
-                .putString("ModelId", skin.getSkinId())
+                .putString("ModelId", UUID.randomUUID().toString())
                 .putString("CapeId", skin.getCapeId())
                 .putByteArray("CapeData", skin.getCapeData().data)
                 .putInt("CapeImageWidth", skin.getCapeData().width)

@@ -85,6 +85,7 @@ public class NewGamesAPI1 extends PluginBase implements Listener {
         this.gameManager = new GameManager();
         this.hubManager = new HubManager(gameManager);
         this.playerKitsManager = new PlayerKitsManager();
+
         this.dimensionWatchdog = new DimensionWatchdog();
 
         this.rewardsManager = new RewardsManager();

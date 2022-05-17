@@ -156,7 +156,7 @@ public class EntityHumanCrystal extends EntityHumanPlus {
         skin.setGeometryName(geometryID);
         skin.setSkinData(skinBaseData);
         skin.setTrusted(true);
-        skin.generateSkinId(String.valueOf(ticker++));
+        skin.setSkinId(UUID.randomUUID() + String.valueOf(ticker++));
         crystalSkins.put(type, skin);
         CrystalWarsPlugin.getInstance().getLogger().info(TextFormat.GREEN + "Successfully created CW Crystal skin of type: " + type);
         return skin;

@@ -132,7 +132,7 @@ public class PointEntityTypeHologram extends PointEntityType implements Listener
             skin.setSkinData(image);
             skin.setTrusted(true);
             skin.setArmSize(entity.getStringProperties().getOrDefault("arm_size", "wide"));
-            skin.generateSkinId(entity.getId());
+            skin.setSkinId(UUID.randomUUID().toString());
             return skin.isValid() ? Optional.of(skin) : Optional.empty();
         }  catch (Exception err) {
             return Optional.empty();

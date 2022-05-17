@@ -245,7 +245,7 @@ public class PointEntityTypePowerUp extends PointEntityType implements Listener 
         skin.setGeometryData(GEOMETRY_DATA);
         skin.setSkinData(SKIN_DATA);
         skin.setTrusted(true);
-        skin.generateSkinId(pointEntity.getId());
+        skin.setSkinId(UUID.randomUUID() + pointEntity.getId());
 
 
         CompoundTag skinDataTag = new CompoundTag()
