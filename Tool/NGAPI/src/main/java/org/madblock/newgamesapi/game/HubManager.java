@@ -119,6 +119,10 @@ public class HubManager {
     public Optional<GameHandler> getAvailableHub(String type, Player player){
         GameHandler emptyHub = null;
 
+        if(!hubGames.containsKey(type))
+            return Optional.empty();
+
+
         if(hubWorlds.containsKey(type)) {
             HashMap<String, GameHandler> hubs = hubWorlds.get(type);
 
